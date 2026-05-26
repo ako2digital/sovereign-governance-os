@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sovereign Governance OS
 
-## Getting Started
+## MVP Name
 
-First, run the development server:
+Hapū Relational Infrastructure MVP
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Project Overview
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Sovereign Governance OS is a relational records and governance platform for hapū, marae, whānau, iwi, and whenua-based groups.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The platform is designed to help organise the records that protect continuity, memory, authority, accountability, and intergenerational knowledge.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This is not a generic admin app.
 
-## Learn More
+The long-term vision is sovereign digital infrastructure for indigenous governance.
 
-To learn more about Next.js, take a look at the following resources:
+## Current MVP Focus
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The first MVP focuses on the core relational records layer.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The MVP will support:
 
-## Deploy on Vercel
+- People
+- Basic whakapapa relationships
+- Whenua records
+- Marae records
+- Governance records
+- Hui
+- Minutes
+- Decisions
+- Documents
+- Pānui
+- Tasks
+- Activity log
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Tech Stack
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Current stack:
+
+- Next.js
+- TypeScript
+- Tailwind CSS
+- Supabase
+- GitHub
+- Obsidian
+- Vercel later
+
+## Source of Truth
+
+- Obsidian holds the project brain
+- GitHub holds the code
+- Supabase holds the database
+- The app proves the system works
+
+## Current Status
+
+Current phase:
+
+Week 1 — Foundation
+
+Completed:
+
+- Obsidian PC brain created
+- GitHub repo created
+- Next.js app created
+- Local app running
+
+Next:
+
+- Push local Next.js app to GitHub
+- Create dashboard and navigation shell
+- Draft Supabase SQL schema
