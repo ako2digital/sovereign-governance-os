@@ -38,16 +38,27 @@ export default async function PeoplePage() {
       </section>
 
       <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-white">People Register</h2>
+            <h2 className="text-lg font-semibold text-white">
+              People Register
+            </h2>
             <p className="mt-1 text-sm text-stone-400">
               Live records pulled from the Supabase people table.
             </p>
           </div>
 
-          <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
-            {people.length} records
+          <div className="flex items-center gap-3">
+            <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
+              {people.length} records
+            </div>
+
+            <a
+              href="/people/new"
+              className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+            >
+              Add Person
+            </a>
           </div>
         </div>
 
