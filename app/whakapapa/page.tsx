@@ -35,7 +35,7 @@ export default async function WhakapapaPage() {
     )
     .order("created_at", { ascending: false });
 
-  const relationships = (data ?? []) as WhakapapaRelationship[];
+  const relationships = (data ?? []) as unknown as WhakapapaRelationship[];
 
   return (
     <AppShell title="Whakapapa" eyebrow="MVP Module">
