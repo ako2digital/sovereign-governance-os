@@ -64,8 +64,17 @@ export default async function WhakapapaPage() {
             </p>
           </div>
 
-          <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
-            {relationships.length} records
+          <div className="flex items-center gap-3">
+            <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
+              {relationships.length} records
+            </div>
+
+            <a
+              href="/whakapapa/new"
+              className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+            >
+              Add Relationship
+            </a>
           </div>
         </div>
 
@@ -80,8 +89,8 @@ export default async function WhakapapaPage() {
               No whakapapa relationships yet
             </h3>
             <p className="mt-2 text-sm text-stone-400">
-              Add the first whakapapa relationship in Supabase to begin testing
-              relational records.
+              Add the first whakapapa relationship to begin testing relational
+              records.
             </p>
           </div>
         ) : (
