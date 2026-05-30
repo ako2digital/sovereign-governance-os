@@ -5,19 +5,23 @@ type MaraeRecord = {
   id: string;
   name: string;
   location: string | null;
-  hapu_affiliation: string | null;
-  iwi_affiliation: string | null;
-  governance_notes: string | null;
-  contact_notes: string | null;
   status: string | null;
   created_at: string;
+  updated_at: string | null;
 };
 
 export default async function MaraePage() {
   const { data, error } = await supabase
     .from("marae_records")
     .select(
-      "id, name, location, hapu_affiliation, iwi_affiliation, governance_notes, contact_notes, status, created_at"
+      `
+      id,
+      name,
+      location,
+      status,
+      created_at,
+      updated_at
+    `
     )
     .order("created_at", { ascending: false });
 
@@ -27,14 +31,14 @@ export default async function MaraePage() {
     <AppShell title="Marae" eyebrow="MVP Module">
       <section className="rounded-3xl border border-stone-800 bg-stone-900/50 p-8">
         <p className="text-xs uppercase tracking-[0.25em] text-stone-500">
-          Marae Records
+          Marae Register
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-white">Marae</h1>
 
         <p className="mt-4 max-w-2xl text-stone-400">
-          Store marae records, governance notes, documents, hui, minutes,
-          decisions, pānui, and tasks.
+          Manage marae records, locations, status, and community infrastructure
+          references.
         </p>
       </section>
 
@@ -85,9 +89,8 @@ export default async function MaraePage() {
                 <tr>
                   <th className="px-4 py-3 font-medium">Name</th>
                   <th className="px-4 py-3 font-medium">Location</th>
-                  <th className="px-4 py-3 font-medium">Hapū</th>
-                  <th className="px-4 py-3 font-medium">Iwi</th>
                   <th className="px-4 py-3 font-medium">Status</th>
+                  <th className="px-4 py-3 font-medium">Created</th>
                 </tr>
               </thead>
 
@@ -97,20 +100,25 @@ export default async function MaraePage() {
                     key={record.id}
                     className="border-t border-stone-800 bg-stone-900"
                   >
-                    <td className="px-4 py-4 text-stone-100">
-                      {record.name}
+                    <td className="px-4 py-4">
+                      <a
+                        href={`/marae/${record.id}`}
+                        className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                      >
+                        {record.name}
+                      </a>
                     </td>
+
                     <td className="px-4 py-4 text-stone-300">
                       {record.location || "—"}
                     </td>
-                    <td className="px-4 py-4 text-stone-300">
-                      {record.hapu_affiliation || "—"}
-                    </td>
-                    <td className="px-4 py-4 text-stone-300">
-                      {record.iwi_affiliation || "—"}
-                    </td>
+
                     <td className="px-4 py-4 text-stone-300">
                       {record.status || "active"}
+                    </td>
+
+                    <td className="px-4 py-4 text-stone-300">
+                      {record.created_at}
                     </td>
                   </tr>
                 ))}

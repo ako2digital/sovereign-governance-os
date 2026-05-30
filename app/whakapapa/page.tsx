@@ -115,15 +115,24 @@ export default async function WhakapapaPage() {
                     <td className="px-4 py-4 text-stone-100">
                       {relationship.person_a?.full_name || "—"}
                     </td>
-                    <td className="px-4 py-4 text-stone-300">
-                      {relationship.relationship_type}
+
+                    <td className="px-4 py-4">
+                      <a
+                        href={`/whakapapa/${relationship.id}`}
+                        className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                      >
+                        {relationship.relationship_type}
+                      </a>
                     </td>
+
                     <td className="px-4 py-4 text-stone-100">
                       {relationship.person_b?.full_name || "—"}
                     </td>
+
                     <td className="px-4 py-4 text-stone-300">
                       {relationship.visibility_status || "private"}
                     </td>
+
                     <td className="px-4 py-4 text-stone-300">
                       {relationship.notes || "—"}
                     </td>

@@ -7,7 +7,6 @@ type GovernanceRecord = {
   record_type: string | null;
   summary: string | null;
   status: string | null;
-  effective_date: string | null;
   created_at: string;
   related_marae: {
     name: string;
@@ -27,7 +26,6 @@ export default async function GovernancePage() {
       record_type,
       summary,
       status,
-      effective_date,
       created_at,
       related_marae:related_marae_id (
         name
@@ -51,8 +49,8 @@ export default async function GovernancePage() {
         <h1 className="mt-3 text-3xl font-semibold text-white">Governance</h1>
 
         <p className="mt-4 max-w-2xl text-stone-400">
-          Track governance records, mandates, policies, resolutions, authority,
-          related marae, related whenua, and supporting summaries.
+          Track governance records, agreements, kaupapa, mandates, and links to
+          whenua or marae.
         </p>
       </section>
 
@@ -92,8 +90,8 @@ export default async function GovernancePage() {
               No governance records yet
             </h3>
             <p className="mt-2 text-sm text-stone-400">
-              Add the first governance record to begin testing governance record
-              management.
+              Add the first governance record to begin testing governance
+              tracking.
             </p>
           </div>
         ) : (
@@ -115,18 +113,27 @@ export default async function GovernancePage() {
                     key={record.id}
                     className="border-t border-stone-800 bg-stone-900"
                   >
-                    <td className="px-4 py-4 text-stone-100">
-                      {record.title}
+                    <td className="px-4 py-4">
+                      <a
+                        href={`/governance/${record.id}`}
+                        className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                      >
+                        {record.title}
+                      </a>
                     </td>
+
                     <td className="px-4 py-4 text-stone-300">
                       {record.record_type || "—"}
                     </td>
+
                     <td className="px-4 py-4 text-stone-300">
                       {record.related_marae?.name || "—"}
                     </td>
+
                     <td className="px-4 py-4 text-stone-300">
                       {record.related_whenua?.title || "—"}
                     </td>
+
                     <td className="px-4 py-4 text-stone-300">
                       {record.status || "active"}
                     </td>
