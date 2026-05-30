@@ -1,137 +1,77 @@
-const navigationItems = [
-  {
-    label: "Dashboard",
-    href: "/",
-    section: "System",
-  },
-  {
-    label: "System Overview",
-    href: "/system-overview",
-    section: "System",
-  },
-  {
-    label: "Demo Flow",
-    href: "/demo-flow",
-    section: "System",
-  },
-  {
-    label: "Feedback",
-    href: "/feedback",
-    section: "System",
-  },
-  {
-    label: "Presentation Checklist",
-    href: "/presentation-checklist",
-    section: "System",
-  },
-  {
-    label: "People",
-    href: "/people",
-    section: "Core Records",
-  },
-  {
-    label: "Whakapapa",
-    href: "/whakapapa",
-    section: "Core Records",
-  },
-  {
-    label: "Whenua",
-    href: "/whenua",
-    section: "Core Records",
-  },
-  {
-    label: "Marae",
-    href: "/marae",
-    section: "Core Records",
-  },
-  {
-    label: "Governance",
-    href: "/governance",
-    section: "Governance",
-  },
-  {
-    label: "Hui",
-    href: "/hui",
-    section: "Governance",
-  },
-  {
-    label: "Minutes",
-    href: "/minutes",
-    section: "Governance",
-  },
-  {
-    label: "Decisions",
-    href: "/decisions",
-    section: "Governance",
-  },
-  {
-    label: "Documents",
-    href: "/documents",
-    section: "Operations",
-  },
-  {
-    label: "Pānui",
-    href: "/panui",
-    section: "Operations",
-  },
-  {
-    label: "Tasks",
-    href: "/tasks",
-    section: "Operations",
-  },
-  {
-    label: "Activity",
-    href: "/activity",
-    section: "System",
-  },
+const navigation = [
+  { name: "Dashboard", href: "/", group: "Overview" },
+  { name: "People", href: "/people", group: "Core Records" },
+  { name: "Whakapapa", href: "/whakapapa", group: "Core Records" },
+  { name: "Whenua", href: "/whenua", group: "Core Records" },
+  { name: "Marae", href: "/marae", group: "Governance" },
+  { name: "Governance", href: "/governance", group: "Governance" },
+  { name: "Hui", href: "/hui", group: "Governance" },
+  { name: "Minutes", href: "/minutes", group: "Governance" },
+  { name: "Decisions", href: "/decisions", group: "Governance" },
+  { name: "Documents", href: "/documents", group: "Records" },
+  { name: "Pānui", href: "/panui", group: "Records" },
+  { name: "Tasks", href: "/tasks", group: "Records" },
+  { name: "Activity", href: "/activity", group: "Records" },
 ];
 
-const groupedNavigation = navigationItems.reduce<Record<string, typeof navigationItems>>(
-  (groups, item) => {
-    if (!groups[item.section]) {
-      groups[item.section] = [];
-    }
-
-    groups[item.section].push(item);
-    return groups;
-  },
-  {}
-);
+const groups = ["Overview", "Core Records", "Governance", "Records"];
 
 export default function Sidebar() {
   return (
-    <aside className="hidden min-h-screen w-72 border-r border-stone-800 bg-stone-950 p-6 lg:block">
-      <div>
-        <p className="text-xs uppercase tracking-[0.3em] text-stone-500">
+    <aside className="hidden w-80 shrink-0 border-r border-stone-800 bg-stone-950/90 px-5 py-5 lg:block">
+      <div className="mb-8 rounded-3xl border border-stone-800 bg-stone-900/60 p-5">
+        <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
           Sovereign OS
         </p>
 
-        <h1 className="mt-3 text-xl font-semibold text-white">
-          Hapū Platform
+        <h1 className="mt-4 text-2xl font-semibold tracking-tight text-white">
+          Hapū Relational Infrastructure
         </h1>
 
-        <p className="mt-2 text-sm text-stone-500">
-          Relational infrastructure for records, governance, and operations.
+        <p className="mt-4 text-sm leading-6 text-stone-500">
+          Records, relationships, governance, documents, actions, and future
+          sovereignty layers.
         </p>
+
+        <div className="mt-5 grid grid-cols-3 gap-2">
+          {[
+            ["3", "Live"],
+            ["12", "Modules"],
+            ["RLS", "On"],
+          ].map(([value, label]) => (
+            <div
+              key={label}
+              className="rounded-2xl border border-stone-800 bg-stone-950 p-3"
+            >
+              <div className="text-lg font-semibold text-white">{value}</div>
+              <div className="mt-1 text-[11px] uppercase tracking-wide text-stone-600">
+                {label}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
-      <nav className="mt-8 grid gap-7">
-        {Object.entries(groupedNavigation).map(([section, items]) => (
-          <div key={section}>
-            <p className="mb-3 text-xs uppercase tracking-[0.2em] text-stone-600">
-              {section}
+      <nav className="space-y-6">
+        {groups.map((group) => (
+          <div key={group}>
+            <p className="mb-2 px-3 font-mono text-[11px] uppercase tracking-[0.25em] text-stone-600">
+              {group}
             </p>
 
-            <div className="grid gap-1">
-              {items.map((item) => (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  className="rounded-xl px-3 py-2 text-sm font-medium text-stone-400 transition hover:bg-stone-900 hover:text-white"
-                >
-                  {item.label}
-                </a>
-              ))}
+            <div className="space-y-1">
+              {navigation
+                .filter((item) => item.group === group)
+                .map((item) => (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    className="group flex items-center justify-between rounded-2xl px-3 py-3 text-sm text-stone-400 transition hover:bg-stone-900 hover:text-white"
+                  >
+                    <span>{item.name}</span>
+                    <span className="h-1.5 w-1.5 rounded-full bg-stone-700 transition group-hover:bg-stone-100" />
+                  </a>
+                ))}
             </div>
           </div>
         ))}
