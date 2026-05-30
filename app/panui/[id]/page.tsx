@@ -96,7 +96,8 @@ export default async function PanuiDetailPage({
                 Core Details
               </h2>
               <p className="mt-1 text-sm text-stone-400">
-                Confirmed fields from the panui table.
+                Confirmed fields from the panui table, with linked related
+                marae, whenua, and hui records.
               </p>
             </div>
 
@@ -167,36 +168,68 @@ export default async function PanuiDetailPage({
 
             <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
               <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
-                Related Record IDs
+                Related Records
               </p>
 
-              <div className="mt-4 grid gap-3 text-sm text-stone-300">
-                <p>
-                  <span className="text-stone-500">Marae ID:</span>{" "}
-                  <span className="break-all">
-                    {panuiRecord.related_marae_id || "—"}
-                  </span>
-                </p>
+              <div className="mt-4 grid gap-4 md:grid-cols-3">
+                <div className="rounded-xl border border-stone-800 bg-stone-900 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                    Related Marae
+                  </p>
 
-                <p>
-                  <span className="text-stone-500">Whenua ID:</span>{" "}
-                  <span className="break-all">
-                    {panuiRecord.related_whenua_id || "—"}
-                  </span>
-                </p>
+                  {panuiRecord.related_marae_id ? (
+                    <a
+                      href={`/marae/${panuiRecord.related_marae_id}`}
+                      className="mt-3 block break-all text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                    >
+                      {panuiRecord.related_marae_id}
+                    </a>
+                  ) : (
+                    <p className="mt-3 text-sm text-stone-300">—</p>
+                  )}
+                </div>
 
-                <p>
-                  <span className="text-stone-500">Hui ID:</span>{" "}
-                  <span className="break-all">
-                    {panuiRecord.related_hui_id || "—"}
-                  </span>
-                </p>
+                <div className="rounded-xl border border-stone-800 bg-stone-900 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                    Related Whenua
+                  </p>
 
-                <p>
-                  <span className="text-stone-500">Created By:</span>{" "}
-                  <span className="break-all">
-                    {panuiRecord.created_by || "—"}
-                  </span>
+                  {panuiRecord.related_whenua_id ? (
+                    <a
+                      href={`/whenua/${panuiRecord.related_whenua_id}`}
+                      className="mt-3 block break-all text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                    >
+                      {panuiRecord.related_whenua_id}
+                    </a>
+                  ) : (
+                    <p className="mt-3 text-sm text-stone-300">—</p>
+                  )}
+                </div>
+
+                <div className="rounded-xl border border-stone-800 bg-stone-900 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                    Related Hui
+                  </p>
+
+                  {panuiRecord.related_hui_id ? (
+                    <a
+                      href={`/hui/${panuiRecord.related_hui_id}`}
+                      className="mt-3 block break-all text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                    >
+                      {panuiRecord.related_hui_id}
+                    </a>
+                  ) : (
+                    <p className="mt-3 text-sm text-stone-300">—</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="mt-4 rounded-xl border border-stone-800 bg-stone-900 p-4">
+                <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                  Created By
+                </p>
+                <p className="mt-3 break-all text-sm text-stone-300">
+                  {panuiRecord.created_by || "—"}
                 </p>
               </div>
             </div>
