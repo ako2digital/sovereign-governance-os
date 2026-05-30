@@ -75,7 +75,7 @@ export default async function DecisionDetailPage({
         ) : !decision ? (
           <div className="rounded-xl border border-stone-800 bg-stone-950 p-6">
             <h2 className="text-base font-semibold text-white">
-              Decision not found
+              Decision record not found
             </h2>
             <p className="mt-2 text-sm text-stone-400">
               No decision record exists for this ID.
@@ -88,7 +88,8 @@ export default async function DecisionDetailPage({
                 Core Details
               </h2>
               <p className="mt-1 text-sm text-stone-400">
-                Confirmed fields from the decisions table.
+                Confirmed fields from the decisions table, with linked related
+                hui and minutes records.
               </p>
             </div>
 
@@ -119,6 +120,24 @@ export default async function DecisionDetailPage({
                   {decision.created_at}
                 </p>
               </div>
+
+              <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
+                <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                  Updated
+                </p>
+                <p className="mt-3 text-sm text-stone-300">
+                  {decision.updated_at || "—"}
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5 md:col-span-2">
+                <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                  Record ID
+                </p>
+                <p className="mt-3 break-all text-sm text-stone-300">
+                  {decision.id}
+                </p>
+              </div>
             </div>
 
             <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
@@ -132,41 +151,43 @@ export default async function DecisionDetailPage({
 
             <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
               <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
-                Related Record IDs
+                Related Records
               </p>
 
-              <div className="mt-4 grid gap-3 text-sm text-stone-300">
-                <p>
-                  <span className="text-stone-500">Hui ID:</span>{" "}
-                  <span className="break-all">{decision.hui_id || "—"}</span>
-                </p>
+              <div className="mt-4 grid gap-4 md:grid-cols-2">
+                <div className="rounded-xl border border-stone-800 bg-stone-900 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                    Related Hui
+                  </p>
 
-                <p>
-                  <span className="text-stone-500">Minutes ID:</span>{" "}
-                  <span className="break-all">
-                    {decision.minutes_id || "—"}
-                  </span>
-                </p>
-              </div>
-            </div>
+                  {decision.hui_id ? (
+                    <a
+                      href={`/hui/${decision.hui_id}`}
+                      className="mt-3 block break-all text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                    >
+                      {decision.hui_id}
+                    </a>
+                  ) : (
+                    <p className="mt-3 text-sm text-stone-300">—</p>
+                  )}
+                </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
-                <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
-                  Updated
-                </p>
-                <p className="mt-3 text-sm text-stone-300">
-                  {decision.updated_at || "—"}
-                </p>
-              </div>
+                <div className="rounded-xl border border-stone-800 bg-stone-900 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                    Related Minutes
+                  </p>
 
-              <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
-                <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
-                  Record ID
-                </p>
-                <p className="mt-3 break-all text-sm text-stone-300">
-                  {decision.id}
-                </p>
+                  {decision.minutes_id ? (
+                    <a
+                      href={`/minutes/${decision.minutes_id}`}
+                      className="mt-3 block break-all text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                    >
+                      {decision.minutes_id}
+                    </a>
+                  ) : (
+                    <p className="mt-3 text-sm text-stone-300">—</p>
+                  )}
+                </div>
               </div>
             </div>
           </div>
