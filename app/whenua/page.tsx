@@ -12,13 +12,26 @@ type WhenuaRecord = {
   status: string | null;
   sensitivity_level: string | null;
   created_at: string;
+  updated_at: string | null;
 };
 
 export default async function WhenuaPage() {
   const { data, error } = await supabase
     .from("whenua_records")
     .select(
-      "id, title, block_name, location, legal_description, external_reference, historical_notes, status, sensitivity_level, created_at"
+      `
+      id,
+      title,
+      block_name,
+      location,
+      legal_description,
+      external_reference,
+      historical_notes,
+      status,
+      sensitivity_level,
+      created_at,
+      updated_at
+    `
     )
     .order("created_at", { ascending: false });
 
@@ -28,14 +41,14 @@ export default async function WhenuaPage() {
     <AppShell title="Whenua" eyebrow="MVP Module">
       <section className="rounded-3xl border border-stone-800 bg-stone-900/50 p-8">
         <p className="text-xs uppercase tracking-[0.25em] text-stone-500">
-          Whenua Records
+          Whenua Register
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-white">Whenua</h1>
 
         <p className="mt-4 max-w-2xl text-stone-400">
-          Organise whenua records, land references, historical notes, documents,
-          hui, decisions, and tasks.
+          Manage whenua records, land block references, legal descriptions,
+          historical notes, and sensitivity settings.
         </p>
       </section>
 
@@ -85,10 +98,10 @@ export default async function WhenuaPage() {
               <thead className="bg-stone-950 text-stone-400">
                 <tr>
                   <th className="px-4 py-3 font-medium">Title</th>
-                  <th className="px-4 py-3 font-medium">Block name</th>
+                  <th className="px-4 py-3 font-medium">Block Name</th>
                   <th className="px-4 py-3 font-medium">Location</th>
-                  <th className="px-4 py-3 font-medium">Status</th>
                   <th className="px-4 py-3 font-medium">Sensitivity</th>
+                  <th className="px-4 py-3 font-medium">Status</th>
                 </tr>
               </thead>
 
@@ -98,8 +111,13 @@ export default async function WhenuaPage() {
                     key={record.id}
                     className="border-t border-stone-800 bg-stone-900"
                   >
-                    <td className="px-4 py-4 text-stone-100">
-                      {record.title}
+                    <td className="px-4 py-4">
+                      <a
+                        href={`/whenua/${record.id}`}
+                        className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                      >
+                        {record.title}
+                      </a>
                     </td>
                     <td className="px-4 py-4 text-stone-300">
                       {record.block_name || "—"}
@@ -108,10 +126,10 @@ export default async function WhenuaPage() {
                       {record.location || "—"}
                     </td>
                     <td className="px-4 py-4 text-stone-300">
-                      {record.status || "active"}
+                      {record.sensitivity_level || "standard"}
                     </td>
                     <td className="px-4 py-4 text-stone-300">
-                      {record.sensitivity_level || "standard"}
+                      {record.status || "active"}
                     </td>
                   </tr>
                 ))}
