@@ -142,21 +142,31 @@ export default async function TasksPage() {
                       key={record.id}
                       className="border-t border-stone-800 bg-stone-900"
                     >
-                      <td className="px-4 py-4 text-stone-100">
-                        {record.title}
+                      <td className="px-4 py-4">
+                        <a
+                          href={`/tasks/${record.id}`}
+                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                        >
+                          {record.title}
+                        </a>
                       </td>
+
                       <td className="px-4 py-4 text-stone-300">
                         {relatedTo}
                       </td>
+
                       <td className="px-4 py-4 text-stone-300">
                         {record.assigned_to?.full_name || "—"}
                       </td>
+
                       <td className="px-4 py-4 text-stone-300">
                         {record.priority || "normal"}
                       </td>
+
                       <td className="px-4 py-4 text-stone-300">
                         {record.due_date || "—"}
                       </td>
+
                       <td className="px-4 py-4 text-stone-300">
                         {record.status || "todo"}
                       </td>
