@@ -22,10 +22,17 @@ async function createPerson(formData: FormData) {
   redirect("/people");
 }
 
+const futureLinks = [
+  "Whakapapa relationship",
+  "Hui attendance",
+  "Assigned tasks",
+  "Activity history",
+];
+
 export default function NewPersonPage() {
   return (
     <AppShell title="Add Person" eyebrow="Core Records / People">
-      <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+      <section className="grid gap-6">
         <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-8">
           <a
             href="/people"
@@ -35,78 +42,114 @@ export default function NewPersonPage() {
           </a>
 
           <p className="mt-8 font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-            New base record
+            New person record
           </p>
 
           <h1 className="mt-5 text-4xl font-semibold tracking-tight text-white md:text-5xl">
-            Add a person to the relational system.
+            Add an identity record to the system.
           </h1>
 
-          <p className="mt-5 text-lg leading-8 text-stone-400">
-            A person record becomes the anchor point for future whakapapa links,
-            whenua relationships, marae roles, governance responsibilities,
-            documents, hui attendance, decisions, and activity history.
+          <p className="mt-5 max-w-3xl text-base leading-8 text-stone-400">
+            A person record becomes the anchor point for future whakapapa,
+            hui, tasks, roles, documents, and activity history.
           </p>
-
-          <div className="mt-8 rounded-2xl border border-stone-800 bg-stone-950 p-5">
-            <p className="font-mono text-xs uppercase tracking-[0.25em] text-stone-600">
-              Current rule
-            </p>
-
-            <p className="mt-3 text-sm leading-7 text-stone-400">
-              This MVP only captures the full name. More identity fields can be
-              added later after the register structure is stable and agreed.
-            </p>
-          </div>
         </div>
 
-        <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-8">
-          <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-            Create record
-          </p>
+        <div className="grid gap-6 xl:grid-cols-[1fr_420px]">
+          <form
+            action={createPerson}
+            className="rounded-3xl border border-stone-800 bg-stone-900/60 p-8"
+          >
+            <div className="border-b border-stone-800 pb-6">
+              <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
+                Core details
+              </p>
 
-          <form action={createPerson} className="mt-8 grid gap-6">
-            <div>
-              <label
-                htmlFor="full_name"
-                className="block text-sm font-semibold text-stone-300"
-              >
-                Full name
+              <h2 className="mt-3 text-2xl font-semibold tracking-tight text-white">
+                Confirm the base identity field.
+              </h2>
+            </div>
+
+            <div className="mt-6 grid gap-6">
+              <label className="grid gap-3">
+                <span className="text-sm font-semibold text-stone-300">
+                  Full name <span className="text-red-300">*</span>
+                </span>
+
+                <input
+                  id="full_name"
+                  name="full_name"
+                  type="text"
+                  required
+                  placeholder="Enter full name"
+                  className="rounded-2xl border border-stone-700 bg-stone-950 px-5 py-4 text-stone-100 outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+                />
               </label>
 
-              <input
-                id="full_name"
-                name="full_name"
-                type="text"
-                required
-                placeholder="Enter full name"
-                className="mt-3 w-full rounded-2xl border border-stone-700 bg-stone-950 px-5 py-4 text-stone-100 outline-none transition placeholder:text-stone-600 focus:border-stone-400"
-              />
-            </div>
+              <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
+                <p className="font-mono text-xs uppercase tracking-[0.25em] text-stone-600">
+                  Current schema
+                </p>
 
-            <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
-              <p className="text-sm leading-7 text-stone-500">
-                After submission, the record will be inserted into the Supabase
-                people table and the app will return to the People Register.
-              </p>
-            </div>
+                <p className="mt-3 text-sm leading-7 text-stone-500">
+                  This MVP currently records one confirmed field: full_name.
+                  Extra identity fields should be added only when the register
+                  structure is agreed.
+                </p>
+              </div>
 
-            <div className="flex flex-wrap gap-3">
-              <button
-                type="submit"
-                className="rounded-full bg-stone-100 px-6 py-3 text-sm font-semibold text-stone-950 transition hover:bg-white"
-              >
-                Create Person
-              </button>
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="submit"
+                  className="rounded-full bg-stone-100 px-6 py-3 text-sm font-semibold text-stone-950 transition hover:bg-white"
+                >
+                  Create Person
+                </button>
 
-              <a
-                href="/people"
-                className="rounded-full border border-stone-700 px-6 py-3 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
-              >
-                Cancel
-              </a>
+                <a
+                  href="/people"
+                  className="rounded-full border border-stone-700 px-6 py-3 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
+                >
+                  Cancel
+                </a>
+              </div>
             </div>
           </form>
+
+          <aside className="grid gap-6">
+            <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-6">
+              <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
+                Related records
+              </p>
+
+              <div className="mt-5 grid gap-3">
+                {futureLinks.map((item) => (
+                  <div
+                    key={item}
+                    className="rounded-2xl border border-stone-800 bg-stone-950 p-4"
+                  >
+                    <p className="text-sm font-semibold text-white">{item}</p>
+
+                    <p className="mt-1 text-xs leading-5 text-stone-600">
+                      Available after the person record exists.
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-6">
+              <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
+                Record flow
+              </p>
+
+              <p className="mt-5 text-sm leading-7 text-stone-400">
+                Create the person first. Then link them to whakapapa,
+                attendance, roles, tasks, documents, and activity as the
+                system expands.
+              </p>
+            </div>
+          </aside>
         </div>
       </section>
     </AppShell>
