@@ -110,18 +110,27 @@ export default async function MinutesPage() {
                     key={record.id}
                     className="border-t border-stone-800 bg-stone-900"
                   >
-                    <td className="px-4 py-4 text-stone-100">
-                      {record.title}
+                    <td className="px-4 py-4">
+                      <a
+                        href={`/minutes/${record.id}`}
+                        className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                      >
+                        {record.title}
+                      </a>
                     </td>
+
                     <td className="px-4 py-4 text-stone-300">
                       {record.hui?.title || "—"}
                     </td>
+
                     <td className="px-4 py-4 text-stone-300">
                       {record.recorded_by || "—"}
                     </td>
+
                     <td className="px-4 py-4 text-stone-300">
                       {record.approved_status || "draft"}
                     </td>
+
                     <td className="px-4 py-4 text-stone-300">
                       {record.approved_date || "—"}
                     </td>
