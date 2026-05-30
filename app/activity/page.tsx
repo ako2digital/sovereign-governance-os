@@ -7,10 +7,8 @@ type ActivityLogRecord = {
   entity_type: string | null;
   entity_id: string | null;
   description: string | null;
+  actor_id: string | null;
   created_at: string;
-  actor: {
-    full_name: string;
-  } | null;
 };
 
 export default async function ActivityPage() {
@@ -23,15 +21,13 @@ export default async function ActivityPage() {
       entity_type,
       entity_id,
       description,
-      created_at,
-      actor:actor_id (
-        full_name
-      )
+      actor_id,
+      created_at
     `
     )
     .order("created_at", { ascending: false });
 
-  const activityRecords = (data ?? []) as unknown as ActivityLogRecord[];
+  const activityRecords = (data ?? []) as ActivityLogRecord[];
 
   return (
     <AppShell title="Activity" eyebrow="MVP Module">
@@ -85,7 +81,8 @@ export default async function ActivityPage() {
                 <tr>
                   <th className="px-4 py-3 font-medium">Action</th>
                   <th className="px-4 py-3 font-medium">Entity Type</th>
-                  <th className="px-4 py-3 font-medium">Actor</th>
+                  <th className="px-4 py-3 font-medium">Entity ID</th>
+                  <th className="px-4 py-3 font-medium">Actor ID</th>
                   <th className="px-4 py-3 font-medium">Description</th>
                   <th className="px-4 py-3 font-medium">Created</th>
                 </tr>
@@ -104,7 +101,10 @@ export default async function ActivityPage() {
                       {record.entity_type || "—"}
                     </td>
                     <td className="px-4 py-4 text-stone-300">
-                      {record.actor?.full_name || "—"}
+                      {record.entity_id || "—"}
+                    </td>
+                    <td className="px-4 py-4 text-stone-300">
+                      {record.actor_id || "—"}
                     </td>
                     <td className="px-4 py-4 text-stone-300">
                       {record.description || "—"}
