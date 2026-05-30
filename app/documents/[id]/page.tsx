@@ -21,6 +21,7 @@ type DocumentRecord = {
   related_decision_id: string | null;
   sensitivity_level: string | null;
   status: string | null;
+  created_by: string | null;
   created_at: string;
   updated_at: string | null;
 };
@@ -47,6 +48,7 @@ export default async function DocumentDetailPage({
       related_decision_id,
       sensitivity_level,
       status,
+      created_by,
       created_at,
       updated_at
     `
@@ -54,7 +56,7 @@ export default async function DocumentDetailPage({
     .eq("id", id)
     .maybeSingle();
 
-  const document = data as DocumentRecord | null;
+  const documentRecord = data as DocumentRecord | null;
 
   return (
     <AppShell title="Document Detail" eyebrow="Documents Module">
@@ -71,12 +73,12 @@ export default async function DocumentDetailPage({
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-white">
-          {document?.title || "Document Detail"}
+          {documentRecord?.title || "Document Detail"}
         </h1>
 
         <p className="mt-4 max-w-2xl text-stone-400">
-          View the selected document, evidence, or external reference record
-          from the hapū relational infrastructure database.
+          View the selected document record from the hapū relational
+          infrastructure database.
         </p>
       </section>
 
@@ -86,7 +88,7 @@ export default async function DocumentDetailPage({
             <p className="font-semibold">Database error</p>
             <pre className="mt-3 whitespace-pre-wrap">{error.message}</pre>
           </div>
-        ) : !document ? (
+        ) : !documentRecord ? (
           <div className="rounded-xl border border-stone-800 bg-stone-950 p-6">
             <h2 className="text-base font-semibold text-white">
               Document not found
@@ -102,7 +104,8 @@ export default async function DocumentDetailPage({
                 Core Details
               </h2>
               <p className="mt-1 text-sm text-stone-400">
-                Confirmed fields from the documents table.
+                Confirmed fields from the documents table, with linked related
+                records.
               </p>
             </div>
 
@@ -112,7 +115,7 @@ export default async function DocumentDetailPage({
                   Title
                 </p>
                 <p className="mt-3 text-lg font-semibold text-white">
-                  {document.title}
+                  {documentRecord.title}
                 </p>
               </div>
 
@@ -121,7 +124,7 @@ export default async function DocumentDetailPage({
                   Document Type
                 </p>
                 <p className="mt-3 text-sm text-stone-300">
-                  {document.document_type || "—"}
+                  {documentRecord.document_type || "—"}
                 </p>
               </div>
 
@@ -130,7 +133,7 @@ export default async function DocumentDetailPage({
                   Status
                 </p>
                 <p className="mt-3 text-sm text-stone-300">
-                  {document.status || "active"}
+                  {documentRecord.status || "draft"}
                 </p>
               </div>
 
@@ -139,36 +142,25 @@ export default async function DocumentDetailPage({
                   Sensitivity
                 </p>
                 <p className="mt-3 text-sm text-stone-300">
-                  {document.sensitivity_level || "standard"}
+                  {documentRecord.sensitivity_level || "standard"}
                 </p>
               </div>
 
               <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
                 <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
-                  External Reference
+                  Created
                 </p>
                 <p className="mt-3 text-sm text-stone-300">
-                  {document.external_reference || "—"}
+                  {documentRecord.created_at}
                 </p>
               </div>
 
               <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
                 <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
-                  File
+                  Updated
                 </p>
                 <p className="mt-3 text-sm text-stone-300">
-                  {document.file_url ? (
-                    <a
-                      href={document.file_url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-stone-100 underline underline-offset-4"
-                    >
-                      Open file
-                    </a>
-                  ) : (
-                    "—"
-                  )}
+                  {documentRecord.updated_at || "—"}
                 </p>
               </div>
             </div>
@@ -178,80 +170,155 @@ export default async function DocumentDetailPage({
                 Description
               </p>
               <p className="mt-3 whitespace-pre-wrap text-sm text-stone-300">
-                {document.description || "—"}
+                {documentRecord.description || "—"}
               </p>
             </div>
 
             <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
               <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
-                Related Record IDs
+                File References
               </p>
 
-              <div className="mt-4 grid gap-3 text-sm text-stone-300">
-                <p>
-                  <span className="text-stone-500">Person ID:</span>{" "}
-                  <span className="break-all">
-                    {document.related_person_id || "—"}
-                  </span>
-                </p>
+              <div className="mt-4 grid gap-4 md:grid-cols-2">
+                <div className="rounded-xl border border-stone-800 bg-stone-900 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                    File URL
+                  </p>
 
-                <p>
-                  <span className="text-stone-500">Whenua ID:</span>{" "}
-                  <span className="break-all">
-                    {document.related_whenua_id || "—"}
-                  </span>
-                </p>
+                  {documentRecord.file_url ? (
+                    <a
+                      href={documentRecord.file_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-3 block break-all text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                    >
+                      {documentRecord.file_url}
+                    </a>
+                  ) : (
+                    <p className="mt-3 text-sm text-stone-300">—</p>
+                  )}
+                </div>
 
-                <p>
-                  <span className="text-stone-500">Marae ID:</span>{" "}
-                  <span className="break-all">
-                    {document.related_marae_id || "—"}
-                  </span>
-                </p>
-
-                <p>
-                  <span className="text-stone-500">Hui ID:</span>{" "}
-                  <span className="break-all">
-                    {document.related_hui_id || "—"}
-                  </span>
-                </p>
-
-                <p>
-                  <span className="text-stone-500">Decision ID:</span>{" "}
-                  <span className="break-all">
-                    {document.related_decision_id || "—"}
-                  </span>
-                </p>
+                <div className="rounded-xl border border-stone-800 bg-stone-900 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                    External Reference
+                  </p>
+                  <p className="mt-3 break-all text-sm text-stone-300">
+                    {documentRecord.external_reference || "—"}
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
-                <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
-                  Created
-                </p>
-                <p className="mt-3 text-sm text-stone-300">
-                  {document.created_at}
-                </p>
-              </div>
+            <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
+              <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                Related Records
+              </p>
 
-              <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
-                <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
-                  Updated
-                </p>
-                <p className="mt-3 text-sm text-stone-300">
-                  {document.updated_at || "—"}
-                </p>
-              </div>
+              <div className="mt-4 grid gap-4 md:grid-cols-2">
+                <div className="rounded-xl border border-stone-800 bg-stone-900 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                    Related Person
+                  </p>
 
-              <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
-                <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
-                  Record ID
-                </p>
-                <p className="mt-3 break-all text-sm text-stone-300">
-                  {document.id}
-                </p>
+                  {documentRecord.related_person_id ? (
+                    <a
+                      href={`/people/${documentRecord.related_person_id}`}
+                      className="mt-3 block break-all text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                    >
+                      {documentRecord.related_person_id}
+                    </a>
+                  ) : (
+                    <p className="mt-3 text-sm text-stone-300">—</p>
+                  )}
+                </div>
+
+                <div className="rounded-xl border border-stone-800 bg-stone-900 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                    Related Whenua
+                  </p>
+
+                  {documentRecord.related_whenua_id ? (
+                    <a
+                      href={`/whenua/${documentRecord.related_whenua_id}`}
+                      className="mt-3 block break-all text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                    >
+                      {documentRecord.related_whenua_id}
+                    </a>
+                  ) : (
+                    <p className="mt-3 text-sm text-stone-300">—</p>
+                  )}
+                </div>
+
+                <div className="rounded-xl border border-stone-800 bg-stone-900 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                    Related Marae
+                  </p>
+
+                  {documentRecord.related_marae_id ? (
+                    <a
+                      href={`/marae/${documentRecord.related_marae_id}`}
+                      className="mt-3 block break-all text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                    >
+                      {documentRecord.related_marae_id}
+                    </a>
+                  ) : (
+                    <p className="mt-3 text-sm text-stone-300">—</p>
+                  )}
+                </div>
+
+                <div className="rounded-xl border border-stone-800 bg-stone-900 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                    Related Hui
+                  </p>
+
+                  {documentRecord.related_hui_id ? (
+                    <a
+                      href={`/hui/${documentRecord.related_hui_id}`}
+                      className="mt-3 block break-all text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                    >
+                      {documentRecord.related_hui_id}
+                    </a>
+                  ) : (
+                    <p className="mt-3 text-sm text-stone-300">—</p>
+                  )}
+                </div>
+
+                <div className="rounded-xl border border-stone-800 bg-stone-900 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                    Related Decision
+                  </p>
+
+                  {documentRecord.related_decision_id ? (
+                    <a
+                      href={`/decisions/${documentRecord.related_decision_id}`}
+                      className="mt-3 block break-all text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                    >
+                      {documentRecord.related_decision_id}
+                    </a>
+                  ) : (
+                    <p className="mt-3 text-sm text-stone-300">—</p>
+                  )}
+                </div>
+
+                <div className="rounded-xl border border-stone-800 bg-stone-900 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                    Created By
+                  </p>
+                  <p className="mt-3 break-all text-sm text-stone-300">
+                    {documentRecord.created_by || "—"}
+                  </p>
+                </div>
               </div>
+            </div>
+
+            <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
+              <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                Record ID
+              </p>
+              <p className="mt-3 break-all text-sm text-stone-300">
+                {documentRecord.id}
+              </p>
             </div>
           </div>
         )}
