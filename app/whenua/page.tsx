@@ -3,37 +3,16 @@ import { supabase } from "@/lib/supabaseClient";
 
 type WhenuaRecord = {
   id: string;
-  created_at?: string | null;
-  name?: string | null;
-  title?: string | null;
-  whenua_name?: string | null;
-  block_name?: string | null;
-  record_name?: string | null;
-  location?: string | null;
-  rohe?: string | null;
-  address?: string | null;
-  description?: string | null;
-  notes?: string | null;
+  title: string | null;
+  block_name: string | null;
+  location: string | null;
+  legal_description: string | null;
+  external_reference: string | null;
+  historical_notes: string | null;
+  status: string | null;
+  sensitivity_level: string | null;
+  created_at: string | null;
 };
-
-function getWhenuaTitle(record: WhenuaRecord) {
-  return (
-    record.name ||
-    record.title ||
-    record.whenua_name ||
-    record.block_name ||
-    record.record_name ||
-    "Untitled whenua record"
-  );
-}
-
-function getWhenuaLocation(record: WhenuaRecord) {
-  return record.location || record.rohe || record.address || "No location recorded";
-}
-
-function getWhenuaDescription(record: WhenuaRecord) {
-  return record.description || record.notes || null;
-}
 
 function formatDate(date?: string | null) {
   if (!date) {
@@ -47,10 +26,59 @@ function formatDate(date?: string | null) {
   });
 }
 
+function formatValue(value?: string | null) {
+  if (!value) {
+    return "Not recorded";
+  }
+
+  return value;
+}
+
+function statusClass(status?: string | null) {
+  if (status === "active") {
+    return "bg-green-400/10 text-green-400";
+  }
+
+  if (status === "under_review") {
+    return "bg-stone-100 text-stone-950";
+  }
+
+  if (status === "archived") {
+    return "bg-stone-800 text-stone-500";
+  }
+
+  return "bg-stone-800 text-stone-500";
+}
+
+function sensitivityClass(level?: string | null) {
+  if (level === "restricted") {
+    return "bg-red-400/10 text-red-300";
+  }
+
+  if (level === "sensitive") {
+    return "bg-yellow-400/10 text-yellow-300";
+  }
+
+  return "bg-stone-800 text-stone-400";
+}
+
 export default async function WhenuaPage() {
   const { data, error } = await supabase
     .from("whenua_records")
-    .select("*")
+    .select(
+      `
+      id,
+      title,
+      block_name,
+      location,
+      legal_description,
+      external_reference,
+      historical_notes,
+      status,
+      sensitivity_level,
+      created_at
+    `
+    )
     .order("created_at", { ascending: false });
 
   const whenuaRecords = (data ?? []) as WhenuaRecord[];
@@ -64,13 +92,13 @@ export default async function WhenuaPage() {
           </p>
 
           <h1 className="mt-5 text-4xl font-semibold tracking-tight text-white md:text-5xl">
-            Whenua records hold place, history, and future claim structure.
+            Whenua records hold land, evidence, and historical context.
           </h1>
 
           <p className="mt-5 max-w-3xl text-lg leading-8 text-stone-400">
-            This module proves the first whenua register. Each record can later
-            connect to people, whakapapa, marae, governance decisions, legal
-            documents, historical evidence, maps, and activity history.
+            Each whenua record can store block names, location, legal
+            descriptions, external references, historical notes, status, and
+            sensitivity level.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
@@ -118,11 +146,11 @@ export default async function WhenuaPage() {
 
             <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
               <div className="font-mono text-xs uppercase tracking-[0.2em] text-stone-600">
-                Record type
+                Record fields
               </div>
 
               <div className="mt-3 text-lg font-semibold text-stone-300">
-                Land and place record
+                Actual schema aligned
               </div>
             </div>
           </div>
@@ -181,43 +209,58 @@ export default async function WhenuaPage() {
             </div>
           ) : (
             <div className="divide-y divide-stone-800">
-              {whenuaRecords.map((record) => {
-                const title = getWhenuaTitle(record);
-                const location = getWhenuaLocation(record);
-                const description = getWhenuaDescription(record);
+              {whenuaRecords.map((record) => (
+                <a
+                  key={record.id}
+                  href={`/whenua/${record.id}`}
+                  className="group grid gap-4 px-6 py-5 transition hover:bg-stone-900 xl:grid-cols-[1fr_180px_160px_120px]"
+                >
+                  <div>
+                    <h3 className="text-lg font-semibold text-white">
+                      {record.title || "Untitled whenua record"}
+                    </h3>
 
-                return (
-                  <a
-                    key={record.id}
-                    href={`/whenua/${record.id}`}
-                    className="group grid gap-4 px-6 py-5 transition hover:bg-stone-900 lg:grid-cols-[1fr_220px_140px]"
-                  >
-                    <div>
-                      <h3 className="text-lg font-semibold text-white">
-                        {title}
-                      </h3>
+                    <p className="mt-1 text-sm text-stone-500">
+                      {formatValue(record.block_name)}
+                      {record.location ? ` · ${record.location}` : ""}
+                    </p>
 
-                      <p className="mt-1 text-sm text-stone-500">
-                        {location}
+                    {record.external_reference ? (
+                      <p className="mt-2 font-mono text-xs text-stone-600">
+                        Ref: {record.external_reference}
                       </p>
+                    ) : null}
+                  </div>
 
-                      {description ? (
-                        <p className="mt-3 max-w-2xl text-sm leading-7 text-stone-500">
-                          {description}
-                        </p>
-                      ) : null}
-                    </div>
+                  <div>
+                    <span
+                      className={`inline-flex rounded-full px-3 py-1 font-mono text-[11px] uppercase ${statusClass(
+                        record.status
+                      )}`}
+                    >
+                      {formatValue(record.status)}
+                    </span>
+                  </div>
 
-                    <div className="text-sm text-stone-500">
-                      Created {formatDate(record.created_at)}
-                    </div>
+                  <div>
+                    <span
+                      className={`inline-flex rounded-full px-3 py-1 font-mono text-[11px] uppercase ${sensitivityClass(
+                        record.sensitivity_level
+                      )}`}
+                    >
+                      {formatValue(record.sensitivity_level)}
+                    </span>
+                  </div>
 
-                    <div className="text-sm font-semibold text-stone-500 transition group-hover:text-white">
-                      View →
-                    </div>
-                  </a>
-                );
-              })}
+                  <div className="text-sm font-semibold text-stone-500 transition group-hover:text-white xl:text-right">
+                    View →
+                  </div>
+
+                  <div className="text-sm text-stone-600 xl:col-span-4">
+                    Created {formatDate(record.created_at)}
+                  </div>
+                </a>
+              ))}
             </div>
           )}
         </section>
