@@ -90,7 +90,8 @@ export default async function GovernanceDetailPage({
                 Core Details
               </h2>
               <p className="mt-1 text-sm text-stone-400">
-                Confirmed fields from the governance_records table.
+                Confirmed fields from the governance_records table, with linked
+                related marae and whenua records.
               </p>
             </div>
 
@@ -161,23 +162,43 @@ export default async function GovernanceDetailPage({
 
             <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
               <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
-                Related Record IDs
+                Related Records
               </p>
 
-              <div className="mt-4 grid gap-3 text-sm text-stone-300">
-                <p>
-                  <span className="text-stone-500">Marae ID:</span>{" "}
-                  <span className="break-all">
-                    {governanceRecord.related_marae_id || "—"}
-                  </span>
-                </p>
+              <div className="mt-4 grid gap-4 md:grid-cols-2">
+                <div className="rounded-xl border border-stone-800 bg-stone-900 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                    Related Marae
+                  </p>
 
-                <p>
-                  <span className="text-stone-500">Whenua ID:</span>{" "}
-                  <span className="break-all">
-                    {governanceRecord.related_whenua_id || "—"}
-                  </span>
-                </p>
+                  {governanceRecord.related_marae_id ? (
+                    <a
+                      href={`/marae/${governanceRecord.related_marae_id}`}
+                      className="mt-3 block break-all text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                    >
+                      {governanceRecord.related_marae_id}
+                    </a>
+                  ) : (
+                    <p className="mt-3 text-sm text-stone-300">—</p>
+                  )}
+                </div>
+
+                <div className="rounded-xl border border-stone-800 bg-stone-900 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                    Related Whenua
+                  </p>
+
+                  {governanceRecord.related_whenua_id ? (
+                    <a
+                      href={`/whenua/${governanceRecord.related_whenua_id}`}
+                      className="mt-3 block break-all text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                    >
+                      {governanceRecord.related_whenua_id}
+                    </a>
+                  ) : (
+                    <p className="mt-3 text-sm text-stone-300">—</p>
+                  )}
+                </div>
               </div>
             </div>
           </div>
