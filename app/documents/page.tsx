@@ -148,21 +148,31 @@ export default async function DocumentsPage() {
                       key={record.id}
                       className="border-t border-stone-800 bg-stone-900"
                     >
-                      <td className="px-4 py-4 text-stone-100">
-                        {record.title}
+                      <td className="px-4 py-4">
+                        <a
+                          href={`/documents/${record.id}`}
+                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                        >
+                          {record.title}
+                        </a>
                       </td>
+
                       <td className="px-4 py-4 text-stone-300">
                         {record.document_type || "—"}
                       </td>
+
                       <td className="px-4 py-4 text-stone-300">
                         {relatedTo}
                       </td>
+
                       <td className="px-4 py-4 text-stone-300">
                         {record.sensitivity_level || "standard"}
                       </td>
+
                       <td className="px-4 py-4 text-stone-300">
                         {record.status || "active"}
                       </td>
+
                       <td className="px-4 py-4 text-stone-300">
                         {record.file_url ? (
                           <a
