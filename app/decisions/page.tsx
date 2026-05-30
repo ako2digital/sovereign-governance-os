@@ -99,8 +99,8 @@ export default async function DecisionsPage() {
                   <th className="px-4 py-3 font-medium">Title</th>
                   <th className="px-4 py-3 font-medium">Hui</th>
                   <th className="px-4 py-3 font-medium">Minutes</th>
-                  <th className="px-4 py-3 font-medium">Decision date</th>
-                  <th className="px-4 py-3 font-medium">Decision text</th>
+                  <th className="px-4 py-3 font-medium">Decision Date</th>
+                  <th className="px-4 py-3 font-medium">Decision Text</th>
                 </tr>
               </thead>
 
@@ -110,18 +110,27 @@ export default async function DecisionsPage() {
                     key={record.id}
                     className="border-t border-stone-800 bg-stone-900"
                   >
-                    <td className="px-4 py-4 text-stone-100">
-                      {record.title}
+                    <td className="px-4 py-4">
+                      <a
+                        href={`/decisions/${record.id}`}
+                        className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                      >
+                        {record.title}
+                      </a>
                     </td>
+
                     <td className="px-4 py-4 text-stone-300">
                       {record.hui?.title || "—"}
                     </td>
+
                     <td className="px-4 py-4 text-stone-300">
                       {record.minutes?.title || "—"}
                     </td>
+
                     <td className="px-4 py-4 text-stone-300">
                       {record.decision_date || "—"}
                     </td>
+
                     <td className="px-4 py-4 text-stone-300">
                       {record.decision_text || "—"}
                     </td>
