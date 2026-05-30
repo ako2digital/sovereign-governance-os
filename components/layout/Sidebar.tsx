@@ -15,6 +15,11 @@ const navigationItems = [
     section: "System",
   },
   {
+    label: "Feedback",
+    href: "/feedback",
+    section: "System",
+  },
+  {
     label: "People",
     href: "/people",
     section: "Core Records",
