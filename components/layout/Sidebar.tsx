@@ -20,6 +20,11 @@ const navigationItems = [
     section: "System",
   },
   {
+    label: "Presentation Checklist",
+    href: "/presentation-checklist",
+    section: "System",
+  },
+  {
     label: "People",
     href: "/people",
     section: "Core Records",
