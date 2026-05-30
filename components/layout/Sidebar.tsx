@@ -18,39 +18,25 @@ const groups = ["Overview", "Core Records", "Governance", "Records"];
 
 export default function Sidebar() {
   return (
-    <aside className="hidden w-80 shrink-0 border-r border-stone-800 bg-stone-950/90 px-5 py-5 lg:block">
-      <div className="mb-8 rounded-3xl border border-stone-800 bg-stone-900/60 p-5">
-        <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-          Sovereign OS
-        </p>
+    <aside className="hidden w-72 shrink-0 border-r border-stone-800 bg-stone-950/90 px-5 py-5 lg:block">
+      <a
+        href="/"
+        className="mb-8 flex items-center justify-between rounded-2xl border border-stone-800 bg-stone-900/50 px-4 py-4 transition hover:border-stone-700 hover:bg-stone-900"
+      >
+        <div>
+          <p className="font-mono text-xs uppercase tracking-[0.25em] text-stone-500">
+            Sovereign OS
+          </p>
 
-        <h1 className="mt-4 text-2xl font-semibold tracking-tight text-white">
-          Hapū Relational Infrastructure
-        </h1>
-
-        <p className="mt-4 text-sm leading-6 text-stone-500">
-          Records, relationships, governance, documents, actions, and future
-          sovereignty layers.
-        </p>
-
-        <div className="mt-5 grid grid-cols-3 gap-2">
-          {[
-            ["3", "Live"],
-            ["12", "Modules"],
-            ["RLS", "On"],
-          ].map(([value, label]) => (
-            <div
-              key={label}
-              className="rounded-2xl border border-stone-800 bg-stone-950 p-3"
-            >
-              <div className="text-lg font-semibold text-white">{value}</div>
-              <div className="mt-1 text-[11px] uppercase tracking-wide text-stone-600">
-                {label}
-              </div>
-            </div>
-          ))}
+          <p className="mt-1 text-sm font-semibold text-white">
+            MVP Command
+          </p>
         </div>
-      </div>
+
+        <span className="rounded-full bg-green-400/10 px-3 py-1 font-mono text-[11px] text-green-400">
+          Live
+        </span>
+      </a>
 
       <nav className="space-y-6">
         {groups.map((group) => (
