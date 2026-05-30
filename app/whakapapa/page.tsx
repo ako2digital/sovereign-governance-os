@@ -1,18 +1,19 @@
 import AppShell from "@/components/layout/AppShell";
 import { supabase } from "@/lib/supabaseClient";
 
+type RelatedPerson = {
+  id: string;
+  full_name: string;
+};
+
 type WhakapapaRelationship = {
   id: string;
   relationship_type: string;
   notes: string | null;
   visibility_status: string | null;
   created_at: string;
-  person_a: {
-    full_name: string;
-  } | null;
-  person_b: {
-    full_name: string;
-  } | null;
+  person_a: RelatedPerson | null;
+  person_b: RelatedPerson | null;
 };
 
 export default async function WhakapapaPage() {
@@ -26,9 +27,11 @@ export default async function WhakapapaPage() {
       visibility_status,
       created_at,
       person_a:person_a_id (
+        id,
         full_name
       ),
       person_b:person_b_id (
+        id,
         full_name
       )
     `
@@ -112,8 +115,17 @@ export default async function WhakapapaPage() {
                     key={relationship.id}
                     className="border-t border-stone-800 bg-stone-900"
                   >
-                    <td className="px-4 py-4 text-stone-100">
-                      {relationship.person_a?.full_name || "—"}
+                    <td className="px-4 py-4">
+                      {relationship.person_a ? (
+                        <a
+                          href={`/people/${relationship.person_a.id}`}
+                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                        >
+                          {relationship.person_a.full_name}
+                        </a>
+                      ) : (
+                        <span className="text-stone-300">—</span>
+                      )}
                     </td>
 
                     <td className="px-4 py-4">
@@ -125,8 +137,17 @@ export default async function WhakapapaPage() {
                       </a>
                     </td>
 
-                    <td className="px-4 py-4 text-stone-100">
-                      {relationship.person_b?.full_name || "—"}
+                    <td className="px-4 py-4">
+                      {relationship.person_b ? (
+                        <a
+                          href={`/people/${relationship.person_b.id}`}
+                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                        >
+                          {relationship.person_b.full_name}
+                        </a>
+                      ) : (
+                        <span className="text-stone-300">—</span>
+                      )}
                     </td>
 
                     <td className="px-4 py-4 text-stone-300">
