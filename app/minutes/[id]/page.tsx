@@ -44,7 +44,7 @@ export default async function MinutesDetailPage({
     .eq("id", id)
     .maybeSingle();
 
-  const minutes = data as MinutesRecord | null;
+  const minutesRecord = data as MinutesRecord | null;
 
   return (
     <AppShell title="Minutes Detail" eyebrow="Minutes Module">
@@ -61,7 +61,7 @@ export default async function MinutesDetailPage({
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-white">
-          {minutes?.title || "Minutes Detail"}
+          {minutesRecord?.title || "Minutes Detail"}
         </h1>
 
         <p className="mt-4 max-w-2xl text-stone-400">
@@ -76,10 +76,10 @@ export default async function MinutesDetailPage({
             <p className="font-semibold">Database error</p>
             <pre className="mt-3 whitespace-pre-wrap">{error.message}</pre>
           </div>
-        ) : !minutes ? (
+        ) : !minutesRecord ? (
           <div className="rounded-xl border border-stone-800 bg-stone-950 p-6">
             <h2 className="text-base font-semibold text-white">
-              Minutes not found
+              Minutes record not found
             </h2>
             <p className="mt-2 text-sm text-stone-400">
               No minutes record exists for this ID.
@@ -92,7 +92,8 @@ export default async function MinutesDetailPage({
                 Core Details
               </h2>
               <p className="mt-1 text-sm text-stone-400">
-                Confirmed fields from the minutes table.
+                Confirmed fields from the minutes table, with linked related hui
+                record.
               </p>
             </div>
 
@@ -102,16 +103,7 @@ export default async function MinutesDetailPage({
                   Title
                 </p>
                 <p className="mt-3 text-lg font-semibold text-white">
-                  {minutes.title}
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
-                <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
-                  Recorded By
-                </p>
-                <p className="mt-3 text-sm text-stone-300">
-                  {minutes.recorded_by || "—"}
+                  {minutesRecord.title}
                 </p>
               </div>
 
@@ -120,7 +112,7 @@ export default async function MinutesDetailPage({
                   Approval Status
                 </p>
                 <p className="mt-3 text-sm text-stone-300">
-                  {minutes.approved_status || "draft"}
+                  {minutesRecord.approved_status || "draft"}
                 </p>
               </div>
 
@@ -129,7 +121,16 @@ export default async function MinutesDetailPage({
                   Approved Date
                 </p>
                 <p className="mt-3 text-sm text-stone-300">
-                  {minutes.approved_date || "—"}
+                  {minutesRecord.approved_date || "—"}
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
+                <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                  Recorded By
+                </p>
+                <p className="mt-3 break-all text-sm text-stone-300">
+                  {minutesRecord.recorded_by || "—"}
                 </p>
               </div>
 
@@ -138,7 +139,7 @@ export default async function MinutesDetailPage({
                   Created
                 </p>
                 <p className="mt-3 text-sm text-stone-300">
-                  {minutes.created_at}
+                  {minutesRecord.created_at}
                 </p>
               </div>
 
@@ -147,7 +148,7 @@ export default async function MinutesDetailPage({
                   Updated
                 </p>
                 <p className="mt-3 text-sm text-stone-300">
-                  {minutes.updated_at || "—"}
+                  {minutesRecord.updated_at || "—"}
                 </p>
               </div>
             </div>
@@ -157,7 +158,7 @@ export default async function MinutesDetailPage({
                 Summary
               </p>
               <p className="mt-3 whitespace-pre-wrap text-sm text-stone-300">
-                {minutes.summary || "—"}
+                {minutesRecord.summary || "—"}
               </p>
             </div>
 
@@ -166,21 +167,25 @@ export default async function MinutesDetailPage({
                 Full Minutes
               </p>
               <p className="mt-3 whitespace-pre-wrap text-sm text-stone-300">
-                {minutes.full_minutes || "—"}
+                {minutesRecord.full_minutes || "—"}
               </p>
             </div>
 
             <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
               <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
-                Related Record IDs
+                Related Hui
               </p>
 
-              <div className="mt-4 grid gap-3 text-sm text-stone-300">
-                <p>
-                  <span className="text-stone-500">Hui ID:</span>{" "}
-                  <span className="break-all">{minutes.hui_id || "—"}</span>
-                </p>
-              </div>
+              {minutesRecord.hui_id ? (
+                <a
+                  href={`/hui/${minutesRecord.hui_id}`}
+                  className="mt-3 block break-all text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                >
+                  {minutesRecord.hui_id}
+                </a>
+              ) : (
+                <p className="mt-3 text-sm text-stone-300">—</p>
+              )}
             </div>
 
             <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
@@ -188,7 +193,7 @@ export default async function MinutesDetailPage({
                 Record ID
               </p>
               <p className="mt-3 break-all text-sm text-stone-300">
-                {minutes.id}
+                {minutesRecord.id}
               </p>
             </div>
           </div>
