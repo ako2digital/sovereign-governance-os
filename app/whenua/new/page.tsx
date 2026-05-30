@@ -5,7 +5,14 @@ import { useRouter } from "next/navigation";
 import AppShell from "@/components/layout/AppShell";
 import { supabase } from "@/lib/supabaseClient";
 
-export default function NewWhenuaRecordPage() {
+const futureLinks = [
+  "Supporting documents",
+  "Governance decisions",
+  "Marae connections",
+  "Whenua activity history",
+];
+
+export default function NewWhenuaPage() {
   const router = useRouter();
 
   const [title, setTitle] = useState("");
@@ -55,7 +62,7 @@ export default function NewWhenuaRecordPage() {
 
   return (
     <AppShell title="Add Whenua Record" eyebrow="Core Records / Whenua">
-      <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+      <section className="grid gap-6">
         <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-8">
           <a
             href="/whenua"
@@ -68,133 +75,107 @@ export default function NewWhenuaRecordPage() {
             New whenua record
           </p>
 
-          <h1 className="mt-5 text-4xl font-semibold tracking-tight text-white md:text-5xl">
-            Create a land record that can connect to evidence and governance.
+          <h1 className="mt-5 max-w-5xl text-4xl font-semibold tracking-tight text-white md:text-5xl">
+            Add a land record with legal, historical, and reference context.
           </h1>
 
-          <p className="mt-5 text-lg leading-8 text-stone-400">
-            This form creates a whenua record using the actual database fields
-            already working in Supabase. Later, each record can connect to
-            documents, maps, hui, decisions, whakapapa, marae, claims, and
-            activity history.
+          <p className="mt-5 max-w-3xl text-base leading-8 text-stone-400">
+            A whenua record should become more than a static note. It should
+            later connect to documents, maps, decisions, governance authority,
+            marae, tasks, and activity history.
           </p>
-
-          <div className="mt-8 rounded-2xl border border-stone-800 bg-stone-950 p-5">
-            <p className="font-mono text-xs uppercase tracking-[0.25em] text-stone-600">
-              Current rule
-            </p>
-
-            <p className="mt-3 text-sm leading-7 text-stone-400">
-              The required field is the title. Other fields can remain blank
-              until the whenua register structure is tested and agreed.
-            </p>
-          </div>
-
-          <div className="mt-4 rounded-2xl border border-stone-800 bg-stone-950 p-5">
-            <p className="font-mono text-xs uppercase tracking-[0.25em] text-stone-600">
-              Insert columns
-            </p>
-
-            <p className="mt-3 text-sm leading-7 text-stone-400">
-              title, block_name, location, legal_description,
-              external_reference, historical_notes, status, sensitivity_level.
-            </p>
-          </div>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="rounded-3xl border border-stone-800 bg-stone-900/60 p-8"
-        >
-          <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-            Create record
-          </p>
+        <div className="grid gap-6 xl:grid-cols-[1fr_420px]">
+          <form
+            onSubmit={handleSubmit}
+            className="rounded-3xl border border-stone-800 bg-stone-900/60 p-8"
+          >
+            <div className="border-b border-stone-800 pb-6">
+              <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
+                Core details
+              </p>
 
-          <div className="mt-8 grid gap-6">
-            <label className="grid gap-3">
-              <span className="text-sm font-semibold text-stone-300">
-                Title <span className="text-red-300">*</span>
-              </span>
-
-              <input
-                value={title}
-                onChange={(event) => setTitle(event.target.value)}
-                required
-                className="rounded-2xl border border-stone-700 bg-stone-950 px-5 py-4 text-stone-100 outline-none transition placeholder:text-stone-600 focus:border-stone-400"
-                placeholder="Example: Kaikohe Aerodrome whenua record"
-              />
-            </label>
-
-            <div className="grid gap-6 md:grid-cols-2">
-              <label className="grid gap-3">
-                <span className="text-sm font-semibold text-stone-300">
-                  Block name
-                </span>
-
-                <input
-                  value={blockName}
-                  onChange={(event) => setBlockName(event.target.value)}
-                  className="rounded-2xl border border-stone-700 bg-stone-950 px-5 py-4 text-stone-100 outline-none transition placeholder:text-stone-600 focus:border-stone-400"
-                  placeholder="Example: Māori land block name"
-                />
-              </label>
-
-              <label className="grid gap-3">
-                <span className="text-sm font-semibold text-stone-300">
-                  Location
-                </span>
-
-                <input
-                  value={location}
-                  onChange={(event) => setLocation(event.target.value)}
-                  className="rounded-2xl border border-stone-700 bg-stone-950 px-5 py-4 text-stone-100 outline-none transition placeholder:text-stone-600 focus:border-stone-400"
-                  placeholder="Example: Kaikohe"
-                />
-              </label>
+              <h2 className="mt-3 text-2xl font-semibold tracking-tight text-white">
+                Use the confirmed whenua_records schema.
+              </h2>
             </div>
 
-            <label className="grid gap-3">
-              <span className="text-sm font-semibold text-stone-300">
-                Legal description
-              </span>
-
-              <textarea
-                value={legalDescription}
-                onChange={(event) => setLegalDescription(event.target.value)}
-                className="min-h-28 rounded-2xl border border-stone-700 bg-stone-950 px-5 py-4 text-stone-100 outline-none transition placeholder:text-stone-600 focus:border-stone-400"
-                placeholder="Add legal description, LINZ reference, land title notes, or official record reference."
-              />
-            </label>
-
-            <label className="grid gap-3">
-              <span className="text-sm font-semibold text-stone-300">
-                External reference
-              </span>
-
-              <input
-                value={externalReference}
-                onChange={(event) => setExternalReference(event.target.value)}
-                className="rounded-2xl border border-stone-700 bg-stone-950 px-5 py-4 text-stone-100 outline-none transition placeholder:text-stone-600 focus:border-stone-400"
-                placeholder="Example: WHN-001, council ref, LINZ ref, file number"
-              />
-            </label>
-
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="mt-6 grid gap-6">
               <label className="grid gap-3">
                 <span className="text-sm font-semibold text-stone-300">
-                  Status
+                  Title <span className="text-red-300">*</span>
                 </span>
 
-                <select
-                  value={status}
-                  onChange={(event) => setStatus(event.target.value)}
-                  className="rounded-2xl border border-stone-700 bg-stone-950 px-5 py-4 text-stone-100 outline-none transition focus:border-stone-400"
-                >
-                  <option value="active">Active</option>
-                  <option value="under_review">Under review</option>
-                  <option value="archived">Archived</option>
-                </select>
+                <input
+                  value={title}
+                  onChange={(event) => setTitle(event.target.value)}
+                  required
+                  placeholder="Example: Kaikohe Aerodrome Whenua Record"
+                  className="rounded-2xl border border-stone-700 bg-stone-950 px-5 py-4 text-stone-100 outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+                />
               </label>
+
+              <div className="grid gap-5 md:grid-cols-2">
+                <label className="grid gap-3">
+                  <span className="text-sm font-semibold text-stone-300">
+                    Block name
+                  </span>
+
+                  <input
+                    value={blockName}
+                    onChange={(event) => setBlockName(event.target.value)}
+                    placeholder="Example: Motatau No. 2 Block"
+                    className="rounded-2xl border border-stone-700 bg-stone-950 px-5 py-4 text-stone-100 outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+                  />
+                </label>
+
+                <label className="grid gap-3">
+                  <span className="text-sm font-semibold text-stone-300">
+                    Location
+                  </span>
+
+                  <input
+                    value={location}
+                    onChange={(event) => setLocation(event.target.value)}
+                    placeholder="Example: Kaikohe, Northland"
+                    className="rounded-2xl border border-stone-700 bg-stone-950 px-5 py-4 text-stone-100 outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+                  />
+                </label>
+              </div>
+
+              <div className="grid gap-5 md:grid-cols-2">
+                <label className="grid gap-3">
+                  <span className="text-sm font-semibold text-stone-300">
+                    External reference
+                  </span>
+
+                  <input
+                    value={externalReference}
+                    onChange={(event) =>
+                      setExternalReference(event.target.value)
+                    }
+                    placeholder="Example: LINZ, council, court, archive reference"
+                    className="rounded-2xl border border-stone-700 bg-stone-950 px-5 py-4 text-stone-100 outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+                  />
+                </label>
+
+                <label className="grid gap-3">
+                  <span className="text-sm font-semibold text-stone-300">
+                    Status
+                  </span>
+
+                  <select
+                    value={status}
+                    onChange={(event) => setStatus(event.target.value)}
+                    className="rounded-2xl border border-stone-700 bg-stone-950 px-5 py-4 text-stone-100 outline-none transition focus:border-stone-400"
+                  >
+                    <option value="active">Active</option>
+                    <option value="under_review">Under review</option>
+                    <option value="archived">Archived</option>
+                  </select>
+                </label>
+              </div>
 
               <label className="grid gap-3">
                 <span className="text-sm font-semibold text-stone-300">
@@ -211,60 +192,134 @@ export default function NewWhenuaRecordPage() {
                   <option value="restricted">Restricted</option>
                 </select>
               </label>
-            </div>
 
-            <label className="grid gap-3">
-              <span className="text-sm font-semibold text-stone-300">
-                Historical notes
-              </span>
+              <label className="grid gap-3">
+                <span className="text-sm font-semibold text-stone-300">
+                  Legal description
+                </span>
 
-              <textarea
-                value={historicalNotes}
-                onChange={(event) => setHistoricalNotes(event.target.value)}
-                className="min-h-36 rounded-2xl border border-stone-700 bg-stone-950 px-5 py-4 text-stone-100 outline-none transition placeholder:text-stone-600 focus:border-stone-400"
-                placeholder="Add history, context, source notes, whānau knowledge, or internal explanation."
-              />
-            </label>
+                <textarea
+                  value={legalDescription}
+                  onChange={(event) => setLegalDescription(event.target.value)}
+                  placeholder="Add legal description, ownership reference, title information, or formal record details."
+                  className="min-h-32 rounded-2xl border border-stone-700 bg-stone-950 px-5 py-4 text-stone-100 outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+                />
+              </label>
 
-            {errorMessage ? (
-              <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-5">
-                <p className="font-semibold text-red-300">
-                  Could not create whenua record.
+              <label className="grid gap-3">
+                <span className="text-sm font-semibold text-stone-300">
+                  Historical notes
+                </span>
+
+                <textarea
+                  value={historicalNotes}
+                  onChange={(event) => setHistoricalNotes(event.target.value)}
+                  placeholder="Add historical notes, acquisition history, whānau context, dispute context, or source notes."
+                  className="min-h-40 rounded-2xl border border-stone-700 bg-stone-950 px-5 py-4 text-stone-100 outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+                />
+              </label>
+
+              <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
+                <p className="font-mono text-xs uppercase tracking-[0.25em] text-stone-600">
+                  Current schema
                 </p>
 
-                <p className="mt-3 text-sm leading-7 text-red-200/80">
-                  {errorMessage}
+                <p className="mt-3 text-sm leading-7 text-stone-500">
+                  This form only writes confirmed columns: title, block_name,
+                  location, legal_description, external_reference,
+                  historical_notes, status, and sensitivity_level.
                 </p>
               </div>
-            ) : null}
 
-            <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
-              <p className="text-sm leading-7 text-stone-500">
-                After submission, this record will be inserted into the
-                Supabase whenua_records table and the app will return to the
-                Whenua Records page.
+              {errorMessage ? (
+                <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-5">
+                  <p className="font-semibold text-red-300">
+                    Could not create whenua record.
+                  </p>
+
+                  <p className="mt-3 text-sm leading-7 text-red-200/80">
+                    {errorMessage}
+                  </p>
+                </div>
+              ) : null}
+
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="rounded-full bg-stone-100 px-6 py-3 text-sm font-semibold text-stone-950 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {isSubmitting ? "Saving..." : "Create Whenua Record"}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => router.push("/whenua")}
+                  className="rounded-full border border-stone-700 px-6 py-3 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </form>
+
+          <aside className="grid gap-6 content-start">
+            <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-6">
+              <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
+                Related records
+              </p>
+
+              <div className="mt-5 grid gap-3">
+                {futureLinks.map((item) => (
+                  <div
+                    key={item}
+                    className="rounded-2xl border border-stone-800 bg-stone-950 p-4"
+                  >
+                    <p className="text-sm font-semibold text-white">{item}</p>
+
+                    <p className="mt-1 text-xs leading-5 text-stone-600">
+                      Available after the whenua record exists.
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-6">
+              <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
+                Record flow
+              </p>
+
+              <p className="mt-5 text-sm leading-7 text-stone-400">
+                Create the whenua record first. Then attach supporting
+                documents, link governance decisions, connect relevant marae,
+                and log future activity against this record.
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-3">
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="rounded-full bg-stone-100 px-6 py-3 text-sm font-semibold text-stone-950 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {isSubmitting ? "Saving..." : "Create Whenua Record"}
-              </button>
+            <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-6">
+              <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
+                Linked actions
+              </p>
 
-              <button
-                type="button"
-                onClick={() => router.push("/whenua")}
-                className="rounded-full border border-stone-700 px-6 py-3 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
-              >
-                Cancel
-              </button>
+              <div className="mt-5 grid gap-3">
+                <a
+                  href="/documents"
+                  className="rounded-2xl border border-stone-800 bg-stone-950 p-4 text-sm font-semibold text-stone-300 transition hover:border-stone-600 hover:bg-stone-900 hover:text-white"
+                >
+                  View Documents
+                </a>
+
+                <a
+                  href="/governance"
+                  className="rounded-2xl border border-stone-800 bg-stone-950 p-4 text-sm font-semibold text-stone-300 transition hover:border-stone-600 hover:bg-stone-900 hover:text-white"
+                >
+                  View Governance
+                </a>
+              </div>
             </div>
-          </div>
-        </form>
+          </aside>
+        </div>
       </section>
     </AppShell>
   );
