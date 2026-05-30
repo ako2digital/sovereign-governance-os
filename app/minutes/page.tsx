@@ -63,8 +63,17 @@ export default async function MinutesPage() {
             </p>
           </div>
 
-          <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
-            {minutesRecords.length} records
+          <div className="flex items-center gap-3">
+            <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
+              {minutesRecords.length} records
+            </div>
+
+            <a
+              href="/minutes/new"
+              className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+            >
+              Add Minutes
+            </a>
           </div>
         </div>
 
@@ -79,8 +88,7 @@ export default async function MinutesPage() {
               No minutes records yet
             </h3>
             <p className="mt-2 text-sm text-stone-400">
-              Add the first minutes record in Supabase to begin testing hui
-              documentation.
+              Add the first minutes record to begin testing hui documentation.
             </p>
           </div>
         ) : (
