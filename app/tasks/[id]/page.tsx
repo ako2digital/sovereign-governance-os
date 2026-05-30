@@ -23,9 +23,7 @@ type TaskRecord = {
   updated_at: string | null;
 };
 
-export default async function TaskDetailPage({
-  params,
-}: TaskDetailPageProps) {
+export default async function TaskDetailPage({ params }: TaskDetailPageProps) {
   const { id } = await params;
 
   const { data, error } = await supabase
@@ -71,7 +69,7 @@ export default async function TaskDetailPage({
         </h1>
 
         <p className="mt-4 max-w-2xl text-stone-400">
-          View the selected action item from the hapū relational infrastructure
+          View the selected task record from the hapū relational infrastructure
           database.
         </p>
       </section>
@@ -98,7 +96,8 @@ export default async function TaskDetailPage({
                 Core Details
               </h2>
               <p className="mt-1 text-sm text-stone-400">
-                Confirmed fields from the tasks table.
+                Confirmed fields from the tasks table, with linked related
+                records.
               </p>
             </div>
 
@@ -169,44 +168,94 @@ export default async function TaskDetailPage({
 
             <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
               <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
-                Related Record IDs
+                Assigned Person
               </p>
 
-              <div className="mt-4 grid gap-3 text-sm text-stone-300">
-                <p>
-                  <span className="text-stone-500">Assigned To ID:</span>{" "}
-                  <span className="break-all">
-                    {task.assigned_to_id || "—"}
-                  </span>
-                </p>
+              {task.assigned_to_id ? (
+                <a
+                  href={`/people/${task.assigned_to_id}`}
+                  className="mt-3 block break-all text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                >
+                  {task.assigned_to_id}
+                </a>
+              ) : (
+                <p className="mt-3 text-sm text-stone-300">—</p>
+              )}
+            </div>
 
-                <p>
-                  <span className="text-stone-500">Hui ID:</span>{" "}
-                  <span className="break-all">
-                    {task.related_hui_id || "—"}
-                  </span>
-                </p>
+            <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
+              <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                Related Records
+              </p>
 
-                <p>
-                  <span className="text-stone-500">Decision ID:</span>{" "}
-                  <span className="break-all">
-                    {task.related_decision_id || "—"}
-                  </span>
-                </p>
+              <div className="mt-4 grid gap-4 md:grid-cols-2">
+                <div className="rounded-xl border border-stone-800 bg-stone-900 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                    Related Hui
+                  </p>
 
-                <p>
-                  <span className="text-stone-500">Document ID:</span>{" "}
-                  <span className="break-all">
-                    {task.related_document_id || "—"}
-                  </span>
-                </p>
+                  {task.related_hui_id ? (
+                    <a
+                      href={`/hui/${task.related_hui_id}`}
+                      className="mt-3 block break-all text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                    >
+                      {task.related_hui_id}
+                    </a>
+                  ) : (
+                    <p className="mt-3 text-sm text-stone-300">—</p>
+                  )}
+                </div>
 
-                <p>
-                  <span className="text-stone-500">Whenua ID:</span>{" "}
-                  <span className="break-all">
-                    {task.related_whenua_id || "—"}
-                  </span>
-                </p>
+                <div className="rounded-xl border border-stone-800 bg-stone-900 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                    Related Decision
+                  </p>
+
+                  {task.related_decision_id ? (
+                    <a
+                      href={`/decisions/${task.related_decision_id}`}
+                      className="mt-3 block break-all text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                    >
+                      {task.related_decision_id}
+                    </a>
+                  ) : (
+                    <p className="mt-3 text-sm text-stone-300">—</p>
+                  )}
+                </div>
+
+                <div className="rounded-xl border border-stone-800 bg-stone-900 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                    Related Document
+                  </p>
+
+                  {task.related_document_id ? (
+                    <a
+                      href={`/documents/${task.related_document_id}`}
+                      className="mt-3 block break-all text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                    >
+                      {task.related_document_id}
+                    </a>
+                  ) : (
+                    <p className="mt-3 text-sm text-stone-300">—</p>
+                  )}
+                </div>
+
+                <div className="rounded-xl border border-stone-800 bg-stone-900 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+                    Related Whenua
+                  </p>
+
+                  {task.related_whenua_id ? (
+                    <a
+                      href={`/whenua/${task.related_whenua_id}`}
+                      className="mt-3 block break-all text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                    >
+                      {task.related_whenua_id}
+                    </a>
+                  ) : (
+                    <p className="mt-3 text-sm text-stone-300">—</p>
+                  )}
+                </div>
               </div>
             </div>
 
