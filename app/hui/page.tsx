@@ -73,8 +73,17 @@ export default async function HuiPage() {
             </p>
           </div>
 
-          <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
-            {huiRecords.length} records
+          <div className="flex items-center gap-3">
+            <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
+              {huiRecords.length} records
+            </div>
+
+            <a
+              href="/hui/new"
+              className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+            >
+              Add Hui
+            </a>
           </div>
         </div>
 
@@ -89,8 +98,7 @@ export default async function HuiPage() {
               No hui records yet
             </h3>
             <p className="mt-2 text-sm text-stone-400">
-              Add the first hui record in Supabase to begin testing hui record
-              management.
+              Add the first hui record to begin testing hui record management.
             </p>
           </div>
         ) : (
