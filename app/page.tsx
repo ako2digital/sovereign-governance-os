@@ -1,148 +1,306 @@
 import AppShell from "@/components/layout/AppShell";
+import { supabase } from "@/lib/supabaseClient";
 
-const modules = [
-  {
-    name: "People",
-    href: "/people",
-    description:
-      "Manage people connected to whakapapa, whenua, hui, documents, and tasks.",
-    count: 0,
-  },
-  {
-    name: "Whakapapa",
-    href: "/whakapapa",
-    description: "Record basic whakapapa relationships and connection notes.",
-    count: 0,
-  },
-  {
-    name: "Whenua",
-    href: "/whenua",
-    description:
-      "Organise whenua records, references, notes, and linked documents.",
-    count: 0,
-  },
-  {
-    name: "Marae",
-    href: "/marae",
-    description:
-      "Store marae records, governance notes, documents, hui, and decisions.",
-    count: 0,
-  },
-  {
-    name: "Governance",
-    href: "/governance",
-    description:
-      "Track governance records, mandates, policies, resolutions, and authority.",
-    count: 0,
-  },
-  {
-    name: "Hui",
-    href: "/hui",
-    description:
-      "Create hui records connected to minutes, decisions, documents, and tasks.",
-    count: 0,
-  },
-  {
-    name: "Documents",
-    href: "/documents",
-    description:
-      "Store document records and connect them to people, whenua, hui, and decisions.",
-    count: 0,
-  },
-  {
-    name: "Tasks",
-    href: "/tasks",
-    description:
-      "Track follow-up actions, responsibility, status, and accountability.",
-    count: 0,
-  },
-];
+type ModuleCount = {
+  label: string;
+  href: string;
+  count: number;
+};
 
-const recentActivity = [
-  "Dashboard shell created",
-  "Obsidian brain completed",
-  "Next.js app created",
-  "GitHub repository connected",
-];
+type RecentActivityRecord = {
+  id: string;
+  action: string;
+  entity_type: string | null;
+  description: string | null;
+  created_at: string;
+};
 
-const openTasks = [
-  "Create reusable app layout",
-  "Refactor module pages into AppShell",
-  "Draft Supabase SQL schema",
-  "Review Supabase project setup",
-];
+async function getTableCount(tableName: string) {
+  const { count, error } = await supabase
+    .from(tableName)
+    .select("*", { count: "exact", head: true });
 
-export default function Home() {
+  if (error) {
+    return {
+      count: 0,
+      error: error.message,
+    };
+  }
+
+  return {
+    count: count ?? 0,
+    error: null,
+  };
+}
+
+export default async function DashboardPage() {
+  const [
+    peopleCount,
+    whakapapaCount,
+    whenuaCount,
+    maraeCount,
+    governanceCount,
+    huiCount,
+    minutesCount,
+    decisionsCount,
+    documentsCount,
+    panuiCount,
+    tasksCount,
+    activityCount,
+    recentActivityResult,
+  ] = await Promise.all([
+    getTableCount("people"),
+    getTableCount("whakapapa_relationships"),
+    getTableCount("whenua_records"),
+    getTableCount("marae_records"),
+    getTableCount("governance_records"),
+    getTableCount("hui"),
+    getTableCount("minutes"),
+    getTableCount("decisions"),
+    getTableCount("documents"),
+    getTableCount("panui"),
+    getTableCount("tasks"),
+    getTableCount("activity_log"),
+    supabase
+      .from("activity_log")
+      .select(
+        `
+        id,
+        action,
+        entity_type,
+        description,
+        created_at
+      `
+      )
+      .order("created_at", { ascending: false })
+      .limit(5),
+  ]);
+
+  const moduleCounts: ModuleCount[] = [
+    {
+      label: "People",
+      href: "/people",
+      count: peopleCount.count,
+    },
+    {
+      label: "Whakapapa",
+      href: "/whakapapa",
+      count: whakapapaCount.count,
+    },
+    {
+      label: "Whenua",
+      href: "/whenua",
+      count: whenuaCount.count,
+    },
+    {
+      label: "Marae",
+      href: "/marae",
+      count: maraeCount.count,
+    },
+    {
+      label: "Governance",
+      href: "/governance",
+      count: governanceCount.count,
+    },
+    {
+      label: "Hui",
+      href: "/hui",
+      count: huiCount.count,
+    },
+    {
+      label: "Minutes",
+      href: "/minutes",
+      count: minutesCount.count,
+    },
+    {
+      label: "Decisions",
+      href: "/decisions",
+      count: decisionsCount.count,
+    },
+    {
+      label: "Documents",
+      href: "/documents",
+      count: documentsCount.count,
+    },
+    {
+      label: "Pānui",
+      href: "/panui",
+      count: panuiCount.count,
+    },
+    {
+      label: "Tasks",
+      href: "/tasks",
+      count: tasksCount.count,
+    },
+    {
+      label: "Activity",
+      href: "/activity",
+      count: activityCount.count,
+    },
+  ];
+
+  const countErrors = [
+    peopleCount.error,
+    whakapapaCount.error,
+    whenuaCount.error,
+    maraeCount.error,
+    governanceCount.error,
+    huiCount.error,
+    minutesCount.error,
+    decisionsCount.error,
+    documentsCount.error,
+    panuiCount.error,
+    tasksCount.error,
+    activityCount.error,
+    recentActivityResult.error?.message ?? null,
+  ].filter(Boolean);
+
+  const recentActivity =
+    (recentActivityResult.data ?? []) as RecentActivityRecord[];
+
+  const totalRecords = moduleCounts.reduce(
+    (total, module) => total + module.count,
+    0
+  );
+
   return (
-    <AppShell>
-      <section className="mb-8 rounded-3xl border border-stone-800 bg-stone-900/50 p-8">
-        <p className="mb-3 text-sm uppercase tracking-[0.25em] text-stone-500">
-          MVP Foundation
+    <AppShell title="Dashboard" eyebrow="MVP Command Centre">
+      <section className="rounded-3xl border border-stone-800 bg-stone-900/50 p-8">
+        <p className="text-xs uppercase tracking-[0.25em] text-stone-500">
+          Sovereign Governance OS
         </p>
 
-        <h1 className="max-w-4xl text-4xl font-semibold tracking-tight text-white">
-          A relational records system for whakapapa, whenua, marae governance,
-          hui, documents, decisions, pānui, tasks, and activity history.
+        <h1 className="mt-3 max-w-3xl text-3xl font-semibold text-white">
+          Hapū Relational Infrastructure Dashboard
         </h1>
 
-        <p className="mt-5 max-w-3xl text-base leading-7 text-stone-400">
-          This first build is not the full sovereign infrastructure platform. It
-          is the first working records layer: simple, demoable, and structured
-          enough to grow.
+        <p className="mt-4 max-w-3xl text-stone-400">
+          A live overview of the MVP database modules: records, relationships,
+          governance activity, communications, tasks, and system activity.
         </p>
-      </section>
 
-      <section className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {modules.map((module) => (
-          <a
-            key={module.name}
-            href={module.href}
-            className="rounded-2xl border border-stone-800 bg-stone-900 p-5 transition hover:border-stone-600 hover:bg-stone-800"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <h2 className="text-lg font-semibold text-white">{module.name}</h2>
-              <span className="rounded-full bg-stone-800 px-3 py-1 text-xs text-stone-300">
-                {module.count}
-              </span>
-            </div>
-
-            <p className="mt-3 text-sm leading-6 text-stone-400">
-              {module.description}
+        <div className="mt-8 grid gap-4 md:grid-cols-3">
+          <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
+            <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+              Total Records
             </p>
-          </a>
-        ))}
+            <p className="mt-3 text-3xl font-semibold text-white">
+              {totalRecords}
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
+            <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+              Active Modules
+            </p>
+            <p className="mt-3 text-3xl font-semibold text-white">
+              {moduleCounts.length}
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
+            <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
+              MVP Status
+            </p>
+            <p className="mt-3 text-3xl font-semibold text-white">Live</p>
+          </div>
+        </div>
       </section>
 
-      <section className="grid gap-6 lg:grid-cols-2">
-        <div className="rounded-2xl border border-stone-800 bg-stone-900 p-6">
+      {countErrors.length > 0 ? (
+        <section className="mt-8 rounded-2xl border border-red-900 bg-red-950/40 p-5 text-sm text-red-300">
+          <p className="font-semibold">Dashboard database warning</p>
+          <div className="mt-3 grid gap-2">
+            {countErrors.map((error) => (
+              <p key={error}>{error}</p>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-semibold text-white">
+              Module Record Counts
+            </h2>
+            <p className="mt-1 text-sm text-stone-400">
+              Live counts pulled from Supabase using lightweight count queries.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-4 md:grid-cols-3 xl:grid-cols-4">
+          {moduleCounts.map((module) => (
+            <a
+              key={module.href}
+              href={module.href}
+              className="rounded-2xl border border-stone-800 bg-stone-950 p-5 transition hover:border-stone-600"
+            >
+              <div className="flex items-center justify-between gap-4">
+                <p className="font-medium text-stone-100">{module.label}</p>
+                <p className="rounded-full border border-stone-700 px-3 py-1 text-sm text-stone-300">
+                  {module.count}
+                </p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <div>
           <h2 className="text-lg font-semibold text-white">Recent Activity</h2>
-
-          <div className="mt-5 space-y-3">
-            {recentActivity.map((item) => (
-              <div
-                key={item}
-                className="rounded-xl border border-stone-800 bg-stone-950 px-4 py-3 text-sm text-stone-300"
-              >
-                {item}
-              </div>
-            ))}
-          </div>
+          <p className="mt-1 text-sm text-stone-400">
+            Latest records from the activity log.
+          </p>
         </div>
 
-        <div className="rounded-2xl border border-stone-800 bg-stone-900 p-6">
-          <h2 className="text-lg font-semibold text-white">Open Tasks</h2>
-
-          <div className="mt-5 space-y-3">
-            {openTasks.map((item) => (
-              <div
-                key={item}
-                className="rounded-xl border border-stone-800 bg-stone-950 px-4 py-3 text-sm text-stone-300"
-              >
-                {item}
-              </div>
-            ))}
+        {recentActivity.length === 0 ? (
+          <div className="mt-6 rounded-xl border border-stone-800 bg-stone-950 p-6">
+            <h3 className="text-base font-semibold text-white">
+              No recent activity yet
+            </h3>
+            <p className="mt-2 text-sm text-stone-400">
+              Activity will appear here once the system begins logging actions.
+            </p>
           </div>
-        </div>
+        ) : (
+          <div className="mt-6 overflow-hidden rounded-2xl border border-stone-800">
+            <table className="w-full border-collapse text-left text-sm">
+              <thead className="bg-stone-950 text-stone-400">
+                <tr>
+                  <th className="px-4 py-3 font-medium">Action</th>
+                  <th className="px-4 py-3 font-medium">Entity</th>
+                  <th className="px-4 py-3 font-medium">Description</th>
+                  <th className="px-4 py-3 font-medium">Created</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {recentActivity.map((record) => (
+                  <tr
+                    key={record.id}
+                    className="border-t border-stone-800 bg-stone-900"
+                  >
+                    <td className="px-4 py-4 text-stone-100">
+                      {record.action}
+                    </td>
+                    <td className="px-4 py-4 text-stone-300">
+                      {record.entity_type || "—"}
+                    </td>
+                    <td className="px-4 py-4 text-stone-300">
+                      {record.description || "—"}
+                    </td>
+                    <td className="px-4 py-4 text-stone-300">
+                      {record.created_at}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </section>
     </AppShell>
   );
