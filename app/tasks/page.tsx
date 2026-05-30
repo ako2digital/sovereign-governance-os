@@ -5,11 +5,13 @@ type TaskRecord = {
   id: string;
   title: string;
   description: string | null;
-  task_status: string | null;
+  status: string | null;
   priority: string | null;
-  assigned_to: string | null;
   due_date: string | null;
   created_at: string;
+  assigned_to: {
+    full_name: string;
+  } | null;
   related_hui: {
     title: string;
   } | null;
@@ -32,11 +34,13 @@ export default async function TasksPage() {
       id,
       title,
       description,
-      task_status,
+      status,
       priority,
-      assigned_to,
       due_date,
       created_at,
+      assigned_to:assigned_to_id (
+        full_name
+      ),
       related_hui:related_hui_id (
         title
       ),
@@ -145,7 +149,7 @@ export default async function TasksPage() {
                         {relatedTo}
                       </td>
                       <td className="px-4 py-4 text-stone-300">
-                        {record.assigned_to || "—"}
+                        {record.assigned_to?.full_name || "—"}
                       </td>
                       <td className="px-4 py-4 text-stone-300">
                         {record.priority || "normal"}
@@ -154,7 +158,7 @@ export default async function TasksPage() {
                         {record.due_date || "—"}
                       </td>
                       <td className="px-4 py-4 text-stone-300">
-                        {record.task_status || "todo"}
+                        {record.status || "todo"}
                       </td>
                     </tr>
                   );
