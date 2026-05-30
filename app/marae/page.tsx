@@ -49,8 +49,17 @@ export default async function MaraePage() {
             </p>
           </div>
 
-          <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
-            {maraeRecords.length} records
+          <div className="flex items-center gap-3">
+            <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
+              {maraeRecords.length} records
+            </div>
+
+            <a
+              href="/marae/new"
+              className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+            >
+              Add Marae
+            </a>
           </div>
         </div>
 
@@ -65,8 +74,8 @@ export default async function MaraePage() {
               No marae records yet
             </h3>
             <p className="mt-2 text-sm text-stone-400">
-              Add the first marae record in Supabase to begin testing marae
-              record management.
+              Add the first marae record to begin testing marae record
+              management.
             </p>
           </div>
         ) : (
