@@ -10,6 +10,11 @@ const navigationItems = [
     section: "System",
   },
   {
+    label: "Demo Flow",
+    href: "/demo-flow",
+    section: "System",
+  },
+  {
     label: "People",
     href: "/people",
     section: "Core Records",
