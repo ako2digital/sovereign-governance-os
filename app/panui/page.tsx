@@ -51,14 +51,14 @@ export default async function PanuiPage() {
     <AppShell title="Pānui" eyebrow="MVP Module">
       <section className="rounded-3xl border border-stone-800 bg-stone-900/50 p-8">
         <p className="text-xs uppercase tracking-[0.25em] text-stone-500">
-          Pānui Register
+          Communications Register
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-white">Pānui</h1>
 
         <p className="mt-4 max-w-2xl text-stone-400">
-          Create and manage communications connected to marae, whenua, hui, and
-          hapū activity.
+          Manage announcements, notices, updates, and public or internal
+          communications connected to hapū records.
         </p>
       </section>
 
@@ -98,7 +98,8 @@ export default async function PanuiPage() {
               No pānui records yet
             </h3>
             <p className="mt-2 text-sm text-stone-400">
-              Add the first pānui record to begin testing communications.
+              Add the first pānui record to begin testing communication
+              management.
             </p>
           </div>
         ) : (
@@ -108,47 +109,49 @@ export default async function PanuiPage() {
                 <tr>
                   <th className="px-4 py-3 font-medium">Title</th>
                   <th className="px-4 py-3 font-medium">Type</th>
-                  <th className="px-4 py-3 font-medium">Related To</th>
-                  <th className="px-4 py-3 font-medium">Published</th>
+                  <th className="px-4 py-3 font-medium">Related Marae</th>
+                  <th className="px-4 py-3 font-medium">Related Whenua</th>
+                  <th className="px-4 py-3 font-medium">Related Hui</th>
                   <th className="px-4 py-3 font-medium">Status</th>
-                  <th className="px-4 py-3 font-medium">Message</th>
                 </tr>
               </thead>
 
               <tbody>
-                {panuiRecords.map((record) => {
-                  const relatedTo =
-                    record.related_marae?.name ||
-                    record.related_whenua?.title ||
-                    record.related_hui?.title ||
-                    "—";
-
-                  return (
-                    <tr
-                      key={record.id}
-                      className="border-t border-stone-800 bg-stone-900"
-                    >
-                      <td className="px-4 py-4 text-stone-100">
+                {panuiRecords.map((record) => (
+                  <tr
+                    key={record.id}
+                    className="border-t border-stone-800 bg-stone-900"
+                  >
+                    <td className="px-4 py-4">
+                      <a
+                        href={`/panui/${record.id}`}
+                        className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                      >
                         {record.title}
-                      </td>
-                      <td className="px-4 py-4 text-stone-300">
-                        {record.panui_type || "—"}
-                      </td>
-                      <td className="px-4 py-4 text-stone-300">
-                        {relatedTo}
-                      </td>
-                      <td className="px-4 py-4 text-stone-300">
-                        {record.published_date || "—"}
-                      </td>
-                      <td className="px-4 py-4 text-stone-300">
-                        {record.status || "draft"}
-                      </td>
-                      <td className="px-4 py-4 text-stone-300">
-                        {record.message || "—"}
-                      </td>
-                    </tr>
-                  );
-                })}
+                      </a>
+                    </td>
+
+                    <td className="px-4 py-4 text-stone-300">
+                      {record.panui_type || "—"}
+                    </td>
+
+                    <td className="px-4 py-4 text-stone-300">
+                      {record.related_marae?.name || "—"}
+                    </td>
+
+                    <td className="px-4 py-4 text-stone-300">
+                      {record.related_whenua?.title || "—"}
+                    </td>
+
+                    <td className="px-4 py-4 text-stone-300">
+                      {record.related_hui?.title || "—"}
+                    </td>
+
+                    <td className="px-4 py-4 text-stone-300">
+                      {record.status || "draft"}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
