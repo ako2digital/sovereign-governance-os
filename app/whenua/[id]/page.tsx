@@ -9,37 +9,16 @@ type WhenuaDetailPageProps = {
 
 type WhenuaRecord = {
   id: string;
-  created_at?: string | null;
-  name?: string | null;
-  title?: string | null;
-  whenua_name?: string | null;
-  block_name?: string | null;
-  record_name?: string | null;
-  location?: string | null;
-  rohe?: string | null;
-  address?: string | null;
-  description?: string | null;
-  notes?: string | null;
+  title: string | null;
+  block_name: string | null;
+  location: string | null;
+  legal_description: string | null;
+  external_reference: string | null;
+  historical_notes: string | null;
+  status: string | null;
+  sensitivity_level: string | null;
+  created_at: string | null;
 };
-
-function getWhenuaTitle(record: WhenuaRecord) {
-  return (
-    record.name ||
-    record.title ||
-    record.whenua_name ||
-    record.block_name ||
-    record.record_name ||
-    "Untitled whenua record"
-  );
-}
-
-function getWhenuaLocation(record: WhenuaRecord) {
-  return record.location || record.rohe || record.address || "No location recorded";
-}
-
-function getWhenuaDescription(record: WhenuaRecord) {
-  return record.description || record.notes || null;
-}
 
 function formatDate(date?: string | null) {
   if (!date) {
@@ -53,6 +32,14 @@ function formatDate(date?: string | null) {
   });
 }
 
+function formatValue(value?: string | null) {
+  if (!value) {
+    return "Not recorded";
+  }
+
+  return value;
+}
+
 export default async function WhenuaDetailPage({
   params,
 }: WhenuaDetailPageProps) {
@@ -60,7 +47,20 @@ export default async function WhenuaDetailPage({
 
   const { data, error } = await supabase
     .from("whenua_records")
-    .select("*")
+    .select(
+      `
+      id,
+      title,
+      block_name,
+      location,
+      legal_description,
+      external_reference,
+      historical_notes,
+      status,
+      sensitivity_level,
+      created_at
+    `
+    )
     .eq("id", id)
     .maybeSingle();
 
@@ -105,13 +105,14 @@ export default async function WhenuaDetailPage({
           ) : (
             <>
               <h1 className="mt-5 text-4xl font-semibold tracking-tight text-white md:text-6xl">
-                {getWhenuaTitle(record)}
+                {record.title || "Untitled whenua record"}
               </h1>
 
               <p className="mt-5 max-w-2xl text-lg leading-8 text-stone-400">
-                This whenua record can become a connection point for people,
-                whakapapa, marae, legal documents, historical evidence,
-                governance decisions, maps, and activity history.
+                This whenua record is part of the land and place layer. It can
+                later connect to people, whakapapa, marae, legal documents,
+                historical evidence, governance decisions, maps, and activity
+                history.
               </p>
 
               <div className="mt-8 flex flex-wrap gap-3">
@@ -145,7 +146,7 @@ export default async function WhenuaDetailPage({
               </div>
 
               <div className="mt-3 text-lg font-semibold text-green-400">
-                {record ? "Loaded" : "Unavailable"}
+                {record ? formatValue(record.status) : "Unavailable"}
               </div>
             </div>
 
@@ -153,11 +154,11 @@ export default async function WhenuaDetailPage({
               <>
                 <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
                   <div className="font-mono text-xs uppercase tracking-[0.2em] text-stone-600">
-                    Location
+                    Sensitivity
                   </div>
 
                   <div className="mt-3 text-lg font-semibold text-stone-300">
-                    {getWhenuaLocation(record)}
+                    {formatValue(record.sensitivity_level)}
                   </div>
                 </div>
 
@@ -196,15 +197,65 @@ export default async function WhenuaDetailPage({
         </div>
       </section>
 
-      {record && getWhenuaDescription(record) ? (
-        <section className="mt-8 rounded-3xl border border-stone-800 bg-stone-900/60 p-8">
-          <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-            Description
-          </p>
+      {record ? (
+        <section className="mt-8 grid gap-6 lg:grid-cols-2">
+          <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-8">
+            <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
+              Place details
+            </p>
 
-          <p className="mt-5 max-w-4xl text-lg leading-8 text-stone-400">
-            {getWhenuaDescription(record)}
-          </p>
+            <div className="mt-6 grid gap-4">
+              <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
+                <div className="font-mono text-xs uppercase tracking-[0.2em] text-stone-600">
+                  Block name
+                </div>
+
+                <div className="mt-3 text-lg font-semibold text-stone-300">
+                  {formatValue(record.block_name)}
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
+                <div className="font-mono text-xs uppercase tracking-[0.2em] text-stone-600">
+                  Location
+                </div>
+
+                <div className="mt-3 text-lg font-semibold text-stone-300">
+                  {formatValue(record.location)}
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
+                <div className="font-mono text-xs uppercase tracking-[0.2em] text-stone-600">
+                  External reference
+                </div>
+
+                <div className="mt-3 break-all text-lg font-semibold text-stone-300">
+                  {formatValue(record.external_reference)}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-8">
+            <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
+              Legal description
+            </p>
+
+            <p className="mt-6 whitespace-pre-wrap text-sm leading-7 text-stone-400">
+              {formatValue(record.legal_description)}
+            </p>
+          </div>
+
+          <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-8 lg:col-span-2">
+            <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
+              Historical notes
+            </p>
+
+            <p className="mt-6 whitespace-pre-wrap text-sm leading-7 text-stone-400">
+              {formatValue(record.historical_notes)}
+            </p>
+          </div>
         </section>
       ) : null}
     </AppShell>
