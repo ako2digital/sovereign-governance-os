@@ -186,6 +186,9 @@ export default async function DecisionsDetailPage({
   const linkedDocumentTitle =
     linkedDocument?.title || linkedDocument?.name || "Untitled document record";
 
+  const linkedDocumentFileUrl = linkedDocument?.file_url ?? null;
+  const hasLinkedDocumentFileUrl = isUrl(linkedDocumentFileUrl);
+
   const hasActualRelatedLinks = Boolean(
     linkedHui || linkedMinutes || linkedDocument
   );
@@ -629,17 +632,17 @@ export default async function DecisionsDetailPage({
 
                 {linkedDocument.file_url !== undefined ? (
                   <FieldRow label="File URL">
-                    {isUrl(linkedDocument.file_url) ? (
+                    {hasLinkedDocumentFileUrl ? (
                       <a
-                        href={linkedDocument.file_url}
+                        href={linkedDocumentFileUrl ?? "#"}
                         target="_blank"
                         rel="noreferrer"
                         className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
                       >
-                        {linkedDocument.file_url}
+                        {linkedDocumentFileUrl}
                       </a>
                     ) : (
-                      formatValue(linkedDocument.file_url)
+                      formatValue(linkedDocumentFileUrl)
                     )}
                   </FieldRow>
                 ) : null}
