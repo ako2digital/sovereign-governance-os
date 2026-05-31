@@ -1,23 +1,29 @@
+import { redirect } from "next/navigation";
+import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 import { supabase } from "@/lib/supabaseClient";
-import { redirect } from "next/navigation";
 
 type PersonRecord = {
   id: string;
   full_name: string;
+  created_at: string | null;
 };
 
-async function createRelationship(formData: FormData) {
+async function createWhakapapaRelationship(formData: FormData) {
   "use server";
 
-  const personAId = String(formData.get("person_a_id") ?? "").trim();
-  const personBId = String(formData.get("person_b_id") ?? "").trim();
+  const personAId = String(formData.get("person_a_id") || "").trim();
+  const personBId = String(formData.get("person_b_id") || "").trim();
   const relationshipType = String(
-    formData.get("relationship_type") ?? ""
+    formData.get("relationship_type") || ""
   ).trim();
 
   if (!personAId || !personBId || !relationshipType) {
     return;
+  }
+
+  if (personAId === personBId) {
+    throw new Error("A whakapapa relationship requires two different people.");
   }
 
   const { error } = await supabase.from("whakapapa_relationships").insert({
@@ -33,215 +39,275 @@ async function createRelationship(formData: FormData) {
   redirect("/whakapapa");
 }
 
-const futureLinks = [
-  "Linked person records",
-  "Whenua connections",
-  "Supporting source documents",
-  "Relationship activity history",
-];
+function formatDate(date?: string | null) {
+  if (!date) {
+    return "—";
+  }
 
-export default async function NewWhakapapaRelationshipPage() {
+  return new Date(date).toLocaleDateString("en-NZ", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function personPath(id: string) {
+  return `/people/${id}`;
+}
+
+export default async function AddWhakapapaPage() {
   const { data, error } = await supabase
     .from("people")
-    .select("id, full_name")
+    .select(
+      `
+      id,
+      full_name,
+      created_at
+    `
+    )
     .order("full_name", { ascending: true });
 
-  const people = (data ?? []) as PersonRecord[];
+  const peopleRecords = (data ?? []) as PersonRecord[];
 
   return (
-    <AppShell
-      title="Add Whakapapa Relationship"
-      eyebrow="Core Records / Whakapapa"
-    >
-      <section className="grid gap-6">
-        <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-8">
-          <a
+    <AppShell title="Add Whakapapa" eyebrow="Whakapapa Module">
+      <section className="rounded-3xl border border-stone-800 bg-stone-900/50 p-8">
+        <p className="text-xs uppercase tracking-[0.25em] text-stone-500">
+          New Whakapapa Record
+        </p>
+
+        <h1 className="mt-3 text-3xl font-semibold text-white">
+          Add Whakapapa Relationship
+        </h1>
+
+        <p className="mt-4 max-w-2xl text-stone-400">
+          Create a relationship record between two existing people. This builds
+          the relational layer used for whakapapa mapping and future
+          verification work.
+        </p>
+      </section>
+
+      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-semibold text-white">
+              Relationship Details
+            </h2>
+
+            <p className="mt-1 text-sm text-stone-400">
+              Select two existing people and define the relationship type.
+            </p>
+          </div>
+
+          <Link
             href="/whakapapa"
-            className="text-sm font-medium text-stone-500 transition hover:text-white"
+            className="rounded-xl border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
           >
-            ← Back to Whakapapa
-          </a>
-
-          <p className="mt-8 font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-            New relationship record
-          </p>
-
-          <h1 className="mt-5 max-w-5xl text-4xl font-semibold tracking-tight text-white md:text-5xl">
-            Link two people into the whakapapa layer.
-          </h1>
-
-          <p className="mt-5 max-w-3xl text-base leading-8 text-stone-400">
-            A relationship record connects one person to another. Once created,
-            each person should remain clickable and the relationship should be
-            traceable through source records, whenua connections, and activity
-            history as the system expands.
-          </p>
+            Back to Whakapapa
+          </Link>
         </div>
 
-        <div className="grid gap-6 xl:grid-cols-[1fr_420px]">
-          <section className="rounded-3xl border border-stone-800 bg-stone-900/60 p-8">
-            <div className="border-b border-stone-800 pb-6">
-              <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-                Core details
-              </p>
+        {error ? (
+          <div className="mt-6 rounded-xl border border-red-900 bg-red-950/40 p-4 text-sm text-red-300">
+            <p className="font-semibold">Database error</p>
+            <pre className="mt-3 whitespace-pre-wrap">{error.message}</pre>
+          </div>
+        ) : peopleRecords.length < 2 ? (
+          <div className="mt-6 rounded-xl border border-stone-800 bg-stone-950 p-6">
+            <h3 className="text-base font-semibold text-white">
+              At least two people are required
+            </h3>
 
-              <h2 className="mt-3 text-2xl font-semibold tracking-tight text-white">
-                Select both people and define the relationship.
-              </h2>
+            <p className="mt-2 text-sm text-stone-400">
+              Add two person records before creating a whakapapa relationship.
+            </p>
+
+            <div className="mt-5 flex flex-wrap gap-3">
+              <Link
+                href="/people/new"
+                className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+              >
+                Add Person
+              </Link>
+
+              <Link
+                href="/people"
+                className="rounded-xl border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
+              >
+                View People
+              </Link>
             </div>
-
-            {error ? (
-              <div className="mt-6 rounded-2xl border border-red-500/30 bg-red-500/10 p-5">
-                <p className="font-semibold text-red-300">
-                  Could not load people records.
-                </p>
-
-                <p className="mt-3 text-sm leading-7 text-red-200/80">
-                  {error.message}
-                </p>
-              </div>
-            ) : people.length < 2 ? (
-              <div className="mt-6 rounded-2xl border border-stone-800 bg-stone-950 p-6">
-                <h3 className="text-xl font-semibold text-white">
-                  At least two people records are required.
-                </h3>
-
-                <p className="mt-3 text-sm leading-7 text-stone-500">
-                  Add more people before creating a whakapapa relationship.
-                </p>
-
-                <a
-                  href="/people/new"
-                  className="mt-6 inline-flex rounded-full bg-stone-100 px-5 py-3 text-sm font-semibold text-stone-950 transition hover:bg-white"
+          </div>
+        ) : (
+          <form action={createWhakapapaRelationship} className="mt-6 grid gap-5">
+            <div className="grid gap-5 md:grid-cols-2">
+              <div>
+                <label
+                  htmlFor="person_a_id"
+                  className="text-sm font-medium text-stone-300"
                 >
-                  Add Person
-                </a>
-              </div>
-            ) : (
-              <form action={createRelationship} className="mt-6 grid gap-6">
-                <div className="grid gap-5 md:grid-cols-2">
-                  <label className="grid gap-3">
-                    <span className="text-sm font-semibold text-stone-300">
-                      First person <span className="text-red-300">*</span>
-                    </span>
-
-                    <select
-                      id="person_a_id"
-                      name="person_a_id"
-                      required
-                      className="rounded-2xl border border-stone-700 bg-stone-950 px-5 py-4 text-stone-100 outline-none transition focus:border-stone-400"
-                    >
-                      <option value="">Select first person</option>
-                      {people.map((person) => (
-                        <option key={person.id} value={person.id}>
-                          {person.full_name}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-
-                  <label className="grid gap-3">
-                    <span className="text-sm font-semibold text-stone-300">
-                      Second person <span className="text-red-300">*</span>
-                    </span>
-
-                    <select
-                      id="person_b_id"
-                      name="person_b_id"
-                      required
-                      className="rounded-2xl border border-stone-700 bg-stone-950 px-5 py-4 text-stone-100 outline-none transition focus:border-stone-400"
-                    >
-                      <option value="">Select second person</option>
-                      {people.map((person) => (
-                        <option key={person.id} value={person.id}>
-                          {person.full_name}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                </div>
-
-                <label className="grid gap-3">
-                  <span className="text-sm font-semibold text-stone-300">
-                    Relationship type <span className="text-red-300">*</span>
-                  </span>
-
-                  <input
-                    id="relationship_type"
-                    name="relationship_type"
-                    type="text"
-                    required
-                    placeholder="Example: parent, child, sibling, spouse, cousin"
-                    className="rounded-2xl border border-stone-700 bg-stone-950 px-5 py-4 text-stone-100 outline-none transition placeholder:text-stone-600 focus:border-stone-400"
-                  />
+                  First Person
                 </label>
 
-                <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
-                  <p className="font-mono text-xs uppercase tracking-[0.25em] text-stone-600">
-                    Current schema
-                  </p>
+                <select
+                  id="person_a_id"
+                  name="person_a_id"
+                  required
+                  className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+                >
+                  <option value="">Select first person</option>
 
-                  <p className="mt-3 text-sm leading-7 text-stone-500">
-                    This MVP records person_a_id, person_b_id, and
-                    relationship_type. Source documents, certainty level, and
-                    visibility rules can be added after the core flow is stable.
-                  </p>
-                </div>
+                  {peopleRecords.map((person) => (
+                    <option key={person.id} value={person.id}>
+                      {person.full_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-                <div className="flex flex-wrap gap-3">
-                  <button
-                    type="submit"
-                    className="rounded-full bg-stone-100 px-6 py-3 text-sm font-semibold text-stone-950 transition hover:bg-white"
-                  >
-                    Create Relationship
-                  </button>
+              <div>
+                <label
+                  htmlFor="person_b_id"
+                  className="text-sm font-medium text-stone-300"
+                >
+                  Second Person
+                </label>
 
-                  <a
-                    href="/whakapapa"
-                    className="rounded-full border border-stone-700 px-6 py-3 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
-                  >
-                    Cancel
-                  </a>
-                </div>
-              </form>
-            )}
-          </section>
+                <select
+                  id="person_b_id"
+                  name="person_b_id"
+                  required
+                  className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+                >
+                  <option value="">Select second person</option>
 
-          <aside className="grid gap-6">
-            <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-6">
-              <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-                Related records
-              </p>
-
-              <div className="mt-5 grid gap-3">
-                {futureLinks.map((item) => (
-                  <div
-                    key={item}
-                    className="rounded-2xl border border-stone-800 bg-stone-950 p-4"
-                  >
-                    <p className="text-sm font-semibold text-white">{item}</p>
-
-                    <p className="mt-1 text-xs leading-5 text-stone-600">
-                      Available after the relationship record exists.
-                    </p>
-                  </div>
-                ))}
+                  {peopleRecords.map((person) => (
+                    <option key={person.id} value={person.id}>
+                      {person.full_name}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
-            <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-6">
-              <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-                Record flow
-              </p>
+            <div>
+              <label
+                htmlFor="relationship_type"
+                className="text-sm font-medium text-stone-300"
+              >
+                Relationship Type
+              </label>
 
-              <p className="mt-5 text-sm leading-7 text-stone-400">
-                Create the relationship first. Then connect the relationship to
-                source documents, whenua, people detail pages, and future
-                activity history.
-              </p>
+              <input
+                id="relationship_type"
+                name="relationship_type"
+                type="text"
+                required
+                placeholder="Example: parent, child, sibling, spouse, tupuna, descendant"
+                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+              />
             </div>
-          </aside>
+
+            <div className="flex flex-wrap items-center gap-3 pt-2">
+              <button
+                type="submit"
+                className="rounded-xl bg-stone-100 px-5 py-3 text-sm font-semibold text-stone-950 transition hover:bg-white"
+              >
+                Create Relationship
+              </button>
+
+              <Link
+                href="/whakapapa"
+                className="rounded-xl border border-stone-700 px-5 py-3 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
+              >
+                Cancel
+              </Link>
+            </div>
+          </form>
+        )}
+      </section>
+
+      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-semibold text-white">
+              Available People
+            </h2>
+
+            <p className="mt-1 text-sm text-stone-400">
+              Existing people that can be selected for the relationship.
+            </p>
+          </div>
+
+          <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
+            {peopleRecords.length} people
+          </div>
         </div>
+
+        {peopleRecords.length === 0 ? (
+          <div className="mt-6 rounded-xl border border-stone-800 bg-stone-950 p-6">
+            <h3 className="text-base font-semibold text-white">
+              No people available
+            </h3>
+
+            <p className="mt-2 text-sm text-stone-400">
+              Add people before creating whakapapa relationships.
+            </p>
+          </div>
+        ) : (
+          <div className="mt-6 overflow-x-auto rounded-2xl border border-stone-800">
+            <table className="w-full min-w-[720px] border-collapse text-left text-sm">
+              <thead className="bg-stone-950 text-stone-400">
+                <tr>
+                  <th className="px-4 py-3 font-medium">Full Name</th>
+                  <th className="px-4 py-3 font-medium">Created</th>
+                  <th className="px-4 py-3 font-medium">Person ID</th>
+                  <th className="px-4 py-3 font-medium">Open</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {peopleRecords.map((person) => (
+                  <tr
+                    key={person.id}
+                    className="border-t border-stone-800 bg-stone-900 transition hover:bg-stone-950"
+                  >
+                    <td className="px-4 py-4">
+                      <Link
+                        href={personPath(person.id)}
+                        className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                      >
+                        {person.full_name}
+                      </Link>
+                    </td>
+
+                    <td className="px-4 py-4 text-stone-300">
+                      {formatDate(person.created_at)}
+                    </td>
+
+                    <td className="px-4 py-4">
+                      <Link
+                        href={personPath(person.id)}
+                        className="font-mono text-xs text-stone-500 underline-offset-4 transition hover:text-white hover:underline"
+                      >
+                        {person.id}
+                      </Link>
+                    </td>
+
+                    <td className="px-4 py-4">
+                      <Link
+                        href={personPath(person.id)}
+                        className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                      >
+                        View person
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </section>
     </AppShell>
   );
