@@ -1,308 +1,239 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
+import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 import { supabase } from "@/lib/supabaseClient";
 
-type MaraeRecord = {
-  id: string;
-  name: string;
-};
+async function createHui(formData: FormData) {
+  "use server";
 
-type WhenuaRecord = {
-  id: string;
-  title: string;
-};
+  const title = String(formData.get("title") || "").trim();
+  const huiDate = String(formData.get("hui_date") || "").trim();
+  const location = String(formData.get("location") || "").trim();
+  const purpose = String(formData.get("purpose") || "").trim();
+  const agenda = String(formData.get("agenda") || "").trim();
+  const summary = String(formData.get("summary") || "").trim();
+  const notes = String(formData.get("notes") || "").trim();
+  const status = String(formData.get("status") || "").trim();
 
-type GovernanceRecord = {
-  id: string;
-  title: string;
-};
-
-export default function NewHuiRecordPage() {
-  const router = useRouter();
-
-  const [title, setTitle] = useState("");
-  const [huiDate, setHuiDate] = useState("");
-  const [location, setLocation] = useState("");
-  const [purpose, setPurpose] = useState("");
-  const [agenda, setAgenda] = useState("");
-  const [status, setStatus] = useState("planned");
-
-  const [relatedMaraeId, setRelatedMaraeId] = useState("");
-  const [relatedWhenuaId, setRelatedWhenuaId] = useState("");
-  const [relatedGovernanceRecordId, setRelatedGovernanceRecordId] =
-    useState("");
-
-  const [maraeRecords, setMaraeRecords] = useState<MaraeRecord[]>([]);
-  const [whenuaRecords, setWhenuaRecords] = useState<WhenuaRecord[]>([]);
-  const [governanceRecords, setGovernanceRecords] = useState<
-    GovernanceRecord[]
-  >([]);
-
-  const [isLoadingRelations, setIsLoadingRelations] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-
-  useEffect(() => {
-    async function loadRelations() {
-      const [maraeResult, whenuaResult, governanceResult] = await Promise.all([
-        supabase.from("marae_records").select("id, name").order("name"),
-        supabase.from("whenua_records").select("id, title").order("title"),
-        supabase
-          .from("governance_records")
-          .select("id, title")
-          .order("title"),
-      ]);
-
-      if (maraeResult.error) {
-        setErrorMessage(maraeResult.error.message);
-        setIsLoadingRelations(false);
-        return;
-      }
-
-      if (whenuaResult.error) {
-        setErrorMessage(whenuaResult.error.message);
-        setIsLoadingRelations(false);
-        return;
-      }
-
-      if (governanceResult.error) {
-        setErrorMessage(governanceResult.error.message);
-        setIsLoadingRelations(false);
-        return;
-      }
-
-      setMaraeRecords((maraeResult.data ?? []) as MaraeRecord[]);
-      setWhenuaRecords((whenuaResult.data ?? []) as WhenuaRecord[]);
-      setGovernanceRecords(
-        (governanceResult.data ?? []) as GovernanceRecord[]
-      );
-      setIsLoadingRelations(false);
-    }
-
-    loadRelations();
-  }, []);
-
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setErrorMessage("");
-
-    if (!title.trim()) {
-      setErrorMessage("Title is required.");
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    const { error } = await supabase.from("hui").insert({
-      title: title.trim(),
-      hui_date: huiDate || null,
-      location: location.trim() || null,
-      purpose: purpose.trim() || null,
-      agenda: agenda.trim() || null,
-      status,
-      related_marae_id: relatedMaraeId || null,
-      related_whenua_id: relatedWhenuaId || null,
-      related_governance_record_id: relatedGovernanceRecordId || null,
-    });
-
-    setIsSubmitting(false);
-
-    if (error) {
-      setErrorMessage(error.message);
-      return;
-    }
-
-    router.push("/hui");
-    router.refresh();
+  if (!title) {
+    return;
   }
 
+  const { error } = await supabase.from("hui").insert({
+    title,
+    hui_date: huiDate || null,
+    location: location || null,
+    purpose: purpose || null,
+    agenda: agenda || null,
+    summary: summary || null,
+    notes: notes || null,
+    status: status || null,
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  redirect("/hui");
+}
+
+export default function AddHuiPage() {
   return (
-    <AppShell title="Add Hui Record" eyebrow="Hui Module">
+    <AppShell title="Add Hui" eyebrow="Hui Module">
       <section className="rounded-3xl border border-stone-800 bg-stone-900/50 p-8">
         <p className="text-xs uppercase tracking-[0.25em] text-stone-500">
-          Create Hui Record
+          New Hui Record
         </p>
 
-        <h1 className="mt-3 text-3xl font-semibold text-white">
-          Add Hui Record
-        </h1>
+        <h1 className="mt-3 text-3xl font-semibold text-white">Add Hui</h1>
 
         <p className="mt-4 max-w-2xl text-stone-400">
-          Create a hui record connected to marae, whenua, governance records,
-          agendas, minutes, decisions, documents, and tasks.
+          Create a hui record with its title, date, location, purpose, agenda,
+          summary, notes, and current status.
         </p>
       </section>
 
-      <form
-        onSubmit={handleSubmit}
-        className="mt-8 max-w-3xl rounded-2xl border border-stone-800 bg-stone-900 p-6"
-      >
-        <div className="grid gap-5">
-          <label className="grid gap-2">
-            <span className="text-sm font-medium text-stone-200">Title</span>
+      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-semibold text-white">Hui Details</h2>
+
+            <p className="mt-1 text-sm text-stone-400">
+              Enter the confirmed hui information. Only the title is required
+              at this stage.
+            </p>
+          </div>
+
+          <Link
+            href="/hui"
+            className="rounded-xl border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
+          >
+            Back to Hui
+          </Link>
+        </div>
+
+        <form action={createHui} className="mt-6 grid gap-5">
+          <div>
+            <label
+              htmlFor="title"
+              className="text-sm font-medium text-stone-300"
+            >
+              Title
+            </label>
+
             <input
-              value={title}
-              onChange={(event) => setTitle(event.target.value)}
-              className="rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-stone-100 outline-none focus:border-stone-500"
-              placeholder="Example: Test Hui"
+              id="title"
+              name="title"
+              type="text"
+              required
+              placeholder="Example: Monthly hapū governance hui"
+              className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-stone-600 focus:border-stone-400"
             />
-          </label>
+          </div>
 
           <div className="grid gap-5 md:grid-cols-2">
-            <label className="grid gap-2">
-              <span className="text-sm font-medium text-stone-200">
-                Hui date
-              </span>
+            <div>
+              <label
+                htmlFor="hui_date"
+                className="text-sm font-medium text-stone-300"
+              >
+                Hui Date
+              </label>
+
               <input
+                id="hui_date"
+                name="hui_date"
                 type="date"
-                value={huiDate}
-                onChange={(event) => setHuiDate(event.target.value)}
-                className="rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-stone-100 outline-none focus:border-stone-500"
+                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
               />
-            </label>
+            </div>
 
-            <label className="grid gap-2">
-              <span className="text-sm font-medium text-stone-200">
+            <div>
+              <label
+                htmlFor="location"
+                className="text-sm font-medium text-stone-300"
+              >
                 Location
-              </span>
+              </label>
+
               <input
-                value={location}
-                onChange={(event) => setLocation(event.target.value)}
-                className="rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-stone-100 outline-none focus:border-stone-500"
-                placeholder="Example: Kaikohe"
+                id="location"
+                name="location"
+                type="text"
+                placeholder="Enter location"
+                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-stone-600 focus:border-stone-400"
               />
-            </label>
+            </div>
           </div>
 
-          <div className="grid gap-5 md:grid-cols-3">
-            <label className="grid gap-2">
-              <span className="text-sm font-medium text-stone-200">
-                Related marae
-              </span>
-              <select
-                value={relatedMaraeId}
-                onChange={(event) => setRelatedMaraeId(event.target.value)}
-                className="rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-stone-100 outline-none focus:border-stone-500"
-                disabled={isLoadingRelations}
-              >
-                <option value="">
-                  {isLoadingRelations ? "Loading..." : "None"}
-                </option>
-                {maraeRecords.map((record) => (
-                  <option key={record.id} value={record.id}>
-                    {record.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label className="grid gap-2">
-              <span className="text-sm font-medium text-stone-200">
-                Related whenua
-              </span>
-              <select
-                value={relatedWhenuaId}
-                onChange={(event) => setRelatedWhenuaId(event.target.value)}
-                className="rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-stone-100 outline-none focus:border-stone-500"
-                disabled={isLoadingRelations}
-              >
-                <option value="">
-                  {isLoadingRelations ? "Loading..." : "None"}
-                </option>
-                {whenuaRecords.map((record) => (
-                  <option key={record.id} value={record.id}>
-                    {record.title}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label className="grid gap-2">
-              <span className="text-sm font-medium text-stone-200">
-                Governance record
-              </span>
-              <select
-                value={relatedGovernanceRecordId}
-                onChange={(event) =>
-                  setRelatedGovernanceRecordId(event.target.value)
-                }
-                className="rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-stone-100 outline-none focus:border-stone-500"
-                disabled={isLoadingRelations}
-              >
-                <option value="">
-                  {isLoadingRelations ? "Loading..." : "None"}
-                </option>
-                {governanceRecords.map((record) => (
-                  <option key={record.id} value={record.id}>
-                    {record.title}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          <label className="grid gap-2">
-            <span className="text-sm font-medium text-stone-200">Status</span>
-            <select
-              value={status}
-              onChange={(event) => setStatus(event.target.value)}
-              className="rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-stone-100 outline-none focus:border-stone-500"
+          <div>
+            <label
+              htmlFor="purpose"
+              className="text-sm font-medium text-stone-300"
             >
-              <option value="planned">Planned</option>
+              Purpose
+            </label>
+
+            <textarea
+              id="purpose"
+              name="purpose"
+              rows={4}
+              placeholder="Enter the purpose, kaupapa, or reason for this hui"
+              className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="agenda"
+              className="text-sm font-medium text-stone-300"
+            >
+              Agenda
+            </label>
+
+            <textarea
+              id="agenda"
+              name="agenda"
+              rows={6}
+              placeholder="Enter agenda items, discussion points, or proposed structure"
+              className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="summary"
+              className="text-sm font-medium text-stone-300"
+            >
+              Summary
+            </label>
+
+            <textarea
+              id="summary"
+              name="summary"
+              rows={5}
+              placeholder="Enter a short summary or context for this hui"
+              className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="notes"
+              className="text-sm font-medium text-stone-300"
+            >
+              Notes
+            </label>
+
+            <textarea
+              id="notes"
+              name="notes"
+              rows={5}
+              placeholder="Enter internal notes, preparation notes, or follow-up context"
+              className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="status"
+              className="text-sm font-medium text-stone-300"
+            >
+              Status
+            </label>
+
+            <select
+              id="status"
+              name="status"
+              defaultValue=""
+              className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+            >
+              <option value="">Select status</option>
+              <option value="draft">Draft</option>
+              <option value="scheduled">Scheduled</option>
               <option value="completed">Completed</option>
               <option value="cancelled">Cancelled</option>
               <option value="archived">Archived</option>
             </select>
-          </label>
+          </div>
 
-          <label className="grid gap-2">
-            <span className="text-sm font-medium text-stone-200">Purpose</span>
-            <textarea
-              value={purpose}
-              onChange={(event) => setPurpose(event.target.value)}
-              className="min-h-24 rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-stone-100 outline-none focus:border-stone-500"
-              placeholder="Add the purpose or context for this hui."
-            />
-          </label>
-
-          <label className="grid gap-2">
-            <span className="text-sm font-medium text-stone-200">Agenda</span>
-            <textarea
-              value={agenda}
-              onChange={(event) => setAgenda(event.target.value)}
-              className="min-h-32 rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-stone-100 outline-none focus:border-stone-500"
-              placeholder="Add agenda items or planned discussion points."
-            />
-          </label>
-
-          {errorMessage ? (
-            <div className="rounded-xl border border-red-900 bg-red-950/40 p-4 text-sm text-red-300">
-              {errorMessage}
-            </div>
-          ) : null}
-
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3 pt-2">
             <button
               type="submit"
-              disabled={isSubmitting || isLoadingRelations}
-              className="rounded-xl bg-stone-100 px-5 py-3 text-sm font-semibold text-stone-950 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-xl bg-stone-100 px-5 py-3 text-sm font-semibold text-stone-950 transition hover:bg-white"
             >
-              {isSubmitting ? "Saving..." : "Create Hui Record"}
+              Create Hui
             </button>
 
-            <button
-              type="button"
-              onClick={() => router.push("/hui")}
+            <Link
+              href="/hui"
               className="rounded-xl border border-stone-700 px-5 py-3 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
             >
               Cancel
-            </button>
+            </Link>
           </div>
-        </div>
-      </form>
+        </form>
+      </section>
     </AppShell>
   );
 }
