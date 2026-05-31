@@ -1,64 +1,80 @@
+import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 import { supabase } from "@/lib/supabaseClient";
 
 type PanuiRecord = {
   id: string;
-  title: string;
-  message: string | null;
-  panui_type: string | null;
-  published_date: string | null;
-  status: string | null;
-  created_at: string;
-  related_marae: {
-    name: string;
-  } | null;
-  related_whenua: {
-    title: string;
-  } | null;
-  related_hui: {
-    title: string;
-  } | null;
+  title?: string | null;
+  message?: string | null;
+  content?: string | null;
+  body?: string | null;
+  summary?: string | null;
+  status?: string | null;
+  publish_date?: string | null;
+  published_at?: string | null;
+  date?: string | null;
+  related_hui_id?: string | null;
+  related_document_id?: string | null;
+  created_at?: string | null;
 };
+
+function formatValue(value?: string | null) {
+  if (!value) {
+    return "—";
+  }
+
+  return value;
+}
+
+function formatDate(date?: string | null) {
+  if (!date) {
+    return "—";
+  }
+
+  return new Date(date).toLocaleDateString("en-NZ", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function panuiPath(id: string) {
+  return `/panui/${id}`;
+}
+
+function getPanuiTitle(record: PanuiRecord) {
+  return record.title || "Untitled pānui record";
+}
+
+function getPanuiDate(record: PanuiRecord) {
+  return record.published_at || record.publish_date || record.date || null;
+}
+
+function getPanuiPreview(record: PanuiRecord) {
+  return record.summary || record.message || record.content || record.body || null;
+}
 
 export default async function PanuiPage() {
   const { data, error } = await supabase
     .from("panui")
-    .select(
-      `
-      id,
-      title,
-      message,
-      panui_type,
-      published_date,
-      status,
-      created_at,
-      related_marae:related_marae_id (
-        name
-      ),
-      related_whenua:related_whenua_id (
-        title
-      ),
-      related_hui:related_hui_id (
-        title
-      )
-    `
-    )
+    .select("*")
     .order("created_at", { ascending: false });
 
-  const panuiRecords = (data ?? []) as unknown as PanuiRecord[];
+  const panuiRecords = (data ?? []) as PanuiRecord[];
 
   return (
-    <AppShell title="Pānui" eyebrow="MVP Module">
+    <AppShell title="Pānui" eyebrow="Core Records">
       <section className="rounded-3xl border border-stone-800 bg-stone-900/50 p-8">
         <p className="text-xs uppercase tracking-[0.25em] text-stone-500">
-          Communications Register
+          Pānui Register
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-white">Pānui</h1>
 
         <p className="mt-4 max-w-2xl text-stone-400">
-          Manage announcements, notices, updates, and public or internal
-          communications connected to hapū records.
+          Manage pānui records, publication dates, status, content summaries,
+          linked hui references, linked document references, and communication
+          history.
         </p>
       </section>
 
@@ -68,6 +84,7 @@ export default async function PanuiPage() {
             <h2 className="text-lg font-semibold text-white">
               Pānui Register
             </h2>
+
             <p className="mt-1 text-sm text-stone-400">
               Live records pulled from the Supabase panui table.
             </p>
@@ -78,12 +95,12 @@ export default async function PanuiPage() {
               {panuiRecords.length} records
             </div>
 
-            <a
+            <Link
               href="/panui/new"
               className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
             >
               Add Pānui
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -97,61 +114,102 @@ export default async function PanuiPage() {
             <h3 className="text-base font-semibold text-white">
               No pānui records yet
             </h3>
+
             <p className="mt-2 text-sm text-stone-400">
-              Add the first pānui record to begin testing communication
-              management.
+              Add the first pānui record to begin building the communication
+              layer.
             </p>
+
+            <div className="mt-5">
+              <Link
+                href="/panui/new"
+                className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+              >
+                Add First Pānui
+              </Link>
+            </div>
           </div>
         ) : (
-          <div className="mt-6 overflow-hidden rounded-2xl border border-stone-800">
-            <table className="w-full border-collapse text-left text-sm">
+          <div className="mt-6 overflow-x-auto rounded-2xl border border-stone-800">
+            <table className="w-full min-w-[1060px] border-collapse text-left text-sm">
               <thead className="bg-stone-950 text-stone-400">
                 <tr>
                   <th className="px-4 py-3 font-medium">Title</th>
-                  <th className="px-4 py-3 font-medium">Type</th>
-                  <th className="px-4 py-3 font-medium">Related Marae</th>
-                  <th className="px-4 py-3 font-medium">Related Whenua</th>
-                  <th className="px-4 py-3 font-medium">Related Hui</th>
+                  <th className="px-4 py-3 font-medium">Published</th>
                   <th className="px-4 py-3 font-medium">Status</th>
+                  <th className="px-4 py-3 font-medium">Linked Hui ID</th>
+                  <th className="px-4 py-3 font-medium">
+                    Linked Document ID
+                  </th>
+                  <th className="px-4 py-3 font-medium">Record ID</th>
+                  <th className="px-4 py-3 font-medium">Open</th>
                 </tr>
               </thead>
 
               <tbody>
-                {panuiRecords.map((record) => (
-                  <tr
-                    key={record.id}
-                    className="border-t border-stone-800 bg-stone-900"
-                  >
-                    <td className="px-4 py-4">
-                      <a
-                        href={`/panui/${record.id}`}
-                        className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
-                      >
-                        {record.title}
-                      </a>
-                    </td>
+                {panuiRecords.map((record) => {
+                  const preview = getPanuiPreview(record);
 
-                    <td className="px-4 py-4 text-stone-300">
-                      {record.panui_type || "—"}
-                    </td>
+                  return (
+                    <tr
+                      key={record.id}
+                      className="border-t border-stone-800 bg-stone-900 transition hover:bg-stone-950"
+                    >
+                      <td className="px-4 py-4">
+                        <Link
+                          href={panuiPath(record.id)}
+                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                        >
+                          {getPanuiTitle(record)}
+                        </Link>
 
-                    <td className="px-4 py-4 text-stone-300">
-                      {record.related_marae?.name || "—"}
-                    </td>
+                        {preview ? (
+                          <p className="mt-1 line-clamp-2 max-w-md text-xs leading-5 text-stone-500">
+                            {preview}
+                          </p>
+                        ) : null}
+                      </td>
 
-                    <td className="px-4 py-4 text-stone-300">
-                      {record.related_whenua?.title || "—"}
-                    </td>
+                      <td className="px-4 py-4 text-stone-300">
+                        {formatDate(getPanuiDate(record))}
+                      </td>
 
-                    <td className="px-4 py-4 text-stone-300">
-                      {record.related_hui?.title || "—"}
-                    </td>
+                      <td className="px-4 py-4 text-stone-300">
+                        {formatValue(record.status)}
+                      </td>
 
-                    <td className="px-4 py-4 text-stone-300">
-                      {record.status || "draft"}
-                    </td>
-                  </tr>
-                ))}
+                      <td className="px-4 py-4">
+                        <span className="font-mono text-xs text-stone-500">
+                          {formatValue(record.related_hui_id)}
+                        </span>
+                      </td>
+
+                      <td className="px-4 py-4">
+                        <span className="font-mono text-xs text-stone-500">
+                          {formatValue(record.related_document_id)}
+                        </span>
+                      </td>
+
+                      <td className="px-4 py-4">
+                        <Link
+                          href={panuiPath(record.id)}
+                          className="font-mono text-xs text-stone-500 underline-offset-4 transition hover:text-white hover:underline"
+                        >
+                          {record.id}
+                        </Link>
+                      </td>
+
+                      <td className="px-4 py-4">
+                        <Link
+                          href={panuiPath(record.id)}
+                          className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                        >
+                          View record
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
