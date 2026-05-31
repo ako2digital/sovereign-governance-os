@@ -14,32 +14,9 @@ type WhenuaRecord = {
   created_at: string | null;
 };
 
-const relatedRecordLinks = [
-  {
-    label: "Documents",
-    href: "/documents",
-    description: "Evidence, maps, legal records, and supporting files.",
-  },
-  {
-    label: "Governance",
-    href: "/governance",
-    description: "Mandates, authority, decisions, and governance context.",
-  },
-  {
-    label: "Marae",
-    href: "/marae",
-    description: "Future marae links connected to whenua records.",
-  },
-  {
-    label: "Activity",
-    href: "/activity",
-    description: "Future audit trail for whenua record changes.",
-  },
-];
-
 function formatDate(date?: string | null) {
   if (!date) {
-    return "Date unavailable";
+    return "—";
   }
 
   return new Date(date).toLocaleDateString("en-NZ", {
@@ -51,38 +28,10 @@ function formatDate(date?: string | null) {
 
 function formatValue(value?: string | null) {
   if (!value) {
-    return "Not recorded";
+    return "—";
   }
 
   return value;
-}
-
-function statusClass(status?: string | null) {
-  if (status === "active") {
-    return "bg-green-400/10 text-green-400";
-  }
-
-  if (status === "under_review") {
-    return "bg-stone-100 text-stone-950";
-  }
-
-  if (status === "archived") {
-    return "bg-stone-800 text-stone-500";
-  }
-
-  return "bg-stone-800 text-stone-500";
-}
-
-function sensitivityClass(level?: string | null) {
-  if (level === "restricted") {
-    return "bg-red-400/10 text-red-300";
-  }
-
-  if (level === "sensitive") {
-    return "bg-yellow-400/10 text-yellow-300";
-  }
-
-  return "bg-stone-800 text-stone-400";
 }
 
 export default async function WhenuaPage() {
@@ -107,220 +56,249 @@ export default async function WhenuaPage() {
   const whenuaRecords = (data ?? []) as WhenuaRecord[];
 
   return (
-    <AppShell title="Whenua Records" eyebrow="Core Records / Whenua">
-      <section className="grid gap-6">
-        <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-8">
-          <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
-            <div>
-              <a
-                href="/whenua"
-                className="inline-flex rounded-full border border-stone-700 bg-stone-950 px-4 py-2 font-mono text-xs uppercase tracking-[0.25em] text-stone-400 transition hover:border-stone-500 hover:text-white"
-              >
-                Whenua register
-              </a>
+    <AppShell title="Whenua" eyebrow="Core Records">
+      <section className="rounded-3xl border border-stone-800 bg-stone-900/50 p-8">
+        <p className="text-xs uppercase tracking-[0.25em] text-stone-500">
+          Whenua Register
+        </p>
 
-              <h1 className="mt-6 text-4xl font-semibold tracking-tight text-white md:text-5xl">
-                Land records connected to evidence, history, and authority.
-              </h1>
+        <h1 className="mt-3 text-3xl font-semibold text-white">Whenua</h1>
 
-              <p className="mt-5 max-w-3xl text-base leading-8 text-stone-400">
-                Whenua records hold title, block name, location, legal
-                description, external reference, historical notes, status, and
-                sensitivity level.
-              </p>
+        <p className="mt-4 max-w-2xl text-stone-400">
+          Manage land records, block names, locations, legal descriptions,
+          historical notes, external references, status, and sensitivity levels.
+        </p>
+      </section>
+
+      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-semibold text-white">
+              Whenua Register
+            </h2>
+
+            <p className="mt-1 text-sm text-stone-400">
+              Live records pulled from the Supabase whenua_records table.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
+              {whenuaRecords.length} records
             </div>
 
-            <div className="flex flex-wrap gap-3">
-              <a
-                href="/whenua/new"
-                className="rounded-full bg-stone-100 px-5 py-3 text-sm font-semibold text-stone-950 transition hover:bg-white"
-              >
-                Add Whenua
-              </a>
-
-              <a
-                href="/documents"
-                className="rounded-full border border-stone-700 px-5 py-3 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
-              >
-                View Documents
-              </a>
-            </div>
+            <a
+              href="/whenua/new"
+              className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+            >
+              Add Whenua
+            </a>
           </div>
         </div>
 
-        <div className="grid gap-6 xl:grid-cols-[1fr_420px]">
-          <section className="overflow-hidden rounded-3xl border border-stone-800 bg-stone-900/60">
-            <div className="flex items-center justify-between border-b border-stone-800 px-6 py-5">
-              <div>
-                <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-                  Current records
-                </p>
+        {error ? (
+          <div className="mt-6 rounded-xl border border-red-900 bg-red-950/40 p-4 text-sm text-red-300">
+            <p className="font-semibold">Database error</p>
+            <pre className="mt-3 whitespace-pre-wrap">{error.message}</pre>
+          </div>
+        ) : whenuaRecords.length === 0 ? (
+          <div className="mt-6 rounded-xl border border-stone-800 bg-stone-950 p-6">
+            <h3 className="text-base font-semibold text-white">
+              No whenua records yet
+            </h3>
 
-                <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white">
-                  {whenuaRecords.length} whenua records
-                </h2>
-              </div>
+            <p className="mt-2 text-sm text-stone-400">
+              Add the first whenua record to begin building the land record
+              layer.
+            </p>
+          </div>
+        ) : (
+          <div className="mt-6 overflow-hidden rounded-2xl border border-stone-800">
+            <table className="w-full border-collapse text-left text-sm">
+              <thead className="bg-stone-950 text-stone-400">
+                <tr>
+                  <th className="px-4 py-3 font-medium">Title</th>
+                  <th className="px-4 py-3 font-medium">Block</th>
+                  <th className="px-4 py-3 font-medium">Location</th>
+                  <th className="px-4 py-3 font-medium">External Ref</th>
+                  <th className="px-4 py-3 font-medium">Status</th>
+                  <th className="px-4 py-3 font-medium">Sensitivity</th>
+                  <th className="px-4 py-3 font-medium">Open</th>
+                </tr>
+              </thead>
 
-              <a
-                href="/whenua/new"
-                className="rounded-full border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
-              >
-                Add record
-              </a>
-            </div>
-
-            {error ? (
-              <div className="p-6">
-                <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-5">
-                  <p className="font-semibold text-red-300">
-                    Supabase error while loading whenua records.
-                  </p>
-
-                  <p className="mt-3 text-sm leading-7 text-red-200/80">
-                    {error.message}
-                  </p>
-                </div>
-              </div>
-            ) : whenuaRecords.length === 0 ? (
-              <div className="p-6">
-                <div className="rounded-3xl border border-dashed border-stone-700 bg-stone-950 p-8 text-center">
-                  <h3 className="text-xl font-semibold text-white">
-                    No whenua records yet.
-                  </h3>
-
-                  <p className="mt-3 text-sm leading-7 text-stone-500">
-                    Add the first whenua record to begin the land record layer.
-                  </p>
-
-                  <a
-                    href="/whenua/new"
-                    className="mt-6 inline-flex rounded-full bg-stone-100 px-5 py-3 text-sm font-semibold text-stone-950 transition hover:bg-white"
-                  >
-                    Add First Whenua Record
-                  </a>
-                </div>
-              </div>
-            ) : (
-              <div className="divide-y divide-stone-800">
+              <tbody>
                 {whenuaRecords.map((record) => (
-                  <a
+                  <tr
                     key={record.id}
-                    href={`/whenua/${record.id}`}
-                    className="group grid gap-4 px-6 py-5 transition hover:bg-stone-900 xl:grid-cols-[1fr_170px_170px_120px]"
+                    className="border-t border-stone-800 bg-stone-900"
                   >
-                    <div>
-                      <h3 className="text-lg font-semibold text-white">
+                    <td className="px-4 py-4">
+                      <a
+                        href={`/whenua/${record.id}`}
+                        className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                      >
                         {record.title || "Untitled whenua record"}
-                      </h3>
+                      </a>
 
-                      <p className="mt-1 text-sm text-stone-500">
-                        {formatValue(record.block_name)}
-                        {record.location ? ` · ${record.location}` : ""}
+                      <p className="mt-1 font-mono text-xs text-stone-600">
+                        {record.id}
                       </p>
+                    </td>
 
-                      {record.external_reference ? (
-                        <p className="mt-2 font-mono text-xs text-stone-600">
-                          Ref: {record.external_reference}
-                        </p>
-                      ) : null}
-                    </div>
+                    <td className="px-4 py-4 text-stone-300">
+                      {formatValue(record.block_name)}
+                    </td>
 
-                    <div>
-                      <span
-                        className={`inline-flex rounded-full px-3 py-1 font-mono text-[11px] uppercase ${statusClass(
-                          record.status
-                        )}`}
+                    <td className="px-4 py-4 text-stone-300">
+                      {formatValue(record.location)}
+                    </td>
+
+                    <td className="px-4 py-4 text-stone-300">
+                      {formatValue(record.external_reference)}
+                    </td>
+
+                    <td className="px-4 py-4 text-stone-300">
+                      {formatValue(record.status)}
+                    </td>
+
+                    <td className="px-4 py-4 text-stone-300">
+                      {formatValue(record.sensitivity_level)}
+                    </td>
+
+                    <td className="px-4 py-4">
+                      <a
+                        href={`/whenua/${record.id}`}
+                        className="text-sm font-medium text-stone-300 underline-offset-4 transition hover:text-white hover:underline"
                       >
-                        {formatValue(record.status)}
-                      </span>
-
-                      <p className="mt-3 text-xs text-stone-600">
-                        {formatDate(record.created_at)}
-                      </p>
-                    </div>
-
-                    <div>
-                      <span
-                        className={`inline-flex rounded-full px-3 py-1 font-mono text-[11px] uppercase ${sensitivityClass(
-                          record.sensitivity_level
-                        )}`}
-                      >
-                        {formatValue(record.sensitivity_level)}
-                      </span>
-                    </div>
-
-                    <div className="text-sm font-semibold text-stone-500 transition group-hover:text-white xl:text-right">
-                      View →
-                    </div>
-                  </a>
+                        View record
+                      </a>
+                    </td>
+                  </tr>
                 ))}
-              </div>
-            )}
-          </section>
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
 
-          <aside className="grid gap-6">
-            <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-6">
-              <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-                Register status
-              </p>
+      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-semibold text-white">
+              Related Records
+            </h2>
 
-              <div className="mt-5 grid gap-3">
-                <div className="rounded-2xl border border-stone-800 bg-stone-950 p-4">
-                  <p className="font-mono text-xs uppercase tracking-[0.2em] text-stone-600">
-                    Total records
-                  </p>
+            <p className="mt-1 text-sm text-stone-400">
+              Useful pathways connected to whenua records.
+            </p>
+          </div>
 
-                  <p className="mt-3 text-3xl font-semibold text-white">
-                    {whenuaRecords.length}
-                  </p>
-                </div>
+          <div className="flex items-center gap-3">
+            <a
+              href="/whenua/new"
+              className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+            >
+              Add Whenua
+            </a>
 
-                <div className="rounded-2xl border border-stone-800 bg-stone-950 p-4">
-                  <p className="font-mono text-xs uppercase tracking-[0.2em] text-stone-600">
-                    Database
-                  </p>
+            <a
+              href="/documents"
+              className="rounded-xl border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
+            >
+              View Documents
+            </a>
+          </div>
+        </div>
 
-                  <p className="mt-3 text-sm font-semibold text-green-400">
-                    Supabase connected
-                  </p>
-                </div>
+        <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <a
+            href="/whenua/new"
+            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+          >
+            <h3 className="text-sm font-semibold text-white">Add Whenua</h3>
 
-                <div className="rounded-2xl border border-stone-800 bg-stone-950 p-4">
-                  <p className="font-mono text-xs uppercase tracking-[0.2em] text-stone-600">
-                    Schema
-                  </p>
+            <p className="mt-1 text-sm text-stone-400">
+              Create a new land record.
+            </p>
+          </a>
 
-                  <p className="mt-3 text-sm font-semibold text-stone-300">
-                    Actual fields aligned
-                  </p>
-                </div>
-              </div>
-            </div>
+          <a
+            href="/documents"
+            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+          >
+            <h3 className="text-sm font-semibold text-white">Documents</h3>
 
-            <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-6">
-              <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-                Related records
-              </p>
+            <p className="mt-1 text-sm text-stone-400">
+              Evidence, maps, legal records, letters, and supporting files.
+            </p>
+          </a>
 
-              <div className="mt-5 grid gap-3">
-                {relatedRecordLinks.map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    className="rounded-2xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
-                  >
-                    <p className="text-sm font-semibold text-white">
-                      {link.label}
-                    </p>
+          <a
+            href="/governance"
+            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+          >
+            <h3 className="text-sm font-semibold text-white">Governance</h3>
 
-                    <p className="mt-1 text-xs leading-5 text-stone-600">
-                      {link.description}
-                    </p>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </aside>
+            <p className="mt-1 text-sm text-stone-400">
+              Mandates, authority, decisions, and governance context.
+            </p>
+          </a>
+
+          <a
+            href="/marae"
+            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+          >
+            <h3 className="text-sm font-semibold text-white">Marae</h3>
+
+            <p className="mt-1 text-sm text-stone-400">
+              Marae records that may connect to whenua.
+            </p>
+          </a>
+
+          <a
+            href="/hui"
+            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+          >
+            <h3 className="text-sm font-semibold text-white">Hui</h3>
+
+            <p className="mt-1 text-sm text-stone-400">
+              Future hui records connected to whenua kaupapa.
+            </p>
+          </a>
+
+          <a
+            href="/decisions"
+            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+          >
+            <h3 className="text-sm font-semibold text-white">Decisions</h3>
+
+            <p className="mt-1 text-sm text-stone-400">
+              Future decisions created from whenua-related work.
+            </p>
+          </a>
+
+          <a
+            href="/tasks"
+            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+          >
+            <h3 className="text-sm font-semibold text-white">Tasks</h3>
+
+            <p className="mt-1 text-sm text-stone-400">
+              Future follow-up actions for whenua matters.
+            </p>
+          </a>
+
+          <a
+            href="/activity"
+            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+          >
+            <h3 className="text-sm font-semibold text-white">Activity</h3>
+
+            <p className="mt-1 text-sm text-stone-400">
+              Future record history and audit trail.
+            </p>
+          </a>
         </div>
       </section>
     </AppShell>
