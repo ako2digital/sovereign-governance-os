@@ -15,29 +15,6 @@ type WhakapapaRelationship = {
   person_b: LinkedPerson | null;
 };
 
-const relatedRecordLinks = [
-  {
-    label: "People Register",
-    href: "/people",
-    description: "The identity records used in whakapapa links.",
-  },
-  {
-    label: "Whenua",
-    href: "/whenua",
-    description: "Future whenua connections through people and whakapapa.",
-  },
-  {
-    label: "Documents",
-    href: "/documents",
-    description: "Future source records, evidence, and supporting files.",
-  },
-  {
-    label: "Activity",
-    href: "/activity",
-    description: "Future audit trail for relationship changes.",
-  },
-];
-
 function formatDate(date: string) {
   return new Date(date).toLocaleDateString("en-NZ", {
     day: "2-digit",
@@ -56,218 +33,240 @@ export default async function WhakapapaPage() {
       person_b_id,
       relationship_type,
       created_at,
-      person_a:person_a_id(full_name),
-      person_b:person_b_id(full_name)
+      person_a:person_a_id (
+        full_name
+      ),
+      person_b:person_b_id (
+        full_name
+      )
     `
     )
     .order("created_at", { ascending: false });
 
-  const relationships = (data ?? []) as unknown as WhakapapaRelationship[];
+  const relationshipRecords =
+    (data ?? []) as unknown as WhakapapaRelationship[];
 
   return (
-    <AppShell title="Whakapapa" eyebrow="Core Records / Relationships">
-      <section className="grid gap-6">
-        <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-8">
-          <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
-            <div>
-              <a
-                href="/whakapapa"
-                className="inline-flex rounded-full border border-stone-700 bg-stone-950 px-4 py-2 font-mono text-xs uppercase tracking-[0.25em] text-stone-400 transition hover:border-stone-500 hover:text-white"
-              >
-                Relationship register
-              </a>
+    <AppShell title="Whakapapa" eyebrow="Core Records">
+      <section className="rounded-3xl border border-stone-800 bg-stone-900/50 p-8">
+        <p className="text-xs uppercase tracking-[0.25em] text-stone-500">
+          Whakapapa Register
+        </p>
 
-              <h1 className="mt-6 text-4xl font-semibold tracking-tight text-white md:text-5xl">
-                Whakapapa links people into relational structure.
-              </h1>
+        <h1 className="mt-3 text-3xl font-semibold text-white">
+          Whakapapa
+        </h1>
 
-              <p className="mt-5 max-w-3xl text-base leading-8 text-stone-400">
-                A whakapapa record connects one person to another. These links
-                become the relationship layer for identity, history, authority,
-                whenua, documents, and future governance context.
-              </p>
+        <p className="mt-4 max-w-2xl text-stone-400">
+          Manage relationship records between people. Each whakapapa record
+          links two identity records together and can later connect to source
+          documents, whenua, governance context, and activity history.
+        </p>
+      </section>
+
+      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-semibold text-white">
+              Whakapapa Register
+            </h2>
+
+            <p className="mt-1 text-sm text-stone-400">
+              Live records pulled from the Supabase whakapapa_relationships
+              table.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
+              {relationshipRecords.length} records
             </div>
 
-            <div className="flex flex-wrap gap-3">
-              <a
-                href="/whakapapa/new"
-                className="rounded-full bg-stone-100 px-5 py-3 text-sm font-semibold text-stone-950 transition hover:bg-white"
-              >
-                Add Relationship
-              </a>
-
-              <a
-                href="/people"
-                className="rounded-full border border-stone-700 px-5 py-3 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
-              >
-                View People
-              </a>
-            </div>
+            <a
+              href="/whakapapa/new"
+              className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+            >
+              Add Relationship
+            </a>
           </div>
         </div>
 
-        <div className="grid gap-6 xl:grid-cols-[1fr_420px]">
-          <section className="overflow-hidden rounded-3xl border border-stone-800 bg-stone-900/60">
-            <div className="flex items-center justify-between border-b border-stone-800 px-6 py-5">
-              <div>
-                <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-                  Current relationships
-                </p>
+        {error ? (
+          <div className="mt-6 rounded-xl border border-red-900 bg-red-950/40 p-4 text-sm text-red-300">
+            <p className="font-semibold">Database error</p>
+            <pre className="mt-3 whitespace-pre-wrap">{error.message}</pre>
+          </div>
+        ) : relationshipRecords.length === 0 ? (
+          <div className="mt-6 rounded-xl border border-stone-800 bg-stone-950 p-6">
+            <h3 className="text-base font-semibold text-white">
+              No whakapapa records yet
+            </h3>
 
-                <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white">
-                  {relationships.length} whakapapa links recorded
-                </h2>
-              </div>
+            <p className="mt-2 text-sm text-stone-400">
+              Add the first relationship record to begin building the whakapapa
+              layer.
+            </p>
+          </div>
+        ) : (
+          <div className="mt-6 overflow-hidden rounded-2xl border border-stone-800">
+            <table className="w-full border-collapse text-left text-sm">
+              <thead className="bg-stone-950 text-stone-400">
+                <tr>
+                  <th className="px-4 py-3 font-medium">First Person</th>
+                  <th className="px-4 py-3 font-medium">Relationship</th>
+                  <th className="px-4 py-3 font-medium">Second Person</th>
+                  <th className="px-4 py-3 font-medium">Created</th>
+                  <th className="px-4 py-3 font-medium">Open</th>
+                </tr>
+              </thead>
 
-              <a
-                href="/whakapapa/new"
-                className="rounded-full border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
-              >
-                Add record
-              </a>
-            </div>
-
-            {error ? (
-              <div className="p-6">
-                <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-5">
-                  <p className="font-semibold text-red-300">
-                    Supabase error while loading whakapapa records.
-                  </p>
-
-                  <p className="mt-3 text-sm leading-7 text-red-200/80">
-                    {error.message}
-                  </p>
-                </div>
-              </div>
-            ) : relationships.length === 0 ? (
-              <div className="p-6">
-                <div className="rounded-3xl border border-dashed border-stone-700 bg-stone-950 p-8 text-center">
-                  <h3 className="text-xl font-semibold text-white">
-                    No whakapapa relationships yet.
-                  </h3>
-
-                  <p className="mt-3 text-sm leading-7 text-stone-500">
-                    Add the first relationship to begin the relational layer.
-                  </p>
-
-                  <a
-                    href="/whakapapa/new"
-                    className="mt-6 inline-flex rounded-full bg-stone-100 px-5 py-3 text-sm font-semibold text-stone-950 transition hover:bg-white"
+              <tbody>
+                {relationshipRecords.map((record) => (
+                  <tr
+                    key={record.id}
+                    className="border-t border-stone-800 bg-stone-900"
                   >
-                    Add First Relationship
-                  </a>
-                </div>
-              </div>
-            ) : (
-              <div className="divide-y divide-stone-800">
-                {relationships.map((relationship) => (
-                  <div
-                    key={relationship.id}
-                    className="grid gap-4 px-6 py-5 transition hover:bg-stone-900 lg:grid-cols-[1fr_180px_170px]"
-                  >
-                    <div>
-                      <h3 className="text-lg font-semibold text-white">
-                        <a
-                          href={`/people/${relationship.person_a_id}`}
-                          className="underline decoration-stone-700 underline-offset-4 transition hover:text-stone-300 hover:decoration-stone-300"
-                        >
-                          {relationship.person_a?.full_name ?? "Unknown person"}
-                        </a>
+                    <td className="px-4 py-4">
+                      <a
+                        href={`/people/${record.person_a_id}`}
+                        className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                      >
+                        {record.person_a?.full_name || "Unknown person"}
+                      </a>
+                    </td>
 
-                        <span className="text-stone-500"> → </span>
+                    <td className="px-4 py-4 text-stone-300">
+                      {record.relationship_type}
+                    </td>
 
-                        <a
-                          href={`/people/${relationship.person_b_id}`}
-                          className="underline decoration-stone-700 underline-offset-4 transition hover:text-stone-300 hover:decoration-stone-300"
-                        >
-                          {relationship.person_b?.full_name ?? "Unknown person"}
-                        </a>
-                      </h3>
+                    <td className="px-4 py-4">
+                      <a
+                        href={`/people/${record.person_b_id}`}
+                        className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                      >
+                        {record.person_b?.full_name || "Unknown person"}
+                      </a>
+                    </td>
 
-                      <p className="mt-2 font-mono text-xs uppercase tracking-[0.2em] text-stone-600">
-                        {relationship.relationship_type}
-                      </p>
-                    </div>
+                    <td className="px-4 py-4 text-stone-300">
+                      {formatDate(record.created_at)}
+                    </td>
 
-                    <div className="text-sm text-stone-500">
-                      Created {formatDate(relationship.created_at)}
-                    </div>
-
-                    <a
-                      href={`/whakapapa/${relationship.id}`}
-                      className="text-sm font-semibold text-stone-500 transition hover:text-white lg:text-right"
-                    >
-                      View relationship →
-                    </a>
-                  </div>
+                    <td className="px-4 py-4">
+                      <a
+                        href={`/whakapapa/${record.id}`}
+                        className="text-sm font-medium text-stone-300 underline-offset-4 transition hover:text-white hover:underline"
+                      >
+                        View relationship
+                      </a>
+                    </td>
+                  </tr>
                 ))}
-              </div>
-            )}
-          </section>
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
 
-          <aside className="grid gap-6">
-            <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-6">
-              <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-                Register status
-              </p>
+      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-semibold text-white">
+              Related Records
+            </h2>
 
-              <div className="mt-5 grid gap-3">
-                <div className="rounded-2xl border border-stone-800 bg-stone-950 p-4">
-                  <p className="font-mono text-xs uppercase tracking-[0.2em] text-stone-600">
-                    Total relationships
-                  </p>
+            <p className="mt-1 text-sm text-stone-400">
+              Useful pathways connected to whakapapa records.
+            </p>
+          </div>
 
-                  <p className="mt-3 text-3xl font-semibold text-white">
-                    {relationships.length}
-                  </p>
-                </div>
+          <div className="flex items-center gap-3">
+            <a
+              href="/people"
+              className="rounded-xl border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
+            >
+              View People
+            </a>
 
-                <div className="rounded-2xl border border-stone-800 bg-stone-950 p-4">
-                  <p className="font-mono text-xs uppercase tracking-[0.2em] text-stone-600">
-                    Database
-                  </p>
+            <a
+              href="/whakapapa/new"
+              className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+            >
+              Add Relationship
+            </a>
+          </div>
+        </div>
 
-                  <p className="mt-3 text-sm font-semibold text-green-400">
-                    Supabase connected
-                  </p>
-                </div>
+        <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <a
+            href="/people"
+            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+          >
+            <h3 className="text-sm font-semibold text-white">
+              People Register
+            </h3>
 
-                <div className="rounded-2xl border border-stone-800 bg-stone-950 p-4">
-                  <p className="font-mono text-xs uppercase tracking-[0.2em] text-stone-600">
-                    Record type
-                  </p>
+            <p className="mt-1 text-sm text-stone-400">
+              View the identity records used in relationships.
+            </p>
+          </a>
 
-                  <p className="mt-3 text-sm font-semibold text-stone-300">
-                    Person-to-person relationship
-                  </p>
-                </div>
-              </div>
-            </div>
+          <a
+            href="/whakapapa/new"
+            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+          >
+            <h3 className="text-sm font-semibold text-white">
+              Add Relationship
+            </h3>
 
-            <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-6">
-              <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-                Related records
-              </p>
+            <p className="mt-1 text-sm text-stone-400">
+              Create a new connection between two people.
+            </p>
+          </a>
 
-              <div className="mt-5 grid gap-3">
-                {relatedRecordLinks.map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    className="rounded-2xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
-                  >
-                    <p className="text-sm font-semibold text-white">
-                      {link.label}
-                    </p>
+          <a
+            href="/whenua"
+            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+          >
+            <h3 className="text-sm font-semibold text-white">Whenua</h3>
 
-                    <p className="mt-1 text-xs leading-5 text-stone-600">
-                      {link.description}
-                    </p>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </aside>
+            <p className="mt-1 text-sm text-stone-400">
+              Future whenua connections through whakapapa lines.
+            </p>
+          </a>
+
+          <a
+            href="/documents"
+            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+          >
+            <h3 className="text-sm font-semibold text-white">Documents</h3>
+
+            <p className="mt-1 text-sm text-stone-400">
+              Future source records and supporting evidence.
+            </p>
+          </a>
+
+          <a
+            href="/governance"
+            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+          >
+            <h3 className="text-sm font-semibold text-white">Governance</h3>
+
+            <p className="mt-1 text-sm text-stone-400">
+              Future authority and decision context.
+            </p>
+          </a>
+
+          <a
+            href="/activity"
+            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+          >
+            <h3 className="text-sm font-semibold text-white">Activity</h3>
+
+            <p className="mt-1 text-sm text-stone-400">
+              Future record history and audit trail.
+            </p>
+          </a>
         </div>
       </section>
     </AppShell>
