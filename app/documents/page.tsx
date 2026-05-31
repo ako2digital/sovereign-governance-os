@@ -1,81 +1,80 @@
+import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 import { supabase } from "@/lib/supabaseClient";
 
 type DocumentRecord = {
   id: string;
-  title: string;
-  document_type: string | null;
-  description: string | null;
-  file_url: string | null;
-  external_reference: string | null;
-  sensitivity_level: string | null;
-  status: string | null;
-  created_at: string;
-  related_person: {
-    full_name: string;
-  } | null;
-  related_whenua: {
-    title: string;
-  } | null;
-  related_marae: {
-    name: string;
-  } | null;
-  related_hui: {
-    title: string;
-  } | null;
-  related_decision: {
-    title: string;
-  } | null;
+  title?: string | null;
+  name?: string | null;
+  document_type?: string | null;
+  file_url?: string | null;
+  url?: string | null;
+  storage_path?: string | null;
+  description?: string | null;
+  summary?: string | null;
+  notes?: string | null;
+  status?: string | null;
+  sensitivity_level?: string | null;
+  related_hui_id?: string | null;
+  related_whenua_id?: string | null;
+  related_marae_id?: string | null;
+  created_at?: string | null;
 };
+
+function formatValue(value?: string | null) {
+  if (!value) {
+    return "—";
+  }
+
+  return value;
+}
+
+function formatDate(date?: string | null) {
+  if (!date) {
+    return "—";
+  }
+
+  return new Date(date).toLocaleDateString("en-NZ", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function documentsPath(id: string) {
+  return `/documents/${id}`;
+}
+
+function getDocumentTitle(record: DocumentRecord) {
+  return record.title || record.name || "Untitled document record";
+}
+
+function getDocumentReference(record: DocumentRecord) {
+  return record.file_url || record.url || record.storage_path || null;
+}
 
 export default async function DocumentsPage() {
   const { data, error } = await supabase
     .from("documents")
-    .select(
-      `
-      id,
-      title,
-      document_type,
-      description,
-      file_url,
-      external_reference,
-      sensitivity_level,
-      status,
-      created_at,
-      related_person:related_person_id (
-        full_name
-      ),
-      related_whenua:related_whenua_id (
-        title
-      ),
-      related_marae:related_marae_id (
-        name
-      ),
-      related_hui:related_hui_id (
-        title
-      ),
-      related_decision:related_decision_id (
-        title
-      )
-    `
-    )
+    .select("*")
     .order("created_at", { ascending: false });
 
-  const documentRecords = (data ?? []) as unknown as DocumentRecord[];
+  const documentRecords = (data ?? []) as DocumentRecord[];
 
   return (
-    <AppShell title="Documents" eyebrow="MVP Module">
+    <AppShell title="Documents" eyebrow="Core Records">
       <section className="rounded-3xl border border-stone-800 bg-stone-900/50 p-8">
         <p className="text-xs uppercase tracking-[0.25em] text-stone-500">
-          Document Register
+          Documents Register
         </p>
 
-        <h1 className="mt-3 text-3xl font-semibold text-white">Documents</h1>
+        <h1 className="mt-3 text-3xl font-semibold text-white">
+          Documents
+        </h1>
 
         <p className="mt-4 max-w-2xl text-stone-400">
-          Store document references, file links, evidence records, external
-          references, and relational links across people, whenua, marae, hui,
-          and decisions.
+          Manage document records, file references, document types, status,
+          sensitivity levels, summaries, and confirmed relational references.
         </p>
       </section>
 
@@ -85,6 +84,7 @@ export default async function DocumentsPage() {
             <h2 className="text-lg font-semibold text-white">
               Documents Register
             </h2>
+
             <p className="mt-1 text-sm text-stone-400">
               Live records pulled from the Supabase documents table.
             </p>
@@ -95,12 +95,12 @@ export default async function DocumentsPage() {
               {documentRecords.length} records
             </div>
 
-            <a
+            <Link
               href="/documents/new"
               className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
             >
               Add Document
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -114,82 +114,101 @@ export default async function DocumentsPage() {
             <h3 className="text-base font-semibold text-white">
               No document records yet
             </h3>
+
             <p className="mt-2 text-sm text-stone-400">
-              Add the first document record to begin testing document and
-              evidence tracking.
+              Add the first document record to begin building the documentation
+              and archive layer.
             </p>
+
+            <div className="mt-5">
+              <Link
+                href="/documents/new"
+                className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+              >
+                Add First Document
+              </Link>
+            </div>
           </div>
         ) : (
-          <div className="mt-6 overflow-hidden rounded-2xl border border-stone-800">
-            <table className="w-full border-collapse text-left text-sm">
+          <div className="mt-6 overflow-x-auto rounded-2xl border border-stone-800">
+            <table className="w-full min-w-[1120px] border-collapse text-left text-sm">
               <thead className="bg-stone-950 text-stone-400">
                 <tr>
                   <th className="px-4 py-3 font-medium">Title</th>
                   <th className="px-4 py-3 font-medium">Type</th>
-                  <th className="px-4 py-3 font-medium">Related To</th>
-                  <th className="px-4 py-3 font-medium">Sensitivity</th>
                   <th className="px-4 py-3 font-medium">Status</th>
-                  <th className="px-4 py-3 font-medium">File / Reference</th>
+                  <th className="px-4 py-3 font-medium">Sensitivity</th>
+                  <th className="px-4 py-3 font-medium">Reference</th>
+                  <th className="px-4 py-3 font-medium">Linked Hui ID</th>
+                  <th className="px-4 py-3 font-medium">Record ID</th>
+                  <th className="px-4 py-3 font-medium">Open</th>
                 </tr>
               </thead>
 
               <tbody>
-                {documentRecords.map((record) => {
-                  const relatedTo =
-                    record.related_person?.full_name ||
-                    record.related_whenua?.title ||
-                    record.related_marae?.name ||
-                    record.related_hui?.title ||
-                    record.related_decision?.title ||
-                    "—";
+                {documentRecords.map((record) => (
+                  <tr
+                    key={record.id}
+                    className="border-t border-stone-800 bg-stone-900 transition hover:bg-stone-950"
+                  >
+                    <td className="px-4 py-4">
+                      <Link
+                        href={documentsPath(record.id)}
+                        className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                      >
+                        {getDocumentTitle(record)}
+                      </Link>
 
-                  return (
-                    <tr
-                      key={record.id}
-                      className="border-t border-stone-800 bg-stone-900"
-                    >
-                      <td className="px-4 py-4">
-                        <a
-                          href={`/documents/${record.id}`}
-                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
-                        >
-                          {record.title}
-                        </a>
-                      </td>
+                      {record.summary ? (
+                        <p className="mt-1 line-clamp-2 max-w-md text-xs leading-5 text-stone-500">
+                          {record.summary}
+                        </p>
+                      ) : null}
+                    </td>
 
-                      <td className="px-4 py-4 text-stone-300">
-                        {record.document_type || "—"}
-                      </td>
+                    <td className="px-4 py-4 text-stone-300">
+                      {formatValue(record.document_type)}
+                    </td>
 
-                      <td className="px-4 py-4 text-stone-300">
-                        {relatedTo}
-                      </td>
+                    <td className="px-4 py-4 text-stone-300">
+                      {formatValue(record.status)}
+                    </td>
 
-                      <td className="px-4 py-4 text-stone-300">
-                        {record.sensitivity_level || "standard"}
-                      </td>
+                    <td className="px-4 py-4 text-stone-300">
+                      {formatValue(record.sensitivity_level)}
+                    </td>
 
-                      <td className="px-4 py-4 text-stone-300">
-                        {record.status || "active"}
-                      </td>
+                    <td className="px-4 py-4">
+                      <span className="line-clamp-2 max-w-xs break-all font-mono text-xs text-stone-500">
+                        {formatValue(getDocumentReference(record))}
+                      </span>
+                    </td>
 
-                      <td className="px-4 py-4 text-stone-300">
-                        {record.file_url ? (
-                          <a
-                            href={record.file_url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="text-stone-100 underline underline-offset-4"
-                          >
-                            Open file
-                          </a>
-                        ) : (
-                          record.external_reference || "—"
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
+                    <td className="px-4 py-4">
+                      <span className="font-mono text-xs text-stone-500">
+                        {formatValue(record.related_hui_id)}
+                      </span>
+                    </td>
+
+                    <td className="px-4 py-4">
+                      <Link
+                        href={documentsPath(record.id)}
+                        className="font-mono text-xs text-stone-500 underline-offset-4 transition hover:text-white hover:underline"
+                      >
+                        {record.id}
+                      </Link>
+                    </td>
+
+                    <td className="px-4 py-4">
+                      <Link
+                        href={documentsPath(record.id)}
+                        className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                      >
+                        View record
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
