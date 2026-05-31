@@ -1,400 +1,509 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
+import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 import { supabase } from "@/lib/supabaseClient";
 
 type PersonRecord = {
   id: string;
-  full_name: string;
+  full_name: string | null;
+  created_at?: string | null;
 };
 
 type HuiRecord = {
   id: string;
-  title: string;
+  title?: string | null;
+  date?: string | null;
+  hui_date?: string | null;
+  location?: string | null;
+  status?: string | null;
+  created_at?: string | null;
 };
 
-type DecisionRecord = {
-  id: string;
-  title: string;
-};
+async function createTask(formData: FormData) {
+  "use server";
 
-type DocumentRecord = {
-  id: string;
-  title: string;
-};
+  const title = String(formData.get("title") || "").trim();
+  const description = String(formData.get("description") || "").trim();
+  const status = String(formData.get("status") || "").trim();
+  const priority = String(formData.get("priority") || "").trim();
+  const dueDate = String(formData.get("due_date") || "").trim();
+  const assignedToId = String(formData.get("assigned_to_id") || "").trim();
+  const relatedHuiId = String(formData.get("related_hui_id") || "").trim();
 
-type WhenuaRecord = {
-  id: string;
-  title: string;
-};
-
-export default function NewTaskRecordPage() {
-  const router = useRouter();
-
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [status, setStatus] = useState("todo");
-  const [priority, setPriority] = useState("normal");
-  const [dueDate, setDueDate] = useState("");
-
-  const [assignedToId, setAssignedToId] = useState("");
-  const [relatedHuiId, setRelatedHuiId] = useState("");
-  const [relatedDecisionId, setRelatedDecisionId] = useState("");
-  const [relatedDocumentId, setRelatedDocumentId] = useState("");
-  const [relatedWhenuaId, setRelatedWhenuaId] = useState("");
-
-  const [peopleRecords, setPeopleRecords] = useState<PersonRecord[]>([]);
-  const [huiRecords, setHuiRecords] = useState<HuiRecord[]>([]);
-  const [decisionRecords, setDecisionRecords] = useState<DecisionRecord[]>([]);
-  const [documentRecords, setDocumentRecords] = useState<DocumentRecord[]>([]);
-  const [whenuaRecords, setWhenuaRecords] = useState<WhenuaRecord[]>([]);
-
-  const [isLoadingRelations, setIsLoadingRelations] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-
-  useEffect(() => {
-    async function loadRelations() {
-      const [
-        peopleResult,
-        huiResult,
-        decisionResult,
-        documentResult,
-        whenuaResult,
-      ] = await Promise.all([
-        supabase.from("people").select("id, full_name").order("full_name", {
-          ascending: true,
-        }),
-        supabase.from("hui").select("id, title").order("title", {
-          ascending: true,
-        }),
-        supabase.from("decisions").select("id, title").order("title", {
-          ascending: true,
-        }),
-        supabase.from("documents").select("id, title").order("title", {
-          ascending: true,
-        }),
-        supabase.from("whenua_records").select("id, title").order("title", {
-          ascending: true,
-        }),
-      ]);
-
-      if (peopleResult.error) {
-        setErrorMessage(peopleResult.error.message);
-        setIsLoadingRelations(false);
-        return;
-      }
-
-      if (huiResult.error) {
-        setErrorMessage(huiResult.error.message);
-        setIsLoadingRelations(false);
-        return;
-      }
-
-      if (decisionResult.error) {
-        setErrorMessage(decisionResult.error.message);
-        setIsLoadingRelations(false);
-        return;
-      }
-
-      if (documentResult.error) {
-        setErrorMessage(documentResult.error.message);
-        setIsLoadingRelations(false);
-        return;
-      }
-
-      if (whenuaResult.error) {
-        setErrorMessage(whenuaResult.error.message);
-        setIsLoadingRelations(false);
-        return;
-      }
-
-      setPeopleRecords((peopleResult.data ?? []) as PersonRecord[]);
-      setHuiRecords((huiResult.data ?? []) as HuiRecord[]);
-      setDecisionRecords((decisionResult.data ?? []) as DecisionRecord[]);
-      setDocumentRecords((documentResult.data ?? []) as DocumentRecord[]);
-      setWhenuaRecords((whenuaResult.data ?? []) as WhenuaRecord[]);
-      setIsLoadingRelations(false);
-    }
-
-    loadRelations();
-  }, []);
-
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setErrorMessage("");
-
-    if (!title.trim()) {
-      setErrorMessage("Title is required.");
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    const { error } = await supabase.from("tasks").insert({
-      title: title.trim(),
-      description: description.trim() || null,
-      status,
-      priority,
-      due_date: dueDate || null,
-      assigned_to_id: assignedToId || null,
-      related_hui_id: relatedHuiId || null,
-      related_decision_id: relatedDecisionId || null,
-      related_document_id: relatedDocumentId || null,
-      related_whenua_id: relatedWhenuaId || null,
-    });
-
-    setIsSubmitting(false);
-
-    if (error) {
-      setErrorMessage(error.message);
-      return;
-    }
-
-    router.push("/tasks");
-    router.refresh();
+  if (!title) {
+    return;
   }
 
+  const { error } = await supabase.from("tasks").insert({
+    title,
+    description: description || null,
+    status: status || null,
+    priority: priority || null,
+    due_date: dueDate || null,
+    assigned_to_id: assignedToId || null,
+    related_hui_id: relatedHuiId || null,
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  redirect("/tasks");
+}
+
+function formatValue(value?: string | null) {
+  if (!value) {
+    return "—";
+  }
+
+  return value;
+}
+
+function formatDate(date?: string | null) {
+  if (!date) {
+    return "—";
+  }
+
+  return new Date(date).toLocaleDateString("en-NZ", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function personPath(id: string) {
+  return `/people/${id}`;
+}
+
+function huiPath(id: string) {
+  return `/hui/${id}`;
+}
+
+function getPersonName(record: PersonRecord) {
+  return record.full_name || "Unnamed person";
+}
+
+function getHuiTitle(record: HuiRecord) {
+  return record.title || "Untitled hui record";
+}
+
+function getHuiDate(record: HuiRecord) {
+  return record.hui_date || record.date || null;
+}
+
+export default async function AddTaskPage() {
+  const { data: peopleData, error: peopleError } = await supabase
+    .from("people")
+    .select(
+      `
+      id,
+      full_name,
+      created_at
+    `
+    )
+    .order("full_name", { ascending: true });
+
+  const { data: huiData, error: huiError } = await supabase
+    .from("hui")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  const peopleRecords = (peopleData ?? []) as PersonRecord[];
+  const huiRecords = (huiData ?? []) as HuiRecord[];
+
   return (
-    <AppShell title="Add Task Record" eyebrow="Tasks Module">
+    <AppShell title="Add Task" eyebrow="Tasks Module">
       <section className="rounded-3xl border border-stone-800 bg-stone-900/50 p-8">
         <p className="text-xs uppercase tracking-[0.25em] text-stone-500">
-          Create Task Record
+          New Task Record
         </p>
 
-        <h1 className="mt-3 text-3xl font-semibold text-white">
-          Add Task Record
-        </h1>
+        <h1 className="mt-3 text-3xl font-semibold text-white">Add Task</h1>
 
         <p className="mt-4 max-w-2xl text-stone-400">
-          Create an action item connected to people, hui, decisions, documents,
-          or whenua.
+          Create a task record with its title, description, status, priority,
+          due date, optional assigned person, and optional hui reference.
         </p>
       </section>
 
-      <form
-        onSubmit={handleSubmit}
-        className="mt-8 max-w-4xl rounded-2xl border border-stone-800 bg-stone-900 p-6"
-      >
-        <div className="grid gap-5">
-          <label className="grid gap-2">
-            <span className="text-sm font-medium text-stone-200">Title</span>
-            <input
-              value={title}
-              onChange={(event) => setTitle(event.target.value)}
-              className="rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-stone-100 outline-none focus:border-stone-500"
-              placeholder="Example: Follow up whenua document"
-            />
-          </label>
+      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-semibold text-white">Task Details</h2>
 
-          <div className="grid gap-5 md:grid-cols-4">
-            <label className="grid gap-2">
-              <span className="text-sm font-medium text-stone-200">
-                Status
-              </span>
-              <select
-                value={status}
-                onChange={(event) => setStatus(event.target.value)}
-                className="rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-stone-100 outline-none focus:border-stone-500"
-              >
-                <option value="todo">Todo</option>
-                <option value="in_progress">In progress</option>
-                <option value="blocked">Blocked</option>
-                <option value="done">Done</option>
-                <option value="archived">Archived</option>
-              </select>
+            <p className="mt-1 text-sm text-stone-400">
+              Enter the confirmed task information. Only the title is required
+              at this stage.
+            </p>
+          </div>
+
+          <Link
+            href="/tasks"
+            className="rounded-xl border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
+          >
+            Back to Tasks
+          </Link>
+        </div>
+
+        {peopleError || huiError ? (
+          <div className="mt-6 grid gap-4">
+            {peopleError ? (
+              <div className="rounded-xl border border-red-900 bg-red-950/40 p-4 text-sm text-red-300">
+                <p className="font-semibold">People database error</p>
+                <pre className="mt-3 whitespace-pre-wrap">
+                  {peopleError.message}
+                </pre>
+              </div>
+            ) : null}
+
+            {huiError ? (
+              <div className="rounded-xl border border-red-900 bg-red-950/40 p-4 text-sm text-red-300">
+                <p className="font-semibold">Hui database error</p>
+                <pre className="mt-3 whitespace-pre-wrap">
+                  {huiError.message}
+                </pre>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+
+        <form action={createTask} className="mt-6 grid gap-5">
+          <div>
+            <label
+              htmlFor="title"
+              className="text-sm font-medium text-stone-300"
+            >
+              Title
             </label>
 
-            <label className="grid gap-2">
-              <span className="text-sm font-medium text-stone-200">
-                Priority
-              </span>
-              <select
-                value={priority}
-                onChange={(event) => setPriority(event.target.value)}
-                className="rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-stone-100 outline-none focus:border-stone-500"
+            <input
+              id="title"
+              name="title"
+              type="text"
+              required
+              placeholder="Example: Prepare draft agenda for next hui"
+              className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="description"
+              className="text-sm font-medium text-stone-300"
+            >
+              Description
+            </label>
+
+            <textarea
+              id="description"
+              name="description"
+              rows={6}
+              placeholder="Enter task details, expected outcome, context, or follow-up notes"
+              className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+            />
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-3">
+            <div>
+              <label
+                htmlFor="status"
+                className="text-sm font-medium text-stone-300"
               >
+                Status
+              </label>
+
+              <select
+                id="status"
+                name="status"
+                defaultValue=""
+                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+              >
+                <option value="">Select status</option>
+                <option value="todo">To Do</option>
+                <option value="in progress">In Progress</option>
+                <option value="blocked">Blocked</option>
+                <option value="completed">Completed</option>
+                <option value="archived">Archived</option>
+              </select>
+            </div>
+
+            <div>
+              <label
+                htmlFor="priority"
+                className="text-sm font-medium text-stone-300"
+              >
+                Priority
+              </label>
+
+              <select
+                id="priority"
+                name="priority"
+                defaultValue=""
+                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+              >
+                <option value="">Select priority</option>
                 <option value="low">Low</option>
-                <option value="normal">Normal</option>
+                <option value="medium">Medium</option>
                 <option value="high">High</option>
                 <option value="urgent">Urgent</option>
               </select>
-            </label>
+            </div>
 
-            <label className="grid gap-2">
-              <span className="text-sm font-medium text-stone-200">
-                Assigned to
-              </span>
-              <select
-                value={assignedToId}
-                onChange={(event) => setAssignedToId(event.target.value)}
-                className="rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-stone-100 outline-none focus:border-stone-500"
-                disabled={isLoadingRelations}
+            <div>
+              <label
+                htmlFor="due_date"
+                className="text-sm font-medium text-stone-300"
               >
-                <option value="">
-                  {isLoadingRelations ? "Loading people..." : "None"}
-                </option>
+                Due Date
+              </label>
 
-                {peopleRecords.map((record) => (
-                  <option key={record.id} value={record.id}>
-                    {record.full_name}
+              <input
+                id="due_date"
+                name="due_date"
+                type="date"
+                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+              />
+            </div>
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-2">
+            <div>
+              <label
+                htmlFor="assigned_to_id"
+                className="text-sm font-medium text-stone-300"
+              >
+                Assigned Person
+              </label>
+
+              <select
+                id="assigned_to_id"
+                name="assigned_to_id"
+                defaultValue=""
+                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+              >
+                <option value="">No assigned person</option>
+
+                {peopleRecords.map((person) => (
+                  <option key={person.id} value={person.id}>
+                    {getPersonName(person)}
                   </option>
                 ))}
               </select>
-            </label>
+            </div>
 
-            <label className="grid gap-2">
-              <span className="text-sm font-medium text-stone-200">
-                Due date
-              </span>
-              <input
-                type="date"
-                value={dueDate}
-                onChange={(event) => setDueDate(event.target.value)}
-                className="rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-stone-100 outline-none focus:border-stone-500"
-              />
-            </label>
-          </div>
-
-          <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
-            <h2 className="text-sm font-semibold text-stone-100">
-              Related records
-            </h2>
-
-            <p className="mt-1 text-sm text-stone-500">
-              Optional links. Select the records this task relates to.
-            </p>
-
-            <div className="mt-5 grid gap-5 md:grid-cols-2">
-              <label className="grid gap-2">
-                <span className="text-sm font-medium text-stone-200">
-                  Related hui
-                </span>
-                <select
-                  value={relatedHuiId}
-                  onChange={(event) => setRelatedHuiId(event.target.value)}
-                  className="rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-stone-100 outline-none focus:border-stone-500"
-                  disabled={isLoadingRelations}
-                >
-                  <option value="">
-                    {isLoadingRelations ? "Loading hui..." : "None"}
-                  </option>
-
-                  {huiRecords.map((record) => (
-                    <option key={record.id} value={record.id}>
-                      {record.title}
-                    </option>
-                  ))}
-                </select>
+            <div>
+              <label
+                htmlFor="related_hui_id"
+                className="text-sm font-medium text-stone-300"
+              >
+                Related Hui
               </label>
 
-              <label className="grid gap-2">
-                <span className="text-sm font-medium text-stone-200">
-                  Related decision
-                </span>
-                <select
-                  value={relatedDecisionId}
-                  onChange={(event) => setRelatedDecisionId(event.target.value)}
-                  className="rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-stone-100 outline-none focus:border-stone-500"
-                  disabled={isLoadingRelations}
-                >
-                  <option value="">
-                    {isLoadingRelations ? "Loading decisions..." : "None"}
+              <select
+                id="related_hui_id"
+                name="related_hui_id"
+                defaultValue=""
+                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+              >
+                <option value="">No related hui</option>
+
+                {huiRecords.map((hui) => (
+                  <option key={hui.id} value={hui.id}>
+                    {getHuiTitle(hui)}
                   </option>
-
-                  {decisionRecords.map((record) => (
-                    <option key={record.id} value={record.id}>
-                      {record.title}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <label className="grid gap-2">
-                <span className="text-sm font-medium text-stone-200">
-                  Related document
-                </span>
-                <select
-                  value={relatedDocumentId}
-                  onChange={(event) => setRelatedDocumentId(event.target.value)}
-                  className="rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-stone-100 outline-none focus:border-stone-500"
-                  disabled={isLoadingRelations}
-                >
-                  <option value="">
-                    {isLoadingRelations ? "Loading documents..." : "None"}
-                  </option>
-
-                  {documentRecords.map((record) => (
-                    <option key={record.id} value={record.id}>
-                      {record.title}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <label className="grid gap-2">
-                <span className="text-sm font-medium text-stone-200">
-                  Related whenua
-                </span>
-                <select
-                  value={relatedWhenuaId}
-                  onChange={(event) => setRelatedWhenuaId(event.target.value)}
-                  className="rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-stone-100 outline-none focus:border-stone-500"
-                  disabled={isLoadingRelations}
-                >
-                  <option value="">
-                    {isLoadingRelations ? "Loading whenua..." : "None"}
-                  </option>
-
-                  {whenuaRecords.map((record) => (
-                    <option key={record.id} value={record.id}>
-                      {record.title}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                ))}
+              </select>
             </div>
           </div>
 
-          <label className="grid gap-2">
-            <span className="text-sm font-medium text-stone-200">
-              Description
-            </span>
-            <textarea
-              value={description}
-              onChange={(event) => setDescription(event.target.value)}
-              className="min-h-40 rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-stone-100 outline-none focus:border-stone-500"
-              placeholder="Describe the action, follow-up, or operational task."
-            />
-          </label>
-
-          {errorMessage ? (
-            <div className="rounded-xl border border-red-900 bg-red-950/40 p-4 text-sm text-red-300">
-              {errorMessage}
-            </div>
-          ) : null}
-
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3 pt-2">
             <button
               type="submit"
-              disabled={isSubmitting || isLoadingRelations}
-              className="rounded-xl bg-stone-100 px-5 py-3 text-sm font-semibold text-stone-950 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-xl bg-stone-100 px-5 py-3 text-sm font-semibold text-stone-950 transition hover:bg-white"
             >
-              {isSubmitting ? "Saving..." : "Create Task Record"}
+              Create Task
             </button>
 
-            <button
-              type="button"
-              onClick={() => router.push("/tasks")}
+            <Link
+              href="/tasks"
               className="rounded-xl border border-stone-700 px-5 py-3 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
             >
               Cancel
-            </button>
+            </Link>
           </div>
+        </form>
+      </section>
+
+      <section className="mt-8 grid gap-6 xl:grid-cols-2">
+        <div className="rounded-2xl border border-stone-800 bg-stone-900 p-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-semibold text-white">
+                Available People
+              </h2>
+
+              <p className="mt-1 text-sm text-stone-400">
+                Existing people records available for optional assignment.
+              </p>
+            </div>
+
+            <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
+              {peopleRecords.length} records
+            </div>
+          </div>
+
+          {peopleRecords.length === 0 ? (
+            <div className="mt-6 rounded-xl border border-stone-800 bg-stone-950 p-6">
+              <h3 className="text-base font-semibold text-white">
+                No people records available
+              </h3>
+
+              <p className="mt-2 text-sm text-stone-400">
+                Add people records before assigning tasks.
+              </p>
+
+              <div className="mt-5">
+                <Link
+                  href="/people/new"
+                  className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+                >
+                  Add Person
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-6 overflow-x-auto rounded-2xl border border-stone-800">
+              <table className="w-full min-w-[560px] border-collapse text-left text-sm">
+                <thead className="bg-stone-950 text-stone-400">
+                  <tr>
+                    <th className="px-4 py-3 font-medium">Full Name</th>
+                    <th className="px-4 py-3 font-medium">Created</th>
+                    <th className="px-4 py-3 font-medium">Open</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {peopleRecords.map((person) => (
+                    <tr
+                      key={person.id}
+                      className="border-t border-stone-800 bg-stone-900 transition hover:bg-stone-950"
+                    >
+                      <td className="px-4 py-4">
+                        <Link
+                          href={personPath(person.id)}
+                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                        >
+                          {getPersonName(person)}
+                        </Link>
+                      </td>
+
+                      <td className="px-4 py-4 text-stone-300">
+                        {formatDate(person.created_at)}
+                      </td>
+
+                      <td className="px-4 py-4">
+                        <Link
+                          href={personPath(person.id)}
+                          className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                        >
+                          View person
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
-      </form>
+
+        <div className="rounded-2xl border border-stone-800 bg-stone-900 p-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-semibold text-white">
+                Available Hui
+              </h2>
+
+              <p className="mt-1 text-sm text-stone-400">
+                Existing hui records available for optional task linking.
+              </p>
+            </div>
+
+            <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
+              {huiRecords.length} records
+            </div>
+          </div>
+
+          {huiRecords.length === 0 ? (
+            <div className="mt-6 rounded-xl border border-stone-800 bg-stone-950 p-6">
+              <h3 className="text-base font-semibold text-white">
+                No hui records available
+              </h3>
+
+              <p className="mt-2 text-sm text-stone-400">
+                Add hui records before linking tasks to hui.
+              </p>
+
+              <div className="mt-5">
+                <Link
+                  href="/hui/new"
+                  className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+                >
+                  Add Hui
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-6 overflow-x-auto rounded-2xl border border-stone-800">
+              <table className="w-full min-w-[620px] border-collapse text-left text-sm">
+                <thead className="bg-stone-950 text-stone-400">
+                  <tr>
+                    <th className="px-4 py-3 font-medium">Title</th>
+                    <th className="px-4 py-3 font-medium">Date</th>
+                    <th className="px-4 py-3 font-medium">Location</th>
+                    <th className="px-4 py-3 font-medium">Open</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {huiRecords.map((hui) => (
+                    <tr
+                      key={hui.id}
+                      className="border-t border-stone-800 bg-stone-900 transition hover:bg-stone-950"
+                    >
+                      <td className="px-4 py-4">
+                        <Link
+                          href={huiPath(hui.id)}
+                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                        >
+                          {getHuiTitle(hui)}
+                        </Link>
+                      </td>
+
+                      <td className="px-4 py-4 text-stone-300">
+                        {formatDate(getHuiDate(hui))}
+                      </td>
+
+                      <td className="px-4 py-4 text-stone-300">
+                        {formatValue(hui.location)}
+                      </td>
+
+                      <td className="px-4 py-4">
+                        <Link
+                          href={huiPath(hui.id)}
+                          className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                        >
+                          View hui
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </section>
     </AppShell>
   );
 }
