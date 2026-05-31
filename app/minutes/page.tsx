@@ -1,54 +1,78 @@
+import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 import { supabase } from "@/lib/supabaseClient";
 
 type MinutesRecord = {
   id: string;
-  title: string;
-  summary: string | null;
-  full_minutes: string | null;
-  recorded_by: string | null;
-  approved_status: string | null;
-  approved_date: string | null;
-  created_at: string;
-  hui: {
-    title: string;
-  } | null;
+  title?: string | null;
+  hui_id?: string | null;
+  related_hui_id?: string | null;
+  date?: string | null;
+  minutes_date?: string | null;
+  summary?: string | null;
+  content?: string | null;
+  notes?: string | null;
+  status?: string | null;
+  approved_at?: string | null;
+  created_at?: string | null;
 };
+
+function formatValue(value?: string | null) {
+  if (!value) {
+    return "—";
+  }
+
+  return value;
+}
+
+function formatDate(date?: string | null) {
+  if (!date) {
+    return "—";
+  }
+
+  return new Date(date).toLocaleDateString("en-NZ", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function minutesPath(id: string) {
+  return `/minutes/${id}`;
+}
+
+function getMinutesTitle(record: MinutesRecord) {
+  return record.title || "Untitled minutes record";
+}
+
+function getMinutesDate(record: MinutesRecord) {
+  return record.minutes_date || record.date || null;
+}
+
+function getLinkedHuiId(record: MinutesRecord) {
+  return record.hui_id || record.related_hui_id || null;
+}
 
 export default async function MinutesPage() {
   const { data, error } = await supabase
     .from("minutes")
-    .select(
-      `
-      id,
-      title,
-      summary,
-      full_minutes,
-      recorded_by,
-      approved_status,
-      approved_date,
-      created_at,
-      hui:hui_id (
-        title
-      )
-    `
-    )
+    .select("*")
     .order("created_at", { ascending: false });
 
-  const minutesRecords = (data ?? []) as unknown as MinutesRecord[];
+  const minutesRecords = (data ?? []) as MinutesRecord[];
 
   return (
-    <AppShell title="Minutes" eyebrow="MVP Module">
+    <AppShell title="Minutes" eyebrow="Core Records">
       <section className="rounded-3xl border border-stone-800 bg-stone-900/50 p-8">
         <p className="text-xs uppercase tracking-[0.25em] text-stone-500">
-          Hui Minutes
+          Minutes Register
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-white">Minutes</h1>
 
         <p className="mt-4 max-w-2xl text-stone-400">
-          Preserve what happened during hui, what was discussed, what was
-          decided, and what followed.
+          Manage meeting minutes, summaries, approvals, status, linked hui
+          references, and supporting meeting records.
         </p>
       </section>
 
@@ -58,6 +82,7 @@ export default async function MinutesPage() {
             <h2 className="text-lg font-semibold text-white">
               Minutes Register
             </h2>
+
             <p className="mt-1 text-sm text-stone-400">
               Live records pulled from the Supabase minutes table.
             </p>
@@ -68,12 +93,12 @@ export default async function MinutesPage() {
               {minutesRecords.length} records
             </div>
 
-            <a
+            <Link
               href="/minutes/new"
               className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
             >
               Add Minutes
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -87,20 +112,33 @@ export default async function MinutesPage() {
             <h3 className="text-base font-semibold text-white">
               No minutes records yet
             </h3>
+
             <p className="mt-2 text-sm text-stone-400">
-              Add the first minutes record to begin testing hui documentation.
+              Add the first minutes record to begin building the meeting
+              documentation layer.
             </p>
+
+            <div className="mt-5">
+              <Link
+                href="/minutes/new"
+                className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+              >
+                Add First Minutes
+              </Link>
+            </div>
           </div>
         ) : (
-          <div className="mt-6 overflow-hidden rounded-2xl border border-stone-800">
-            <table className="w-full border-collapse text-left text-sm">
+          <div className="mt-6 overflow-x-auto rounded-2xl border border-stone-800">
+            <table className="w-full min-w-[980px] border-collapse text-left text-sm">
               <thead className="bg-stone-950 text-stone-400">
                 <tr>
                   <th className="px-4 py-3 font-medium">Title</th>
-                  <th className="px-4 py-3 font-medium">Hui</th>
-                  <th className="px-4 py-3 font-medium">Recorded by</th>
-                  <th className="px-4 py-3 font-medium">Approval</th>
-                  <th className="px-4 py-3 font-medium">Approved date</th>
+                  <th className="px-4 py-3 font-medium">Date</th>
+                  <th className="px-4 py-3 font-medium">Status</th>
+                  <th className="px-4 py-3 font-medium">Approved</th>
+                  <th className="px-4 py-3 font-medium">Linked Hui ID</th>
+                  <th className="px-4 py-3 font-medium">Record ID</th>
+                  <th className="px-4 py-3 font-medium">Open</th>
                 </tr>
               </thead>
 
@@ -108,31 +146,57 @@ export default async function MinutesPage() {
                 {minutesRecords.map((record) => (
                   <tr
                     key={record.id}
-                    className="border-t border-stone-800 bg-stone-900"
+                    className="border-t border-stone-800 bg-stone-900 transition hover:bg-stone-950"
                   >
                     <td className="px-4 py-4">
-                      <a
-                        href={`/minutes/${record.id}`}
+                      <Link
+                        href={minutesPath(record.id)}
                         className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
                       >
-                        {record.title}
-                      </a>
+                        {getMinutesTitle(record)}
+                      </Link>
+
+                      {record.summary ? (
+                        <p className="mt-1 line-clamp-2 max-w-md text-xs leading-5 text-stone-500">
+                          {record.summary}
+                        </p>
+                      ) : null}
                     </td>
 
                     <td className="px-4 py-4 text-stone-300">
-                      {record.hui?.title || "—"}
+                      {formatDate(getMinutesDate(record))}
                     </td>
 
                     <td className="px-4 py-4 text-stone-300">
-                      {record.recorded_by || "—"}
+                      {formatValue(record.status)}
                     </td>
 
                     <td className="px-4 py-4 text-stone-300">
-                      {record.approved_status || "draft"}
+                      {formatDate(record.approved_at)}
                     </td>
 
-                    <td className="px-4 py-4 text-stone-300">
-                      {record.approved_date || "—"}
+                    <td className="px-4 py-4">
+                      <span className="font-mono text-xs text-stone-500">
+                        {formatValue(getLinkedHuiId(record))}
+                      </span>
+                    </td>
+
+                    <td className="px-4 py-4">
+                      <Link
+                        href={minutesPath(record.id)}
+                        className="font-mono text-xs text-stone-500 underline-offset-4 transition hover:text-white hover:underline"
+                      >
+                        {record.id}
+                      </Link>
+                    </td>
+
+                    <td className="px-4 py-4">
+                      <Link
+                        href={minutesPath(record.id)}
+                        className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                      >
+                        View record
+                      </Link>
                     </td>
                   </tr>
                 ))}
