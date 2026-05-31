@@ -14,18 +14,6 @@ type WhenuaRecord = {
   created_at: string | null;
 };
 
-function formatDate(date?: string | null) {
-  if (!date) {
-    return "—";
-  }
-
-  return new Date(date).toLocaleDateString("en-NZ", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-}
-
 function formatValue(value?: string | null) {
   if (!value) {
     return "—";
@@ -141,21 +129,44 @@ export default async function WhenuaPage() {
                         {record.title || "Untitled whenua record"}
                       </a>
 
-                      <p className="mt-1 font-mono text-xs text-stone-600">
-                        {record.id}
+                      <p className="mt-1">
+                        <a
+                          href={`/whenua/${record.id}`}
+                          className="font-mono text-xs text-stone-600 underline-offset-4 transition hover:text-white hover:underline"
+                        >
+                          {record.id}
+                        </a>
                       </p>
                     </td>
 
-                    <td className="px-4 py-4 text-stone-300">
-                      {formatValue(record.block_name)}
+                    <td className="px-4 py-4">
+                      {record.block_name ? (
+                        <a
+                          href={`/whenua/${record.id}`}
+                          className="font-medium text-stone-300 underline-offset-4 transition hover:text-white hover:underline"
+                        >
+                          {record.block_name}
+                        </a>
+                      ) : (
+                        <span className="text-stone-500">—</span>
+                      )}
                     </td>
 
                     <td className="px-4 py-4 text-stone-300">
                       {formatValue(record.location)}
                     </td>
 
-                    <td className="px-4 py-4 text-stone-300">
-                      {formatValue(record.external_reference)}
+                    <td className="px-4 py-4">
+                      {record.external_reference ? (
+                        <a
+                          href={`/whenua/${record.id}`}
+                          className="font-medium text-stone-300 underline-offset-4 transition hover:text-white hover:underline"
+                        >
+                          {record.external_reference}
+                        </a>
+                      ) : (
+                        <span className="text-stone-500">—</span>
+                      )}
                     </td>
 
                     <td className="px-4 py-4 text-stone-300">
