@@ -1,3 +1,4 @@
+import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -10,23 +11,28 @@ type PeopleDetailPageProps = {
 type PersonRecord = {
   id: string;
   full_name: string;
-  created_at: string;
+  created_at: string | null;
+};
+
+type LinkedPerson = {
+  full_name: string;
 };
 
 type WhakapapaRelationship = {
   id: string;
-  relationship_type: string;
   person_a_id: string;
   person_b_id: string;
-  person_a: {
-    full_name: string;
-  } | null;
-  person_b: {
-    full_name: string;
-  } | null;
+  relationship_type: string;
+  created_at: string | null;
+  person_a: LinkedPerson | null;
+  person_b: LinkedPerson | null;
 };
 
-function formatDate(date: string) {
+function formatDate(date?: string | null) {
+  if (!date) {
+    return "—";
+  }
+
   return new Date(date).toLocaleDateString("en-NZ", {
     day: "2-digit",
     month: "short",
@@ -34,25 +40,66 @@ function formatDate(date: string) {
   });
 }
 
+function personPath(id: string) {
+  return `/people/${id}`;
+}
+
+function relationshipPath(id: string) {
+  return `/whakapapa/${id}`;
+}
+
+function FieldRow({
+  label,
+  children,
+  darker = false,
+}: {
+  label: string;
+  children: React.ReactNode;
+  darker?: boolean;
+}) {
+  return (
+    <tr
+      className={`border-t border-stone-800 ${
+        darker ? "bg-stone-950" : "bg-stone-900"
+      }`}
+    >
+      <th className="w-56 px-4 py-4 align-top font-medium text-stone-400">
+        {label}
+      </th>
+
+      <td className="px-4 py-4 text-stone-300">{children}</td>
+    </tr>
+  );
+}
+
 export default async function PeopleDetailPage({
   params,
 }: PeopleDetailPageProps) {
   const { id } = await params;
 
-  const personResult = await supabase
+  const { data: personData, error: personError } = await supabase
     .from("people")
-    .select("id, full_name, created_at")
+    .select(
+      `
+      id,
+      full_name,
+      created_at
+    `
+    )
     .eq("id", id)
     .maybeSingle();
 
-  const relationshipResult = await supabase
+  const person = personData as PersonRecord | null;
+
+  const { data: relationshipData, error: relationshipError } = await supabase
     .from("whakapapa_relationships")
     .select(
       `
       id,
-      relationship_type,
       person_a_id,
       person_b_id,
+      relationship_type,
+      created_at,
       person_a:person_a_id (
         full_name
       ),
@@ -64,9 +111,10 @@ export default async function PeopleDetailPage({
     .or(`person_a_id.eq.${id},person_b_id.eq.${id}`)
     .order("created_at", { ascending: false });
 
-  const person = personResult.data as PersonRecord | null;
-  const relationshipRecords =
-    (relationshipResult.data ?? []) as unknown as WhakapapaRelationship[];
+  const relationships =
+    (relationshipData ?? []) as unknown as WhakapapaRelationship[];
+
+  const personName = person?.full_name || "Unknown person";
 
   return (
     <AppShell title="Person Detail" eyebrow="Core Records">
@@ -75,14 +123,14 @@ export default async function PeopleDetailPage({
           Person Record
         </p>
 
-        {personResult.error ? (
+        {personError ? (
           <>
             <h1 className="mt-3 text-3xl font-semibold text-red-300">
               Database error
             </h1>
 
             <pre className="mt-4 max-w-2xl whitespace-pre-wrap text-sm text-red-300">
-              {personResult.error.message}
+              {personError.message}
             </pre>
           </>
         ) : !person ? (
@@ -92,20 +140,20 @@ export default async function PeopleDetailPage({
             </h1>
 
             <p className="mt-4 max-w-2xl text-stone-400">
-              No people record exists for this ID. Return to the people
-              register and select an existing record.
+              No person record exists for this ID. Return to the people register
+              and select an existing record.
             </p>
           </>
         ) : (
           <>
             <h1 className="mt-3 text-3xl font-semibold text-white">
-              {person.full_name}
+              {personName}
             </h1>
 
             <p className="mt-4 max-w-2xl text-stone-400">
-              This identity record can connect to whakapapa relationships, hui
-              attendance, assigned tasks, documents, roles, and future activity
-              history.
+              This page displays the selected person record and only the records
+              that are actually linked to this person through confirmed database
+              relationships.
             </p>
           </>
         )}
@@ -114,27 +162,29 @@ export default async function PeopleDetailPage({
       <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-white">Record Details</h2>
+            <h2 className="text-lg font-semibold text-white">
+              Person Details
+            </h2>
 
             <p className="mt-1 text-sm text-stone-400">
-              Core fields from the Supabase people table.
+              Confirmed fields from the Supabase people table.
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
-            <a
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
               href="/people"
               className="rounded-xl border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
             >
               Back to People
-            </a>
+            </Link>
 
-            <a
-              href="/whakapapa/new"
+            <Link
+              href="/people/new"
               className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
             >
-              Add Relationship
-            </a>
+              Add Person
+            </Link>
           </div>
         </div>
 
@@ -142,44 +192,31 @@ export default async function PeopleDetailPage({
           <div className="mt-6 overflow-hidden rounded-2xl border border-stone-800">
             <table className="w-full border-collapse text-left text-sm">
               <tbody>
-                <tr className="border-t border-stone-800 bg-stone-950">
-                  <th className="w-48 px-4 py-4 font-medium text-stone-400">
-                    Full Name
-                  </th>
-
-                  <td className="px-4 py-4 text-stone-100">
+                <FieldRow label="Full Name" darker>
+                  <p className="font-medium text-stone-100">
                     {person.full_name}
-                  </td>
-                </tr>
+                  </p>
+                </FieldRow>
 
-                <tr className="border-t border-stone-800 bg-stone-900">
-                  <th className="w-48 px-4 py-4 font-medium text-stone-400">
-                    Created
-                  </th>
+                <FieldRow label="Person ID">
+                  <Link
+                    href={personPath(person.id)}
+                    className="font-mono text-xs text-stone-400 underline-offset-4 transition hover:text-white hover:underline"
+                  >
+                    {person.id}
+                  </Link>
+                </FieldRow>
 
-                  <td className="px-4 py-4 text-stone-300">
-                    {formatDate(person.created_at)}
-                  </td>
-                </tr>
-
-                <tr className="border-t border-stone-800 bg-stone-950">
-                  <th className="w-48 px-4 py-4 font-medium text-stone-400">
-                    Record ID
-                  </th>
-
-                  <td className="px-4 py-4">
-                    <span className="font-mono text-xs text-stone-500">
-                      {person.id}
-                    </span>
-                  </td>
-                </tr>
+                <FieldRow label="Created" darker>
+                  {formatDate(person.created_at)}
+                </FieldRow>
               </tbody>
             </table>
           </div>
         ) : (
           <div className="mt-6 rounded-xl border border-stone-800 bg-stone-950 p-6">
             <h3 className="text-base font-semibold text-white">
-              No record loaded
+              No person record loaded
             </h3>
 
             <p className="mt-2 text-sm text-stone-400">
@@ -189,167 +226,176 @@ export default async function PeopleDetailPage({
         )}
       </section>
 
-      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <h2 className="text-lg font-semibold text-white">
-              Whakapapa Relationships
-            </h2>
+      {relationshipError ? (
+        <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+          <h2 className="text-lg font-semibold text-white">
+            Linked Records Error
+          </h2>
 
-            <p className="mt-1 text-sm text-stone-400">
-              Relationship records where this person appears.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
-              {relationshipRecords.length} records
-            </div>
-
-            <a
-              href="/whakapapa/new"
-              className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
-            >
-              Add Relationship
-            </a>
-          </div>
-        </div>
-
-        {relationshipResult.error ? (
           <div className="mt-6 rounded-xl border border-red-900 bg-red-950/40 p-4 text-sm text-red-300">
             <p className="font-semibold">Database error</p>
             <pre className="mt-3 whitespace-pre-wrap">
-              {relationshipResult.error.message}
+              {relationshipError.message}
             </pre>
           </div>
-        ) : relationshipRecords.length === 0 ? (
-          <div className="mt-6 rounded-xl border border-stone-800 bg-stone-950 p-6">
-            <h3 className="text-base font-semibold text-white">
-              No whakapapa relationships yet
-            </h3>
+        </section>
+      ) : relationships.length > 0 ? (
+        <>
+          <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-semibold text-white">
+                  Linked Whakapapa Relationships
+                </h2>
 
-            <p className="mt-2 text-sm text-stone-400">
-              Add a relationship record to connect this person into the
-              whakapapa layer.
-            </p>
-          </div>
-        ) : (
-          <div className="mt-6 overflow-hidden rounded-2xl border border-stone-800">
-            <table className="w-full border-collapse text-left text-sm">
-              <thead className="bg-stone-950 text-stone-400">
-                <tr>
-                  <th className="px-4 py-3 font-medium">First Person</th>
-                  <th className="px-4 py-3 font-medium">Relationship</th>
-                  <th className="px-4 py-3 font-medium">Second Person</th>
-                  <th className="px-4 py-3 font-medium">Open</th>
-                </tr>
-              </thead>
+                <p className="mt-1 text-sm text-stone-400">
+                  These are the confirmed whakapapa relationship records linked
+                  to this person.
+                </p>
+              </div>
 
-              <tbody>
-                {relationshipRecords.map((relationship) => (
-                  <tr
-                    key={relationship.id}
-                    className="border-t border-stone-800 bg-stone-900"
-                  >
-                    <td className="px-4 py-4">
-                      <a
-                        href={`/people/${relationship.person_a_id}`}
-                        className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
-                      >
-                        {relationship.person_a?.full_name || "Unknown person"}
-                      </a>
-                    </td>
+              <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
+                {relationships.length} linked records
+              </div>
+            </div>
 
-                    <td className="px-4 py-4 text-stone-300">
-                      {relationship.relationship_type}
-                    </td>
-
-                    <td className="px-4 py-4">
-                      <a
-                        href={`/people/${relationship.person_b_id}`}
-                        className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
-                      >
-                        {relationship.person_b?.full_name || "Unknown person"}
-                      </a>
-                    </td>
-
-                    <td className="px-4 py-4">
-                      <a
-                        href={`/whakapapa/${relationship.id}`}
-                        className="text-sm font-medium text-stone-300 underline-offset-4 transition hover:text-white hover:underline"
-                      >
-                        View relationship
-                      </a>
-                    </td>
+            <div className="mt-6 overflow-x-auto rounded-2xl border border-stone-800">
+              <table className="w-full min-w-[860px] border-collapse text-left text-sm">
+                <thead className="bg-stone-950 text-stone-400">
+                  <tr>
+                    <th className="px-4 py-3 font-medium">First Person</th>
+                    <th className="px-4 py-3 font-medium">Relationship</th>
+                    <th className="px-4 py-3 font-medium">Second Person</th>
+                    <th className="px-4 py-3 font-medium">Created</th>
+                    <th className="px-4 py-3 font-medium">Open</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </section>
+                </thead>
 
-      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <h2 className="text-lg font-semibold text-white">
-              Related Records
-            </h2>
+                <tbody>
+                  {relationships.map((relationship) => {
+                    const firstPersonName =
+                      relationship.person_a?.full_name || "Unknown person";
 
-            <p className="mt-1 text-sm text-stone-400">
-              Useful pathways connected to this person record.
-            </p>
-          </div>
-        </div>
+                    const secondPersonName =
+                      relationship.person_b?.full_name || "Unknown person";
 
-        <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-          <a
-            href="/people"
-            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
-          >
-            <h3 className="text-sm font-semibold text-white">
-              People Register
-            </h3>
+                    return (
+                      <tr
+                        key={relationship.id}
+                        className="border-t border-stone-800 bg-stone-900 transition hover:bg-stone-950"
+                      >
+                        <td className="px-4 py-4">
+                          <Link
+                            href={personPath(relationship.person_a_id)}
+                            className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                          >
+                            {firstPersonName}
+                          </Link>
+                        </td>
 
-            <p className="mt-1 text-sm text-stone-400">
-              Return to the full people register.
-            </p>
-          </a>
+                        <td className="px-4 py-4 text-stone-300">
+                          {relationship.relationship_type}
+                        </td>
 
-          <a
-            href="/whakapapa"
-            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
-          >
-            <h3 className="text-sm font-semibold text-white">Whakapapa</h3>
+                        <td className="px-4 py-4">
+                          <Link
+                            href={personPath(relationship.person_b_id)}
+                            className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                          >
+                            {secondPersonName}
+                          </Link>
+                        </td>
 
-            <p className="mt-1 text-sm text-stone-400">
-              View all relationship records.
-            </p>
-          </a>
+                        <td className="px-4 py-4 text-stone-300">
+                          {formatDate(relationship.created_at)}
+                        </td>
 
-          <a
-            href="/tasks"
-            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
-          >
-            <h3 className="text-sm font-semibold text-white">Tasks</h3>
+                        <td className="px-4 py-4">
+                          <Link
+                            href={relationshipPath(relationship.id)}
+                            className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                          >
+                            View relationship
+                          </Link>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </section>
 
-            <p className="mt-1 text-sm text-stone-400">
-              Future assigned actions and follow-up.
-            </p>
-          </a>
+          <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-semibold text-white">
+                  Related Links
+                </h2>
 
-          <a
-            href="/activity"
-            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
-          >
-            <h3 className="text-sm font-semibold text-white">Activity</h3>
+                <p className="mt-1 text-sm text-stone-400">
+                  Only actual linked records are shown here.
+                </p>
+              </div>
+            </div>
 
-            <p className="mt-1 text-sm text-stone-400">
-              Future record history and audit trail.
-            </p>
-          </a>
-        </div>
-      </section>
+            <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+              {relationships.map((relationship) => {
+                const firstPersonName =
+                  relationship.person_a?.full_name || "Unknown person";
+
+                const secondPersonName =
+                  relationship.person_b?.full_name || "Unknown person";
+
+                const otherPersonId =
+                  relationship.person_a_id === id
+                    ? relationship.person_b_id
+                    : relationship.person_a_id;
+
+                const otherPersonName =
+                  relationship.person_a_id === id
+                    ? secondPersonName
+                    : firstPersonName;
+
+                return (
+                  <div
+                    key={relationship.id}
+                    className="rounded-xl border border-stone-800 bg-stone-950 p-4"
+                  >
+                    <h3 className="text-sm font-semibold text-white">
+                      {relationship.relationship_type}
+                    </h3>
+
+                    <p className="mt-1 text-sm text-stone-400">
+                      Linked to {otherPersonName}.
+                    </p>
+
+                    <div className="mt-4 flex flex-wrap gap-3">
+                      <Link
+                        href={personPath(otherPersonId)}
+                        className="rounded-lg border border-stone-700 px-3 py-2 text-xs font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
+                      >
+                        Open person
+                      </Link>
+
+                      <Link
+                        href={relationshipPath(relationship.id)}
+                        className="rounded-lg border border-stone-700 px-3 py-2 text-xs font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
+                      >
+                        Open relationship
+                      </Link>
+                    </div>
+
+                    <p className="mt-4 font-mono text-xs text-stone-600">
+                      Relationship ID: {relationship.id}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        </>
+      ) : null}
     </AppShell>
   );
 }
