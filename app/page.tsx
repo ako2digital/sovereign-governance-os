@@ -4,270 +4,203 @@ const modules = [
   {
     title: "People",
     href: "/people",
-    eyebrow: "Core record",
-    description: "Identity records for people connected to whakapapa, hui, tasks, roles, and activity.",
+    description:
+      "Identity records for people connected to whakapapa, hui, tasks, roles, and activity.",
     status: "Live",
   },
   {
     title: "Whakapapa",
     href: "/whakapapa",
-    eyebrow: "Relationship record",
-    description: "Person-to-person relationships that stop records sitting as disconnected entries.",
+    description: "Relationship records connecting one person to another.",
     status: "Live",
   },
   {
     title: "Whenua",
     href: "/whenua",
-    eyebrow: "Land record",
-    description: "Land, block, location, legal description, historical notes, and reference records.",
+    description:
+      "Land records, legal descriptions, historical notes, and references.",
     status: "Live",
   },
   {
     title: "Marae",
     href: "/marae",
-    eyebrow: "Community record",
-    description: "Marae records connected to people, whenua, hui, documents, and governance activity.",
+    description:
+      "Marae records connected to whenua, hui, governance, and documents.",
     status: "Live",
   },
   {
     title: "Governance",
     href: "/governance",
-    eyebrow: "Authority record",
-    description: "Mandates, policy, authority, structures, responsibilities, and decision context.",
+    description:
+      "Mandates, policies, authority records, decisions, and governance context.",
     status: "Live",
   },
   {
     title: "Hui",
     href: "/hui",
-    eyebrow: "Meeting record",
-    description: "Capture hui, attendees, kaupapa, notes, decisions, and follow-up actions.",
+    description:
+      "Meeting records connected to minutes, decisions, tasks, and documents.",
     status: "Next",
   },
   {
     title: "Minutes",
     href: "/minutes",
-    eyebrow: "Meeting notes",
-    description: "Formal records of kōrero, summaries, references, and meeting outcomes.",
+    description: "Formal notes and summaries from hui records.",
     status: "Planned",
   },
   {
     title: "Decisions",
     href: "/decisions",
-    eyebrow: "Outcome record",
-    description: "Decisions made, where they came from, who approved them, and what they trigger.",
+    description:
+      "Decision records connected to hui, governance, and follow-up actions.",
     status: "Planned",
   },
   {
     title: "Documents",
     href: "/documents",
-    eyebrow: "Evidence record",
-    description: "Files, maps, reports, letters, images, and evidence attached to the right records.",
+    description:
+      "Supporting files, evidence, maps, photos, and formal records.",
     status: "Planned",
   },
   {
     title: "Pānui",
     href: "/panui",
-    eyebrow: "Communication record",
-    description: "Notices, updates, announcements, and communication history.",
+    description: "Communication records, notices, updates, and announcements.",
     status: "Planned",
   },
   {
     title: "Tasks",
     href: "/tasks",
-    eyebrow: "Action record",
-    description: "Follow-up actions from hui, decisions, documents, and governance work.",
+    description:
+      "Follow-up actions connected to hui, decisions, documents, and whenua.",
     status: "Planned",
   },
   {
     title: "Activity",
     href: "/activity",
-    eyebrow: "Audit record",
-    description: "A visible trail of what happened, who acted, and what record was affected.",
+    description: "Audit trail for actions, updates, and record history.",
     status: "Planned",
   },
 ];
 
-const relatedRecordExamples = [
+const activityItems = [
   {
-    label: "Governance",
-    value: "Data Management Mandate",
-    href: "/governance",
+    action: "People register connected",
+    area: "Core Records",
+    status: "Complete",
+    href: "/people",
   },
   {
-    label: "Related Marae",
-    value: "Linked marae record",
-    href: "/marae",
+    action: "Whakapapa relationships connected",
+    area: "Core Records",
+    status: "Complete",
+    href: "/whakapapa",
   },
   {
-    label: "Related Whenua",
-    value: "Linked whenua record",
+    action: "Whenua records connected",
+    area: "Core Records",
+    status: "Complete",
     href: "/whenua",
   },
   {
-    label: "Related Decision",
-    value: "Awaiting decision record",
+    action: "Marae records connected",
+    area: "Governance",
+    status: "Complete",
+    href: "/marae",
+  },
+  {
+    action: "Governance records connected",
+    area: "Governance",
+    status: "Complete",
+    href: "/governance",
+  },
+];
+
+const nextActions = [
+  {
+    title: "Standardise Hui pages",
+    area: "Governance / Hui",
+    href: "/hui",
+  },
+  {
+    title: "Connect Minutes module",
+    area: "Governance / Minutes",
+    href: "/minutes",
+  },
+  {
+    title: "Connect Decisions module",
+    area: "Governance / Decisions",
     href: "/decisions",
   },
-];
-
-const actionables = [
   {
-    title: "Confirm hui attendees",
-    source: "Hui follow-up",
-    status: "To do",
-  },
-  {
-    title: "Attach signed minutes",
-    source: "Minutes record",
-    status: "Waiting",
-  },
-  {
-    title: "Assign decision owner",
-    source: "Decision flow",
-    status: "To do",
-  },
-  {
-    title: "Upload supporting evidence",
-    source: "Document trail",
-    status: "To do",
-  },
-];
-
-const loggedActivity = [
-  {
-    action: "Governance record viewed",
-    record: "Data Management Mandate",
-    user: "System user",
-    time: "Just now",
-    type: "Governance",
-  },
-  {
-    action: "Marae record created",
-    record: "Community layer",
-    user: "System user",
-    time: "Today",
-    type: "Marae",
-  },
-  {
-    action: "Whenua record updated",
-    record: "Land record layer",
-    user: "System user",
-    time: "Today",
-    type: "Whenua",
-  },
-  {
-    action: "Whakapapa link opened",
-    record: "Relationship layer",
-    user: "System user",
-    time: "Earlier",
-    type: "Whakapapa",
+    title: "Connect Documents module",
+    area: "Records / Documents",
+    href: "/documents",
   },
 ];
 
 function statusClass(status: string) {
   if (status === "Live") {
-    return "bg-green-400/10 text-green-400";
+    return "border-green-900 bg-green-950/30 text-green-300";
   }
 
   if (status === "Next") {
-    return "bg-stone-100 text-stone-950";
+    return "border-stone-600 bg-stone-100 text-stone-950";
   }
 
-  return "bg-stone-800 text-stone-500";
-}
-
-function activityTypeClass(type: string) {
-  if (type === "Governance") {
-    return "bg-stone-100 text-stone-950";
-  }
-
-  if (type === "Marae") {
-    return "bg-green-400/10 text-green-400";
-  }
-
-  if (type === "Whenua") {
-    return "bg-white/10 text-white";
-  }
-
-  return "bg-stone-800 text-stone-400";
+  return "border-stone-700 bg-stone-950 text-stone-400";
 }
 
 export default function HomePage() {
   return (
-    <AppShell title="Dashboard" eyebrow="Sovereign Governance OS / Home">
-      <section className="grid gap-6">
-        <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-8">
-          <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
-            <div>
-              <a
-                href="/"
-                className="inline-flex rounded-full border border-stone-700 bg-stone-950 px-4 py-2 font-mono text-xs uppercase tracking-[0.25em] text-stone-400 transition hover:border-stone-500 hover:text-white"
-              >
-                Operations home
-              </a>
+    <AppShell title="Dashboard" eyebrow="Sovereign Governance OS">
+      <section className="rounded-3xl border border-stone-800 bg-stone-900/50 p-8">
+        <p className="text-xs uppercase tracking-[0.25em] text-stone-500">
+          Operations Dashboard
+        </p>
 
-              <h1 className="mt-6 max-w-5xl text-4xl font-semibold tracking-tight text-white md:text-5xl">
-                A relational home for records, authority, decisions, and follow-up actions.
-              </h1>
+        <h1 className="mt-3 text-3xl font-semibold text-white">
+          Sovereign Governance OS
+        </h1>
 
-              <p className="mt-5 max-w-4xl text-base leading-8 text-stone-400">
-                This app keeps the chain visible: people connect to whakapapa, whenua connects to evidence,
-                hui creates decisions, decisions create tasks, and activity records what happened.
-              </p>
-            </div>
+        <p className="mt-4 max-w-3xl text-stone-400">
+          A practical record system for people, whakapapa, whenua, marae,
+          governance, hui, minutes, decisions, documents, tasks, pānui, and
+          activity history.
+        </p>
+      </section>
 
-            <div className="grid gap-3 sm:grid-cols-2 xl:w-[420px]">
-              <a
-                href="/hui"
-                className="rounded-2xl bg-stone-100 px-5 py-4 text-sm font-semibold text-stone-950 transition hover:bg-white"
-              >
-                Record Hui
-              </a>
+      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-semibold text-white">
+              Module Register
+            </h2>
 
-              <a
-                href="/governance/new"
-                className="rounded-2xl border border-stone-700 px-5 py-4 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
-              >
-                Add Governance
-              </a>
+            <p className="mt-1 text-sm text-stone-400">
+              Core system areas and current build status.
+            </p>
+          </div>
 
-              <a
-                href="/tasks"
-                className="rounded-2xl border border-stone-700 px-5 py-4 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
-              >
-                View Tasks
-              </a>
-
-              <a
-                href="/activity"
-                className="rounded-2xl border border-stone-700 px-5 py-4 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
-              >
-                Activity Log
-              </a>
-            </div>
+          <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
+            {modules.length} modules
           </div>
         </div>
 
-        <div className="grid gap-px overflow-hidden rounded-3xl border border-stone-800 bg-stone-800 md:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {modules.map((module) => (
             <a
               key={module.title}
               href={module.href}
-              className="group min-h-[230px] bg-stone-900/80 p-6 transition hover:bg-stone-900"
+              className="group rounded-2xl border border-stone-800 bg-stone-950 p-5 transition hover:border-stone-600 hover:bg-stone-900"
             >
               <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="font-mono text-xs uppercase tracking-[0.25em] text-stone-600">
-                    {module.eyebrow}
-                  </p>
-
-                  <h2 className="mt-4 text-2xl font-semibold tracking-tight text-white">
-                    {module.title}
-                  </h2>
-                </div>
+                <h3 className="text-base font-semibold text-white">
+                  {module.title}
+                </h3>
 
                 <span
-                  className={`shrink-0 rounded-full px-3 py-1 font-mono text-[11px] ${statusClass(
+                  className={`rounded-full border px-3 py-1 text-xs font-medium ${statusClass(
                     module.status
                   )}`}
                 >
@@ -275,154 +208,113 @@ export default function HomePage() {
                 </span>
               </div>
 
-              <p className="mt-5 text-sm leading-7 text-stone-500">
+              <p className="mt-3 text-sm leading-6 text-stone-400">
                 {module.description}
               </p>
 
-              <div className="mt-7 text-sm font-semibold text-stone-600 transition group-hover:text-white">
-                Open module →
-              </div>
+              <p className="mt-4 text-sm font-medium text-stone-500 transition group-hover:text-white">
+                Open {module.title} →
+              </p>
             </a>
           ))}
         </div>
+      </section>
 
-        <div className="grid gap-6 xl:grid-cols-[1fr_420px]">
-          <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-6">
-            <div className="border-b border-stone-800 pb-5">
-              <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-                Related records
-              </p>
-
-              <h2 className="mt-3 text-2xl font-semibold tracking-tight text-white">
-                Records should connect, not sit alone.
-              </h2>
-            </div>
-
-            <div className="mt-5 grid gap-3 md:grid-cols-2">
-              {relatedRecordExamples.map((record) => (
-                <a
-                  key={record.label}
-                  href={record.href}
-                  className="rounded-2xl border border-stone-800 bg-stone-950 p-5 transition hover:border-stone-600 hover:bg-stone-900"
-                >
-                  <p className="font-mono text-xs uppercase tracking-[0.2em] text-stone-600">
-                    {record.label}
-                  </p>
-
-                  <p className="mt-3 text-sm font-semibold text-stone-200">
-                    {record.value}
-                  </p>
-                </a>
-              ))}
-            </div>
-          </div>
-
-          <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-6">
-            <div className="flex items-center justify-between border-b border-stone-800 pb-5">
-              <div>
-                <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-                  To do
-                </p>
-
-                <h2 className="mt-3 text-2xl font-semibold tracking-tight text-white">
-                  Actionables
-                </h2>
-              </div>
-
-              <a
-                href="/tasks"
-                className="text-sm font-semibold text-stone-500 transition hover:text-white"
-              >
-                Tasks →
-              </a>
-            </div>
-
-            <div className="mt-5 grid gap-3">
-              {actionables.map((item) => (
-                <div
-                  key={item.title}
-                  className="rounded-2xl border border-stone-800 bg-stone-950 p-4"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h3 className="text-sm font-semibold text-white">
-                        {item.title}
-                      </h3>
-
-                      <p className="mt-1 text-xs text-stone-600">
-                        {item.source}
-                      </p>
-                    </div>
-
-                    <span className="rounded-full bg-stone-800 px-3 py-1 font-mono text-[11px] text-stone-400">
-                      {item.status}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-6">
-          <div className="flex flex-col gap-2 border-b border-stone-800 pb-5 md:flex-row md:items-end md:justify-between">
+      <div className="mt-8 grid gap-8 xl:grid-cols-2">
+        <section className="rounded-2xl border border-stone-800 bg-stone-900 p-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-                Logged activity
-              </p>
-
-              <h2 className="mt-3 text-2xl font-semibold tracking-tight text-white">
-                Recent actions across the system.
+              <h2 className="text-lg font-semibold text-white">
+                Current Activity
               </h2>
+
+              <p className="mt-1 text-sm text-stone-400">
+                System progress and connected records.
+              </p>
             </div>
 
             <a
               href="/activity"
-              className="text-sm font-semibold text-stone-500 transition hover:text-white"
+              className="rounded-xl border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
             >
-              View activity log →
+              View Activity
             </a>
           </div>
 
-          <div className="mt-5 divide-y divide-stone-800 overflow-hidden rounded-2xl border border-stone-800 bg-stone-950">
-            {loggedActivity.map((item) => (
-              <div
-                key={`${item.action}-${item.time}`}
-                className="grid gap-4 px-5 py-4 md:grid-cols-[1fr_180px_120px]"
+          <div className="mt-6 overflow-hidden rounded-2xl border border-stone-800">
+            <table className="w-full border-collapse text-left text-sm">
+              <thead className="bg-stone-950 text-stone-400">
+                <tr>
+                  <th className="px-4 py-3 font-medium">Action</th>
+                  <th className="px-4 py-3 font-medium">Area</th>
+                  <th className="px-4 py-3 font-medium">Status</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {activityItems.map((item) => (
+                  <tr
+                    key={item.action}
+                    className="border-t border-stone-800 bg-stone-900"
+                  >
+                    <td className="px-4 py-4">
+                      <a
+                        href={item.href}
+                        className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                      >
+                        {item.action}
+                      </a>
+                    </td>
+
+                    <td className="px-4 py-4 text-stone-300">{item.area}</td>
+
+                    <td className="px-4 py-4 text-stone-300">
+                      {item.status}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section className="rounded-2xl border border-stone-800 bg-stone-900 p-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-semibold text-white">
+                Next Actions
+              </h2>
+
+              <p className="mt-1 text-sm text-stone-400">
+                Work queue for the next build pass.
+              </p>
+            </div>
+
+            <a
+              href="/tasks"
+              className="rounded-xl border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
+            >
+              View Tasks
+            </a>
+          </div>
+
+          <div className="mt-6 grid gap-3">
+            {nextActions.map((item) => (
+              <a
+                key={item.title}
+                href={item.href}
+                className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
               >
-                <div>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <h3 className="text-sm font-semibold text-white">
-                      {item.action}
-                    </h3>
+                <h3 className="text-sm font-semibold text-white">
+                  {item.title}
+                </h3>
 
-                    <span
-                      className={`rounded-full px-3 py-1 font-mono text-[11px] ${activityTypeClass(
-                        item.type
-                      )}`}
-                    >
-                      {item.type}
-                    </span>
-                  </div>
-
-                  <p className="mt-2 text-sm text-stone-500">{item.record}</p>
-                </div>
-
-                <div className="text-sm text-stone-500">
-                  Used by{" "}
-                  <span className="font-semibold text-stone-300">
-                    {item.user}
-                  </span>
-                </div>
-
-                <div className="text-sm font-semibold text-stone-500 md:text-right">
-                  {item.time}
-                </div>
-              </div>
+                <p className="mt-1 text-sm text-stone-400">{item.area}</p>
+              </a>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </AppShell>
   );
 }
