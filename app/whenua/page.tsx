@@ -1,3 +1,4 @@
+import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -20,6 +21,10 @@ function formatValue(value?: string | null) {
   }
 
   return value;
+}
+
+function whenuaPath(id: string) {
+  return `/whenua/${id}`;
 }
 
 export default async function WhenuaPage() {
@@ -75,12 +80,12 @@ export default async function WhenuaPage() {
               {whenuaRecords.length} records
             </div>
 
-            <a
+            <Link
               href="/whenua/new"
               className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
             >
               Add Whenua
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -99,10 +104,19 @@ export default async function WhenuaPage() {
               Add the first whenua record to begin building the land record
               layer.
             </p>
+
+            <div className="mt-5">
+              <Link
+                href="/whenua/new"
+                className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+              >
+                Add First Whenua
+              </Link>
+            </div>
           </div>
         ) : (
-          <div className="mt-6 overflow-hidden rounded-2xl border border-stone-800">
-            <table className="w-full border-collapse text-left text-sm">
+          <div className="mt-6 overflow-x-auto rounded-2xl border border-stone-800">
+            <table className="w-full min-w-[980px] border-collapse text-left text-sm">
               <thead className="bg-stone-950 text-stone-400">
                 <tr>
                   <th className="px-4 py-3 font-medium">Title</th>
@@ -119,54 +133,28 @@ export default async function WhenuaPage() {
                 {whenuaRecords.map((record) => (
                   <tr
                     key={record.id}
-                    className="border-t border-stone-800 bg-stone-900"
+                    className="border-t border-stone-800 bg-stone-900 transition hover:bg-stone-950"
                   >
                     <td className="px-4 py-4">
-                      <a
-                        href={`/whenua/${record.id}`}
-                        className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
-                      >
+                      <p className="font-medium text-stone-100">
                         {record.title || "Untitled whenua record"}
-                      </a>
+                      </p>
 
-                      <p className="mt-1">
-                        <a
-                          href={`/whenua/${record.id}`}
-                          className="font-mono text-xs text-stone-600 underline-offset-4 transition hover:text-white hover:underline"
-                        >
-                          {record.id}
-                        </a>
+                      <p className="mt-1 font-mono text-xs text-stone-500">
+                        {record.id}
                       </p>
                     </td>
 
-                    <td className="px-4 py-4">
-                      {record.block_name ? (
-                        <a
-                          href={`/whenua/${record.id}`}
-                          className="font-medium text-stone-300 underline-offset-4 transition hover:text-white hover:underline"
-                        >
-                          {record.block_name}
-                        </a>
-                      ) : (
-                        <span className="text-stone-500">—</span>
-                      )}
+                    <td className="px-4 py-4 text-stone-300">
+                      {formatValue(record.block_name)}
                     </td>
 
                     <td className="px-4 py-4 text-stone-300">
                       {formatValue(record.location)}
                     </td>
 
-                    <td className="px-4 py-4">
-                      {record.external_reference ? (
-                        <a
-                          href={`/whenua/${record.id}`}
-                          className="font-medium text-stone-300 underline-offset-4 transition hover:text-white hover:underline"
-                        >
-                          {record.external_reference}
-                        </a>
-                      ) : (
-                        <span className="text-stone-500">—</span>
-                      )}
+                    <td className="px-4 py-4 text-stone-300">
+                      {formatValue(record.external_reference)}
                     </td>
 
                     <td className="px-4 py-4 text-stone-300">
@@ -178,12 +166,12 @@ export default async function WhenuaPage() {
                     </td>
 
                     <td className="px-4 py-4">
-                      <a
-                        href={`/whenua/${record.id}`}
-                        className="text-sm font-medium text-stone-300 underline-offset-4 transition hover:text-white hover:underline"
+                      <Link
+                        href={whenuaPath(record.id)}
+                        className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
                       >
                         View record
-                      </a>
+                      </Link>
                     </td>
                   </tr>
                 ))}
@@ -206,110 +194,102 @@ export default async function WhenuaPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <a
+            <Link
               href="/whenua/new"
               className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
             >
               Add Whenua
-            </a>
+            </Link>
 
-            <a
+            <Link
               href="/documents"
               className="rounded-xl border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
             >
               View Documents
-            </a>
+            </Link>
           </div>
         </div>
 
         <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-          <a
+          <Link
             href="/whenua/new"
             className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
           >
             <h3 className="text-sm font-semibold text-white">Add Whenua</h3>
-
             <p className="mt-1 text-sm text-stone-400">
               Create a new land record.
             </p>
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/documents"
             className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
           >
             <h3 className="text-sm font-semibold text-white">Documents</h3>
-
             <p className="mt-1 text-sm text-stone-400">
               Evidence, maps, legal records, letters, and supporting files.
             </p>
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/governance"
             className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
           >
             <h3 className="text-sm font-semibold text-white">Governance</h3>
-
             <p className="mt-1 text-sm text-stone-400">
               Mandates, authority, decisions, and governance context.
             </p>
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/marae"
             className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
           >
             <h3 className="text-sm font-semibold text-white">Marae</h3>
-
             <p className="mt-1 text-sm text-stone-400">
               Marae records that may connect to whenua.
             </p>
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/hui"
             className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
           >
             <h3 className="text-sm font-semibold text-white">Hui</h3>
-
             <p className="mt-1 text-sm text-stone-400">
               Future hui records connected to whenua kaupapa.
             </p>
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/decisions"
             className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
           >
             <h3 className="text-sm font-semibold text-white">Decisions</h3>
-
             <p className="mt-1 text-sm text-stone-400">
               Future decisions created from whenua-related work.
             </p>
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/tasks"
             className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
           >
             <h3 className="text-sm font-semibold text-white">Tasks</h3>
-
             <p className="mt-1 text-sm text-stone-400">
               Future follow-up actions for whenua matters.
             </p>
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/activity"
             className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
           >
             <h3 className="text-sm font-semibold text-white">Activity</h3>
-
             <p className="mt-1 text-sm text-stone-400">
               Future record history and audit trail.
             </p>
-          </a>
+          </Link>
         </div>
       </section>
     </AppShell>
