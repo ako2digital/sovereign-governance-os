@@ -1,46 +1,117 @@
+import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 import { supabase } from "@/lib/supabaseClient";
 
-type ActivityLogRecord = {
+type ActivityRecord = {
   id: string;
-  action: string;
-  entity_type: string | null;
-  entity_id: string | null;
-  description: string | null;
-  actor_id: string | null;
-  created_at: string;
+  action?: string | null;
+  event_type?: string | null;
+  module?: string | null;
+  table_name?: string | null;
+  record_table?: string | null;
+  record_type?: string | null;
+  entity_type?: string | null;
+  related_table?: string | null;
+  record_id?: string | null;
+  entity_id?: string | null;
+  related_record_id?: string | null;
+  person_id?: string | null;
+  related_person_id?: string | null;
+  actor_id?: string | null;
+  actor_person_id?: string | null;
+  description?: string | null;
+  summary?: string | null;
+  notes?: string | null;
+  created_at?: string | null;
 };
+
+function formatValue(value?: string | null) {
+  if (!value) {
+    return "—";
+  }
+
+  return value;
+}
+
+function formatDate(date?: string | null) {
+  if (!date) {
+    return "—";
+  }
+
+  return new Date(date).toLocaleDateString("en-NZ", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function activityPath(id: string) {
+  return `/activity/${id}`;
+}
+
+function getActivityTitle(record: ActivityRecord) {
+  return (
+    record.action ||
+    record.event_type ||
+    record.summary ||
+    "Activity record"
+  );
+}
+
+function getActivityType(record: ActivityRecord) {
+  return (
+    record.event_type ||
+    record.action ||
+    record.record_type ||
+    record.entity_type ||
+    "—"
+  );
+}
+
+function getActivityModule(record: ActivityRecord) {
+  return (
+    record.module ||
+    record.record_table ||
+    record.table_name ||
+    record.related_table ||
+    "—"
+  );
+}
+
+function getTargetRecordId(record: ActivityRecord) {
+  return record.record_id || record.entity_id || record.related_record_id || null;
+}
+
+function getPersonReferenceId(record: ActivityRecord) {
+  return (
+    record.related_person_id ||
+    record.person_id ||
+    record.actor_person_id ||
+    record.actor_id ||
+    null
+  );
+}
 
 export default async function ActivityPage() {
   const { data, error } = await supabase
     .from("activity_log")
-    .select(
-      `
-      id,
-      action,
-      entity_type,
-      entity_id,
-      description,
-      actor_id,
-      created_at
-    `
-    )
+    .select("*")
     .order("created_at", { ascending: false });
 
-  const activityRecords = (data ?? []) as ActivityLogRecord[];
+  const activityRecords = (data ?? []) as ActivityRecord[];
 
   return (
-    <AppShell title="Activity" eyebrow="MVP Module">
+    <AppShell title="Activity" eyebrow="System Records">
       <section className="rounded-3xl border border-stone-800 bg-stone-900/50 p-8">
         <p className="text-xs uppercase tracking-[0.25em] text-stone-500">
-          Activity Log
+          Activity Register
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-white">Activity</h1>
 
         <p className="mt-4 max-w-2xl text-stone-400">
-          Track system activity, record changes, preserve accountability, and
-          create a visible history of actions across the platform.
+          Review system activity, record changes, module events, linked record
+          references, person references, and operational history.
         </p>
       </section>
 
@@ -50,6 +121,7 @@ export default async function ActivityPage() {
             <h2 className="text-lg font-semibold text-white">
               Activity Register
             </h2>
+
             <p className="mt-1 text-sm text-stone-400">
               Live records pulled from the Supabase activity_log table.
             </p>
@@ -70,21 +142,25 @@ export default async function ActivityPage() {
             <h3 className="text-base font-semibold text-white">
               No activity records yet
             </h3>
+
             <p className="mt-2 text-sm text-stone-400">
-              Activity records will appear here once system actions are logged.
+              Activity records will appear here once the system begins logging
+              record events or operational changes.
             </p>
           </div>
         ) : (
-          <div className="mt-6 overflow-hidden rounded-2xl border border-stone-800">
-            <table className="w-full border-collapse text-left text-sm">
+          <div className="mt-6 overflow-x-auto rounded-2xl border border-stone-800">
+            <table className="w-full min-w-[1120px] border-collapse text-left text-sm">
               <thead className="bg-stone-950 text-stone-400">
                 <tr>
-                  <th className="px-4 py-3 font-medium">Action</th>
-                  <th className="px-4 py-3 font-medium">Entity Type</th>
-                  <th className="px-4 py-3 font-medium">Entity ID</th>
-                  <th className="px-4 py-3 font-medium">Actor ID</th>
-                  <th className="px-4 py-3 font-medium">Description</th>
+                  <th className="px-4 py-3 font-medium">Activity</th>
+                  <th className="px-4 py-3 font-medium">Type</th>
+                  <th className="px-4 py-3 font-medium">Module / Table</th>
+                  <th className="px-4 py-3 font-medium">Target Record ID</th>
+                  <th className="px-4 py-3 font-medium">Person Reference ID</th>
                   <th className="px-4 py-3 font-medium">Created</th>
+                  <th className="px-4 py-3 font-medium">Activity ID</th>
+                  <th className="px-4 py-3 font-medium">Open</th>
                 </tr>
               </thead>
 
@@ -92,25 +168,63 @@ export default async function ActivityPage() {
                 {activityRecords.map((record) => (
                   <tr
                     key={record.id}
-                    className="border-t border-stone-800 bg-stone-900"
+                    className="border-t border-stone-800 bg-stone-900 transition hover:bg-stone-950"
                   >
-                    <td className="px-4 py-4 text-stone-100">
-                      {record.action}
+                    <td className="px-4 py-4">
+                      <Link
+                        href={activityPath(record.id)}
+                        className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                      >
+                        {getActivityTitle(record)}
+                      </Link>
+
+                      {record.description || record.summary ? (
+                        <p className="mt-1 line-clamp-2 max-w-md text-xs leading-5 text-stone-500">
+                          {record.description || record.summary}
+                        </p>
+                      ) : null}
                     </td>
+
                     <td className="px-4 py-4 text-stone-300">
-                      {record.entity_type || "—"}
+                      {formatValue(getActivityType(record))}
                     </td>
+
                     <td className="px-4 py-4 text-stone-300">
-                      {record.entity_id || "—"}
+                      {formatValue(getActivityModule(record))}
                     </td>
-                    <td className="px-4 py-4 text-stone-300">
-                      {record.actor_id || "—"}
+
+                    <td className="px-4 py-4">
+                      <span className="font-mono text-xs text-stone-500">
+                        {formatValue(getTargetRecordId(record))}
+                      </span>
                     </td>
-                    <td className="px-4 py-4 text-stone-300">
-                      {record.description || "—"}
+
+                    <td className="px-4 py-4">
+                      <span className="font-mono text-xs text-stone-500">
+                        {formatValue(getPersonReferenceId(record))}
+                      </span>
                     </td>
+
                     <td className="px-4 py-4 text-stone-300">
-                      {record.created_at}
+                      {formatDate(record.created_at)}
+                    </td>
+
+                    <td className="px-4 py-4">
+                      <Link
+                        href={activityPath(record.id)}
+                        className="font-mono text-xs text-stone-500 underline-offset-4 transition hover:text-white hover:underline"
+                      >
+                        {record.id}
+                      </Link>
+                    </td>
+
+                    <td className="px-4 py-4">
+                      <Link
+                        href={activityPath(record.id)}
+                        className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                      >
+                        View record
+                      </Link>
                     </td>
                   </tr>
                 ))}
