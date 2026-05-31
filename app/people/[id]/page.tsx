@@ -13,43 +13,18 @@ type PersonRecord = {
   created_at: string;
 };
 
-const relatedRecordLinks = [
-  {
-    label: "Whakapapa",
-    description: "View relationships connected to this person.",
-    href: "/whakapapa",
-  },
-  {
-    label: "Hui",
-    description: "Future hui attendance and participation records.",
-    href: "/hui",
-  },
-  {
-    label: "Tasks",
-    description: "Future actions assigned to this person.",
-    href: "/tasks",
-  },
-  {
-    label: "Activity",
-    description: "Future audit trail for this person record.",
-    href: "/activity",
-  },
-];
-
-const linkedActions = [
-  {
-    label: "Add relationship",
-    href: "/whakapapa/new",
-  },
-  {
-    label: "Record hui attendance",
-    href: "/hui",
-  },
-  {
-    label: "Assign task",
-    href: "/tasks",
-  },
-];
+type WhakapapaRelationship = {
+  id: string;
+  relationship_type: string;
+  person_a_id: string;
+  person_b_id: string;
+  person_a: {
+    full_name: string;
+  } | null;
+  person_b: {
+    full_name: string;
+  } | null;
+};
 
 function formatDate(date: string) {
   return new Date(date).toLocaleDateString("en-NZ", {
@@ -64,193 +39,315 @@ export default async function PeopleDetailPage({
 }: PeopleDetailPageProps) {
   const { id } = await params;
 
-  const { data, error } = await supabase
+  const personResult = await supabase
     .from("people")
-    .select(
-      `
-      id,
-      full_name,
-      created_at
-    `
-    )
+    .select("id, full_name, created_at")
     .eq("id", id)
     .maybeSingle();
 
-  const person = data as PersonRecord | null;
+  const relationshipResult = await supabase
+    .from("whakapapa_relationships")
+    .select(
+      `
+      id,
+      relationship_type,
+      person_a_id,
+      person_b_id,
+      person_a:person_a_id (
+        full_name
+      ),
+      person_b:person_b_id (
+        full_name
+      )
+    `
+    )
+    .or(`person_a_id.eq.${id},person_b_id.eq.${id}`)
+    .order("created_at", { ascending: false });
+
+  const person = personResult.data as PersonRecord | null;
+  const relationshipRecords =
+    (relationshipResult.data ?? []) as unknown as WhakapapaRelationship[];
 
   return (
-    <AppShell title="Person Detail" eyebrow="Core Records / People">
-      <section className="grid gap-6">
-        <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-8">
-          <a
-            href="/people"
-            className="text-sm font-medium text-stone-500 transition hover:text-white"
-          >
-            ← Back to People Register
-          </a>
+    <AppShell title="Person Detail" eyebrow="Core Records">
+      <section className="rounded-3xl border border-stone-800 bg-stone-900/50 p-8">
+        <p className="text-xs uppercase tracking-[0.25em] text-stone-500">
+          Person Record
+        </p>
 
-          <p className="mt-8 font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-            Person record
-          </p>
+        {personResult.error ? (
+          <>
+            <h1 className="mt-3 text-3xl font-semibold text-red-300">
+              Database error
+            </h1>
 
-          {error ? (
-            <>
-              <h1 className="mt-5 text-4xl font-semibold tracking-tight text-red-300 md:text-5xl">
-                Record could not be loaded.
-              </h1>
+            <pre className="mt-4 max-w-2xl whitespace-pre-wrap text-sm text-red-300">
+              {personResult.error.message}
+            </pre>
+          </>
+        ) : !person ? (
+          <>
+            <h1 className="mt-3 text-3xl font-semibold text-white">
+              Person not found
+            </h1>
 
-              <p className="mt-5 text-sm leading-7 text-red-200/80">
-                {error.message}
-              </p>
-            </>
-          ) : !person ? (
-            <>
-              <h1 className="mt-5 text-4xl font-semibold tracking-tight text-white md:text-5xl">
-                Person not found.
-              </h1>
+            <p className="mt-4 max-w-2xl text-stone-400">
+              No people record exists for this ID. Return to the people
+              register and select an existing record.
+            </p>
+          </>
+        ) : (
+          <>
+            <h1 className="mt-3 text-3xl font-semibold text-white">
+              {person.full_name}
+            </h1>
 
-              <p className="mt-5 max-w-2xl text-base leading-8 text-stone-400">
-                No people record exists for this ID. Return to the register and
-                select an existing record.
-              </p>
-            </>
-          ) : (
-            <>
-              <h1 className="mt-5 text-4xl font-semibold tracking-tight text-white md:text-5xl">
-                {person.full_name}
-              </h1>
+            <p className="mt-4 max-w-2xl text-stone-400">
+              This identity record can connect to whakapapa relationships, hui
+              attendance, assigned tasks, documents, roles, and future activity
+              history.
+            </p>
+          </>
+        )}
+      </section>
 
-              <p className="mt-5 max-w-3xl text-base leading-8 text-stone-400">
-                This person is an identity anchor inside the relational system.
-                Future records can connect this person to whakapapa, whenua,
-                marae, hui, decisions, tasks, documents, and activity history.
-              </p>
+      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-semibold text-white">Record Details</h2>
 
-              <div className="mt-8 flex flex-wrap gap-3">
-                {linkedActions.map((action, index) => (
-                  <a
-                    key={action.label}
-                    href={action.href}
-                    className={`rounded-full px-5 py-3 text-sm font-semibold transition ${
-                      index === 0
-                        ? "bg-stone-100 text-stone-950 hover:bg-white"
-                        : "border border-stone-700 text-stone-300 hover:border-stone-500 hover:text-white"
-                    }`}
-                  >
-                    {action.label}
-                  </a>
-                ))}
-              </div>
-            </>
-          )}
+            <p className="mt-1 text-sm text-stone-400">
+              Core fields from the Supabase people table.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <a
+              href="/people"
+              className="rounded-xl border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
+            >
+              Back to People
+            </a>
+
+            <a
+              href="/whakapapa/new"
+              className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+            >
+              Add Relationship
+            </a>
+          </div>
         </div>
 
-        <div className="grid gap-6 xl:grid-cols-[1fr_420px]">
-          <section className="rounded-3xl border border-stone-800 bg-stone-900/60 p-6">
-            <div className="border-b border-stone-800 pb-5">
-              <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-                Core details
-              </p>
+        {person ? (
+          <div className="mt-6 overflow-hidden rounded-2xl border border-stone-800">
+            <table className="w-full border-collapse text-left text-sm">
+              <tbody>
+                <tr className="border-t border-stone-800 bg-stone-950">
+                  <th className="w-48 px-4 py-4 font-medium text-stone-400">
+                    Full Name
+                  </th>
 
-              <h2 className="mt-3 text-2xl font-semibold tracking-tight text-white">
-                Confirmed record fields
-              </h2>
+                  <td className="px-4 py-4 text-stone-100">
+                    {person.full_name}
+                  </td>
+                </tr>
+
+                <tr className="border-t border-stone-800 bg-stone-900">
+                  <th className="w-48 px-4 py-4 font-medium text-stone-400">
+                    Created
+                  </th>
+
+                  <td className="px-4 py-4 text-stone-300">
+                    {formatDate(person.created_at)}
+                  </td>
+                </tr>
+
+                <tr className="border-t border-stone-800 bg-stone-950">
+                  <th className="w-48 px-4 py-4 font-medium text-stone-400">
+                    Record ID
+                  </th>
+
+                  <td className="px-4 py-4">
+                    <span className="font-mono text-xs text-stone-500">
+                      {person.id}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="mt-6 rounded-xl border border-stone-800 bg-stone-950 p-6">
+            <h3 className="text-base font-semibold text-white">
+              No record loaded
+            </h3>
+
+            <p className="mt-2 text-sm text-stone-400">
+              The person record could not be displayed.
+            </p>
+          </div>
+        )}
+      </section>
+
+      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-semibold text-white">
+              Whakapapa Relationships
+            </h2>
+
+            <p className="mt-1 text-sm text-stone-400">
+              Relationship records where this person appears.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
+              {relationshipRecords.length} records
             </div>
 
-            <div className="mt-5 grid gap-4 md:grid-cols-2">
-              <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
-                <p className="font-mono text-xs uppercase tracking-[0.2em] text-stone-600">
-                  Full name
-                </p>
+            <a
+              href="/whakapapa/new"
+              className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+            >
+              Add Relationship
+            </a>
+          </div>
+        </div>
 
-                <p className="mt-3 text-lg font-semibold text-stone-200">
-                  {person?.full_name ?? "Not available"}
-                </p>
-              </div>
+        {relationshipResult.error ? (
+          <div className="mt-6 rounded-xl border border-red-900 bg-red-950/40 p-4 text-sm text-red-300">
+            <p className="font-semibold">Database error</p>
+            <pre className="mt-3 whitespace-pre-wrap">
+              {relationshipResult.error.message}
+            </pre>
+          </div>
+        ) : relationshipRecords.length === 0 ? (
+          <div className="mt-6 rounded-xl border border-stone-800 bg-stone-950 p-6">
+            <h3 className="text-base font-semibold text-white">
+              No whakapapa relationships yet
+            </h3>
 
-              <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
-                <p className="font-mono text-xs uppercase tracking-[0.2em] text-stone-600">
-                  Status
-                </p>
+            <p className="mt-2 text-sm text-stone-400">
+              Add a relationship record to connect this person into the
+              whakapapa layer.
+            </p>
+          </div>
+        ) : (
+          <div className="mt-6 overflow-hidden rounded-2xl border border-stone-800">
+            <table className="w-full border-collapse text-left text-sm">
+              <thead className="bg-stone-950 text-stone-400">
+                <tr>
+                  <th className="px-4 py-3 font-medium">First Person</th>
+                  <th className="px-4 py-3 font-medium">Relationship</th>
+                  <th className="px-4 py-3 font-medium">Second Person</th>
+                  <th className="px-4 py-3 font-medium">Open</th>
+                </tr>
+              </thead>
 
-                <p className="mt-3 text-lg font-semibold text-green-400">
-                  {person ? "Loaded" : "Unavailable"}
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
-                <p className="font-mono text-xs uppercase tracking-[0.2em] text-stone-600">
-                  Created
-                </p>
-
-                <p className="mt-3 text-lg font-semibold text-stone-200">
-                  {person ? formatDate(person.created_at) : "Not available"}
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
-                <p className="font-mono text-xs uppercase tracking-[0.2em] text-stone-600">
-                  Database
-                </p>
-
-                <p className="mt-3 text-lg font-semibold text-stone-200">
-                  Supabase people table
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5 md:col-span-2">
-                <p className="font-mono text-xs uppercase tracking-[0.2em] text-stone-600">
-                  Record ID
-                </p>
-
-                <p className="mt-3 break-all font-mono text-sm text-stone-300">
-                  {id}
-                </p>
-              </div>
-            </div>
-          </section>
-
-          <aside className="grid gap-6">
-            <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-6">
-              <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-                Related records
-              </p>
-
-              <div className="mt-5 grid gap-3">
-                {relatedRecordLinks.map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    className="rounded-2xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+              <tbody>
+                {relationshipRecords.map((relationship) => (
+                  <tr
+                    key={relationship.id}
+                    className="border-t border-stone-800 bg-stone-900"
                   >
-                    <p className="text-sm font-semibold text-white">
-                      {link.label}
-                    </p>
+                    <td className="px-4 py-4">
+                      <a
+                        href={`/people/${relationship.person_a_id}`}
+                        className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                      >
+                        {relationship.person_a?.full_name || "Unknown person"}
+                      </a>
+                    </td>
 
-                    <p className="mt-1 text-xs leading-5 text-stone-600">
-                      {link.description}
-                    </p>
-                  </a>
+                    <td className="px-4 py-4 text-stone-300">
+                      {relationship.relationship_type}
+                    </td>
+
+                    <td className="px-4 py-4">
+                      <a
+                        href={`/people/${relationship.person_b_id}`}
+                        className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                      >
+                        {relationship.person_b?.full_name || "Unknown person"}
+                      </a>
+                    </td>
+
+                    <td className="px-4 py-4">
+                      <a
+                        href={`/whakapapa/${relationship.id}`}
+                        className="text-sm font-medium text-stone-300 underline-offset-4 transition hover:text-white hover:underline"
+                      >
+                        View relationship
+                      </a>
+                    </td>
+                  </tr>
                 ))}
-              </div>
-            </div>
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
 
-            <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-6">
-              <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-                Activity
-              </p>
+      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-semibold text-white">
+              Related Records
+            </h2>
 
-              <div className="mt-5 rounded-2xl border border-stone-800 bg-stone-950 p-4">
-                <p className="text-sm font-semibold text-white">
-                  Person record viewed
-                </p>
+            <p className="mt-1 text-sm text-stone-400">
+              Useful pathways connected to this person record.
+            </p>
+          </div>
+        </div>
 
-                <p className="mt-1 text-xs leading-5 text-stone-600">
-                  This models the future activity log for this person record.
-                </p>
-              </div>
-            </div>
-          </aside>
+        <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <a
+            href="/people"
+            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+          >
+            <h3 className="text-sm font-semibold text-white">
+              People Register
+            </h3>
+
+            <p className="mt-1 text-sm text-stone-400">
+              Return to the full people register.
+            </p>
+          </a>
+
+          <a
+            href="/whakapapa"
+            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+          >
+            <h3 className="text-sm font-semibold text-white">Whakapapa</h3>
+
+            <p className="mt-1 text-sm text-stone-400">
+              View all relationship records.
+            </p>
+          </a>
+
+          <a
+            href="/tasks"
+            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+          >
+            <h3 className="text-sm font-semibold text-white">Tasks</h3>
+
+            <p className="mt-1 text-sm text-stone-400">
+              Future assigned actions and follow-up.
+            </p>
+          </a>
+
+          <a
+            href="/activity"
+            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+          >
+            <h3 className="text-sm font-semibold text-white">Activity</h3>
+
+            <p className="mt-1 text-sm text-stone-400">
+              Future record history and audit trail.
+            </p>
+          </a>
         </div>
       </section>
     </AppShell>
