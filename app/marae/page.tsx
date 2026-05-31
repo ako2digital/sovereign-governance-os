@@ -1,72 +1,29 @@
+import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 import { supabase } from "@/lib/supabaseClient";
 
 type MaraeRecord = {
   id: string;
-  created_at?: string | null;
   name?: string | null;
   title?: string | null;
-  marae_name?: string | null;
   location?: string | null;
-  rohe?: string | null;
-  address?: string | null;
-  hapu?: string | null;
-  hapū?: string | null;
-  iwi?: string | null;
   description?: string | null;
   notes?: string | null;
-  historical_notes?: string | null;
   status?: string | null;
-  sensitivity_level?: string | null;
+  created_at?: string | null;
 };
 
-const relatedRecordLinks = [
-  {
-    label: "Whenua",
-    href: "/whenua",
-    description: "Land records connected to marae, whenua, and place.",
-  },
-  {
-    label: "Hui",
-    href: "/hui",
-    description: "Future hui records hosted at or connected to marae.",
-  },
-  {
-    label: "Governance",
-    href: "/governance",
-    description: "Mandates, authority, roles, and governance records.",
-  },
-  {
-    label: "Documents",
-    href: "/documents",
-    description: "Photos, records, maps, minutes, and supporting files.",
-  },
-];
+function formatValue(value?: string | null) {
+  if (!value) {
+    return "—";
+  }
 
-function getMaraeName(record: MaraeRecord) {
-  return record.name || record.marae_name || record.title || "Untitled marae record";
-}
-
-function getLocation(record: MaraeRecord) {
-  return record.location || record.rohe || record.address || "Location not recorded";
-}
-
-function getAffiliation(record: MaraeRecord) {
-  return record.hapu || record.hapū || record.iwi || "Affiliation not recorded";
-}
-
-function getDescription(record: MaraeRecord) {
-  return (
-    record.description ||
-    record.notes ||
-    record.historical_notes ||
-    "No description recorded."
-  );
+  return value;
 }
 
 function formatDate(date?: string | null) {
   if (!date) {
-    return "Date unavailable";
+    return "—";
   }
 
   return new Date(date).toLocaleDateString("en-NZ", {
@@ -76,20 +33,12 @@ function formatDate(date?: string | null) {
   });
 }
 
-function statusClass(status?: string | null) {
-  if (status === "active") {
-    return "bg-green-400/10 text-green-400";
-  }
+function maraePath(id: string) {
+  return `/marae/${id}`;
+}
 
-  if (status === "under_review") {
-    return "bg-stone-100 text-stone-950";
-  }
-
-  if (status === "archived") {
-    return "bg-stone-800 text-stone-500";
-  }
-
-  return "bg-stone-800 text-stone-500";
+function getMaraeName(record: MaraeRecord) {
+  return record.name || record.title || "Untitled marae record";
 }
 
 export default async function MaraePage() {
@@ -101,214 +50,134 @@ export default async function MaraePage() {
   const maraeRecords = (data ?? []) as MaraeRecord[];
 
   return (
-    <AppShell title="Marae Records" eyebrow="Governance / Marae">
-      <section className="grid gap-6">
-        <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-8">
-          <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
-            <div>
-              <a
-                href="/marae"
-                className="inline-flex rounded-full border border-stone-700 bg-stone-950 px-4 py-2 font-mono text-xs uppercase tracking-[0.25em] text-stone-400 transition hover:border-stone-500 hover:text-white"
-              >
-                Marae register
-              </a>
+    <AppShell title="Marae" eyebrow="Core Records">
+      <section className="rounded-3xl border border-stone-800 bg-stone-900/50 p-8">
+        <p className="text-xs uppercase tracking-[0.25em] text-stone-500">
+          Marae Register
+        </p>
 
-              <h1 className="mt-6 max-w-5xl text-4xl font-semibold tracking-tight text-white md:text-5xl">
-                Marae records connected to people, whenua, hui, and governance.
-              </h1>
+        <h1 className="mt-3 text-3xl font-semibold text-white">Marae</h1>
 
-              <p className="mt-5 max-w-3xl text-base leading-8 text-stone-400">
-                Marae records are community anchors. Each record should later
-                connect to whenua, hui, governance structures, documents,
-                decisions, tasks, and activity history.
-              </p>
+        <p className="mt-4 max-w-2xl text-stone-400">
+          Manage marae records, locations, descriptions, notes, status, and
+          supporting context for governance and relational infrastructure.
+        </p>
+      </section>
+
+      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-semibold text-white">
+              Marae Register
+            </h2>
+
+            <p className="mt-1 text-sm text-stone-400">
+              Live records pulled from the Supabase marae_records table.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
+              {maraeRecords.length} records
             </div>
 
-            <div className="flex flex-wrap gap-3">
-              <a
-                href="/marae/new"
-                className="rounded-full bg-stone-100 px-5 py-3 text-sm font-semibold text-stone-950 transition hover:bg-white"
-              >
-                Add Marae
-              </a>
-
-              <a
-                href="/hui"
-                className="rounded-full border border-stone-700 px-5 py-3 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
-              >
-                View Hui
-              </a>
-            </div>
+            <Link
+              href="/marae/new"
+              className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+            >
+              Add Marae
+            </Link>
           </div>
         </div>
 
-        <div className="grid gap-6 xl:grid-cols-[1fr_420px]">
-          <section className="overflow-hidden rounded-3xl border border-stone-800 bg-stone-900/60">
-            <div className="flex items-center justify-between border-b border-stone-800 px-6 py-5">
-              <div>
-                <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-                  Current records
-                </p>
+        {error ? (
+          <div className="mt-6 rounded-xl border border-red-900 bg-red-950/40 p-4 text-sm text-red-300">
+            <p className="font-semibold">Database error</p>
+            <pre className="mt-3 whitespace-pre-wrap">{error.message}</pre>
+          </div>
+        ) : maraeRecords.length === 0 ? (
+          <div className="mt-6 rounded-xl border border-stone-800 bg-stone-950 p-6">
+            <h3 className="text-base font-semibold text-white">
+              No marae records yet
+            </h3>
 
-                <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white">
-                  {maraeRecords.length} marae records
-                </h2>
-              </div>
+            <p className="mt-2 text-sm text-stone-400">
+              Add the first marae record to begin building the marae layer.
+            </p>
 
-              <a
+            <div className="mt-5">
+              <Link
                 href="/marae/new"
-                className="rounded-full border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
+                className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
               >
-                Add record
-              </a>
+                Add First Marae
+              </Link>
             </div>
+          </div>
+        ) : (
+          <div className="mt-6 overflow-x-auto rounded-2xl border border-stone-800">
+            <table className="w-full min-w-[860px] border-collapse text-left text-sm">
+              <thead className="bg-stone-950 text-stone-400">
+                <tr>
+                  <th className="px-4 py-3 font-medium">Name</th>
+                  <th className="px-4 py-3 font-medium">Location</th>
+                  <th className="px-4 py-3 font-medium">Status</th>
+                  <th className="px-4 py-3 font-medium">Created</th>
+                  <th className="px-4 py-3 font-medium">Record ID</th>
+                  <th className="px-4 py-3 font-medium">Open</th>
+                </tr>
+              </thead>
 
-            {error ? (
-              <div className="p-6">
-                <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-5">
-                  <p className="font-semibold text-red-300">
-                    Supabase error while loading marae records.
-                  </p>
-
-                  <p className="mt-3 text-sm leading-7 text-red-200/80">
-                    {error.message}
-                  </p>
-                </div>
-              </div>
-            ) : maraeRecords.length === 0 ? (
-              <div className="p-6">
-                <div className="rounded-3xl border border-dashed border-stone-700 bg-stone-950 p-8 text-center">
-                  <h3 className="text-xl font-semibold text-white">
-                    No marae records yet.
-                  </h3>
-
-                  <p className="mt-3 text-sm leading-7 text-stone-500">
-                    Add the first marae record to begin the community record layer.
-                  </p>
-
-                  <a
-                    href="/marae/new"
-                    className="mt-6 inline-flex rounded-full bg-stone-100 px-5 py-3 text-sm font-semibold text-stone-950 transition hover:bg-white"
-                  >
-                    Add First Marae Record
-                  </a>
-                </div>
-              </div>
-            ) : (
-              <div className="divide-y divide-stone-800">
+              <tbody>
                 {maraeRecords.map((record) => (
-                  <a
+                  <tr
                     key={record.id}
-                    href={`/marae/${record.id}`}
-                    className="group grid gap-4 px-6 py-5 transition hover:bg-stone-900 xl:grid-cols-[1fr_180px_150px_120px]"
+                    className="border-t border-stone-800 bg-stone-900 transition hover:bg-stone-950"
                   >
-                    <div>
-                      <h3 className="text-lg font-semibold text-white">
-                        {getMaraeName(record)}
-                      </h3>
-
-                      <p className="mt-1 text-sm text-stone-500">
-                        {getLocation(record)}
-                      </p>
-
-                      <p className="mt-2 line-clamp-2 text-sm leading-6 text-stone-600">
-                        {getDescription(record)}
-                      </p>
-                    </div>
-
-                    <div>
-                      <p className="text-sm font-semibold text-stone-300">
-                        {getAffiliation(record)}
-                      </p>
-
-                      <p className="mt-2 text-xs text-stone-600">
-                        Created {formatDate(record.created_at)}
-                      </p>
-                    </div>
-
-                    <div>
-                      <span
-                        className={`inline-flex rounded-full px-3 py-1 font-mono text-[11px] uppercase ${statusClass(
-                          record.status
-                        )}`}
+                    <td className="px-4 py-4">
+                      <Link
+                        href={maraePath(record.id)}
+                        className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
                       >
-                        {record.status || "not set"}
-                      </span>
-                    </div>
+                        {getMaraeName(record)}
+                      </Link>
+                    </td>
 
-                    <div className="text-sm font-semibold text-stone-500 transition group-hover:text-white xl:text-right">
-                      View →
-                    </div>
-                  </a>
+                    <td className="px-4 py-4 text-stone-300">
+                      {formatValue(record.location)}
+                    </td>
+
+                    <td className="px-4 py-4 text-stone-300">
+                      {formatValue(record.status)}
+                    </td>
+
+                    <td className="px-4 py-4 text-stone-300">
+                      {formatDate(record.created_at)}
+                    </td>
+
+                    <td className="px-4 py-4">
+                      <Link
+                        href={maraePath(record.id)}
+                        className="font-mono text-xs text-stone-500 underline-offset-4 transition hover:text-white hover:underline"
+                      >
+                        {record.id}
+                      </Link>
+                    </td>
+
+                    <td className="px-4 py-4">
+                      <Link
+                        href={maraePath(record.id)}
+                        className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                      >
+                        View record
+                      </Link>
+                    </td>
+                  </tr>
                 ))}
-              </div>
-            )}
-          </section>
-
-          <aside className="grid gap-6 content-start">
-            <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-6">
-              <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-                Register status
-              </p>
-
-              <div className="mt-5 grid gap-3">
-                <div className="rounded-2xl border border-stone-800 bg-stone-950 p-4">
-                  <p className="font-mono text-xs uppercase tracking-[0.2em] text-stone-600">
-                    Total records
-                  </p>
-
-                  <p className="mt-3 text-3xl font-semibold text-white">
-                    {maraeRecords.length}
-                  </p>
-                </div>
-
-                <div className="rounded-2xl border border-stone-800 bg-stone-950 p-4">
-                  <p className="font-mono text-xs uppercase tracking-[0.2em] text-stone-600">
-                    Database
-                  </p>
-
-                  <p className="mt-3 text-sm font-semibold text-green-400">
-                    Supabase connected
-                  </p>
-                </div>
-
-                <div className="rounded-2xl border border-stone-800 bg-stone-950 p-4">
-                  <p className="font-mono text-xs uppercase tracking-[0.2em] text-stone-600">
-                    Display
-                  </p>
-
-                  <p className="mt-3 text-sm font-semibold text-stone-300">
-                    Flexible field mapping
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-6">
-              <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-                Related records
-              </p>
-
-              <div className="mt-5 grid gap-3">
-                {relatedRecordLinks.map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    className="rounded-2xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
-                  >
-                    <p className="text-sm font-semibold text-white">
-                      {link.label}
-                    </p>
-
-                    <p className="mt-1 text-xs leading-5 text-stone-600">
-                      {link.description}
-                    </p>
-                  </a>
-                ))}
-              </div>
-            </div>
-          </aside>
-        </div>
+              </tbody>
+            </table>
+          </div>
+        )}
       </section>
     </AppShell>
   );
