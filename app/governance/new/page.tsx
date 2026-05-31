@@ -1,439 +1,507 @@
-"use client";
-
-import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
+import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 import { supabase } from "@/lib/supabaseClient";
 
 type MaraeRecord = {
   id: string;
-  name: string | null;
+  name?: string | null;
+  title?: string | null;
+  location?: string | null;
+  created_at?: string | null;
 };
 
 type WhenuaRecord = {
   id: string;
   title: string | null;
+  block_name: string | null;
+  location: string | null;
+  created_at: string | null;
 };
 
-const futureLinks = [
-  "Linked hui records",
-  "Meeting minutes",
-  "Governance decisions",
-  "Supporting documents",
-  "Follow-up tasks",
-  "Governance activity history",
-];
+async function createGovernanceRecord(formData: FormData) {
+  "use server";
 
-export default function NewGovernanceRecordPage() {
-  const router = useRouter();
+  const title = String(formData.get("title") || "").trim();
+  const recordType = String(formData.get("record_type") || "").trim();
+  const summary = String(formData.get("summary") || "").trim();
+  const status = String(formData.get("status") || "").trim();
+  const effectiveDate = String(formData.get("effective_date") || "").trim();
+  const relatedMaraeId = String(formData.get("related_marae_id") || "").trim();
+  const relatedWhenuaId = String(
+    formData.get("related_whenua_id") || ""
+  ).trim();
 
-  const [title, setTitle] = useState("");
-  const [recordType, setRecordType] = useState("policy");
-  const [summary, setSummary] = useState("");
-  const [status, setStatus] = useState("active");
-  const [effectiveDate, setEffectiveDate] = useState("");
-  const [relatedMaraeId, setRelatedMaraeId] = useState("");
-  const [relatedWhenuaId, setRelatedWhenuaId] = useState("");
-
-  const [maraeRecords, setMaraeRecords] = useState<MaraeRecord[]>([]);
-  const [whenuaRecords, setWhenuaRecords] = useState<WhenuaRecord[]>([]);
-
-  const [isLoadingRelations, setIsLoadingRelations] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-
-  useEffect(() => {
-    async function loadRelations() {
-      setIsLoadingRelations(true);
-      setErrorMessage("");
-
-      const [maraeResult, whenuaResult] = await Promise.all([
-        supabase.from("marae_records").select("id, name").order("name"),
-        supabase.from("whenua_records").select("id, title").order("title"),
-      ]);
-
-      if (maraeResult.error) {
-        setErrorMessage(maraeResult.error.message);
-        setIsLoadingRelations(false);
-        return;
-      }
-
-      if (whenuaResult.error) {
-        setErrorMessage(whenuaResult.error.message);
-        setIsLoadingRelations(false);
-        return;
-      }
-
-      setMaraeRecords((maraeResult.data ?? []) as MaraeRecord[]);
-      setWhenuaRecords((whenuaResult.data ?? []) as WhenuaRecord[]);
-      setIsLoadingRelations(false);
-    }
-
-    loadRelations();
-  }, []);
-
-  const selectedMarae = useMemo(() => {
-    return maraeRecords.find((record) => record.id === relatedMaraeId) ?? null;
-  }, [maraeRecords, relatedMaraeId]);
-
-  const selectedWhenua = useMemo(() => {
-    return whenuaRecords.find((record) => record.id === relatedWhenuaId) ?? null;
-  }, [whenuaRecords, relatedWhenuaId]);
-
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setErrorMessage("");
-
-    if (!title.trim()) {
-      setErrorMessage("Title is required.");
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    const { error } = await supabase.from("governance_records").insert({
-      title: title.trim(),
-      record_type: recordType.trim() || null,
-      summary: summary.trim() || null,
-      status,
-      effective_date: effectiveDate || null,
-      related_marae_id: relatedMaraeId || null,
-      related_whenua_id: relatedWhenuaId || null,
-    });
-
-    setIsSubmitting(false);
-
-    if (error) {
-      setErrorMessage(error.message);
-      return;
-    }
-
-    router.push("/governance");
-    router.refresh();
+  if (!title) {
+    return;
   }
 
+  const { error } = await supabase.from("governance_records").insert({
+    title,
+    record_type: recordType || null,
+    summary: summary || null,
+    status: status || null,
+    effective_date: effectiveDate || null,
+    related_marae_id: relatedMaraeId || null,
+    related_whenua_id: relatedWhenuaId || null,
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  redirect("/governance");
+}
+
+function formatValue(value?: string | null) {
+  if (!value) {
+    return "—";
+  }
+
+  return value;
+}
+
+function formatDate(date?: string | null) {
+  if (!date) {
+    return "—";
+  }
+
+  return new Date(date).toLocaleDateString("en-NZ", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function maraePath(id: string) {
+  return `/marae/${id}`;
+}
+
+function whenuaPath(id: string) {
+  return `/whenua/${id}`;
+}
+
+function getMaraeName(record: MaraeRecord) {
+  return record.name || record.title || "Untitled marae record";
+}
+
+function getWhenuaTitle(record: WhenuaRecord) {
+  return record.title || "Untitled whenua record";
+}
+
+export default async function AddGovernancePage() {
+  const { data: maraeData, error: maraeError } = await supabase
+    .from("marae_records")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  const { data: whenuaData, error: whenuaError } = await supabase
+    .from("whenua_records")
+    .select(
+      `
+      id,
+      title,
+      block_name,
+      location,
+      created_at
+    `
+    )
+    .order("created_at", { ascending: false });
+
+  const maraeRecords = (maraeData ?? []) as MaraeRecord[];
+  const whenuaRecords = (whenuaData ?? []) as WhenuaRecord[];
+
   return (
-    <AppShell title="Add Governance Record" eyebrow="Governance / Records">
-      <section className="grid gap-6">
-        <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-8">
-          <a
+    <AppShell title="Add Governance" eyebrow="Governance Module">
+      <section className="rounded-3xl border border-stone-800 bg-stone-900/50 p-8">
+        <p className="text-xs uppercase tracking-[0.25em] text-stone-500">
+          New Governance Record
+        </p>
+
+        <h1 className="mt-3 text-3xl font-semibold text-white">
+          Add Governance
+        </h1>
+
+        <p className="mt-4 max-w-2xl text-stone-400">
+          Create a governance record with its title, type, summary, status,
+          effective date, and optional links to existing marae or whenua
+          records.
+        </p>
+      </section>
+
+      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-semibold text-white">
+              Governance Details
+            </h2>
+
+            <p className="mt-1 text-sm text-stone-400">
+              Enter the confirmed governance information. Only the title is
+              required at this stage.
+            </p>
+          </div>
+
+          <Link
             href="/governance"
-            className="text-sm font-medium text-stone-500 transition hover:text-white"
+            className="rounded-xl border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
           >
-            ← Back to Governance Records
-          </a>
-
-          <p className="mt-8 font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-            New governance record
-          </p>
-
-          <h1 className="mt-5 max-w-5xl text-4xl font-semibold tracking-tight text-white md:text-5xl">
-            Create an authority, mandate, policy, or governance context record.
-          </h1>
-
-          <p className="mt-5 max-w-3xl text-base leading-8 text-stone-400">
-            A governance record should not sit alone. Link it to marae and
-            whenua now, then connect hui, minutes, decisions, documents, tasks,
-            and activity history as the system expands.
-          </p>
+            Back to Governance
+          </Link>
         </div>
 
-        <div className="grid gap-6 xl:grid-cols-[1fr_420px]">
-          <form
-            onSubmit={handleSubmit}
-            className="rounded-3xl border border-stone-800 bg-stone-900/60 p-8"
-          >
-            <div className="border-b border-stone-800 pb-6">
-              <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-                Core details
-              </p>
+        {maraeError || whenuaError ? (
+          <div className="mt-6 grid gap-4">
+            {maraeError ? (
+              <div className="rounded-xl border border-red-900 bg-red-950/40 p-4 text-sm text-red-300">
+                <p className="font-semibold">Marae database error</p>
+                <pre className="mt-3 whitespace-pre-wrap">
+                  {maraeError.message}
+                </pre>
+              </div>
+            ) : null}
 
-              <h2 className="mt-3 text-2xl font-semibold tracking-tight text-white">
-                Define the governance record and its direct links.
-              </h2>
-            </div>
+            {whenuaError ? (
+              <div className="rounded-xl border border-red-900 bg-red-950/40 p-4 text-sm text-red-300">
+                <p className="font-semibold">Whenua database error</p>
+                <pre className="mt-3 whitespace-pre-wrap">
+                  {whenuaError.message}
+                </pre>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
 
-            <div className="mt-6 grid gap-6">
-              <label className="grid gap-3">
-                <span className="text-sm font-semibold text-stone-300">
-                  Title <span className="text-red-300">*</span>
-                </span>
+        <form action={createGovernanceRecord} className="mt-6 grid gap-5">
+          <div>
+            <label
+              htmlFor="title"
+              className="text-sm font-medium text-stone-300"
+            >
+              Title
+            </label>
 
-                <input
-                  value={title}
-                  onChange={(event) => setTitle(event.target.value)}
-                  required
-                  placeholder="Example: Hapū Data Management Mandate"
-                  className="rounded-2xl border border-stone-700 bg-stone-950 px-5 py-4 text-stone-100 outline-none transition placeholder:text-stone-600 focus:border-stone-400"
-                />
+            <input
+              id="title"
+              name="title"
+              type="text"
+              required
+              placeholder="Example: Hapū data governance mandate"
+              className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+            />
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-2">
+            <div>
+              <label
+                htmlFor="record_type"
+                className="text-sm font-medium text-stone-300"
+              >
+                Record Type
               </label>
 
-              <div className="grid gap-5 md:grid-cols-2">
-                <label className="grid gap-3">
-                  <span className="text-sm font-semibold text-stone-300">
-                    Record type
-                  </span>
-
-                  <select
-                    value={recordType}
-                    onChange={(event) => setRecordType(event.target.value)}
-                    className="rounded-2xl border border-stone-700 bg-stone-950 px-5 py-4 text-stone-100 outline-none transition focus:border-stone-400"
-                  >
-                    <option value="policy">Policy</option>
-                    <option value="mandate">Mandate</option>
-                    <option value="resolution">Resolution</option>
-                    <option value="trust_deed">Trust deed</option>
-                    <option value="committee_record">Committee record</option>
-                    <option value="authority_record">Authority record</option>
-                    <option value="other">Other</option>
-                  </select>
-                </label>
-
-                <label className="grid gap-3">
-                  <span className="text-sm font-semibold text-stone-300">
-                    Effective date
-                  </span>
-
-                  <input
-                    type="date"
-                    value={effectiveDate}
-                    onChange={(event) => setEffectiveDate(event.target.value)}
-                    className="rounded-2xl border border-stone-700 bg-stone-950 px-5 py-4 text-stone-100 outline-none transition focus:border-stone-400"
-                  />
-                </label>
-              </div>
-
-              <div className="grid gap-5 md:grid-cols-2">
-                <label className="grid gap-3">
-                  <span className="text-sm font-semibold text-stone-300">
-                    Related marae
-                  </span>
-
-                  <select
-                    value={relatedMaraeId}
-                    onChange={(event) => setRelatedMaraeId(event.target.value)}
-                    disabled={isLoadingRelations}
-                    className="rounded-2xl border border-stone-700 bg-stone-950 px-5 py-4 text-stone-100 outline-none transition focus:border-stone-400 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    <option value="">
-                      {isLoadingRelations ? "Loading marae..." : "None"}
-                    </option>
-
-                    {maraeRecords.map((record) => (
-                      <option key={record.id} value={record.id}>
-                        {record.name || "Untitled marae record"}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-
-                <label className="grid gap-3">
-                  <span className="text-sm font-semibold text-stone-300">
-                    Related whenua
-                  </span>
-
-                  <select
-                    value={relatedWhenuaId}
-                    onChange={(event) => setRelatedWhenuaId(event.target.value)}
-                    disabled={isLoadingRelations}
-                    className="rounded-2xl border border-stone-700 bg-stone-950 px-5 py-4 text-stone-100 outline-none transition focus:border-stone-400 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    <option value="">
-                      {isLoadingRelations ? "Loading whenua..." : "None"}
-                    </option>
-
-                    {whenuaRecords.map((record) => (
-                      <option key={record.id} value={record.id}>
-                        {record.title || "Untitled whenua record"}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-
-              <label className="grid gap-3">
-                <span className="text-sm font-semibold text-stone-300">
-                  Status
-                </span>
-
-                <select
-                  value={status}
-                  onChange={(event) => setStatus(event.target.value)}
-                  className="rounded-2xl border border-stone-700 bg-stone-950 px-5 py-4 text-stone-100 outline-none transition focus:border-stone-400"
-                >
-                  <option value="active">Active</option>
-                  <option value="draft">Draft</option>
-                  <option value="under_review">Under review</option>
-                  <option value="archived">Archived</option>
-                </select>
-              </label>
-
-              <label className="grid gap-3">
-                <span className="text-sm font-semibold text-stone-300">
-                  Summary / mandate
-                </span>
-
-                <textarea
-                  value={summary}
-                  onChange={(event) => setSummary(event.target.value)}
-                  placeholder="Add policy, mandate, authority, resolution, responsibility, or governance context."
-                  className="min-h-40 rounded-2xl border border-stone-700 bg-stone-950 px-5 py-4 text-stone-100 outline-none transition placeholder:text-stone-600 focus:border-stone-400"
-                />
-              </label>
-
-              <div className="rounded-2xl border border-stone-800 bg-stone-950 p-5">
-                <p className="font-mono text-xs uppercase tracking-[0.25em] text-stone-600">
-                  Current schema
-                </p>
-
-                <p className="mt-3 text-sm leading-7 text-stone-500">
-                  This form writes the current governance columns: title,
-                  record_type, summary, status, effective_date,
-                  related_marae_id, and related_whenua_id.
-                </p>
-              </div>
-
-              {errorMessage ? (
-                <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-5">
-                  <p className="font-semibold text-red-300">
-                    Could not create governance record.
-                  </p>
-
-                  <p className="mt-3 text-sm leading-7 text-red-200/80">
-                    {errorMessage}
-                  </p>
-                </div>
-              ) : null}
-
-              <div className="flex flex-wrap gap-3">
-                <button
-                  type="submit"
-                  disabled={isSubmitting || isLoadingRelations}
-                  className="rounded-full bg-stone-100 px-6 py-3 text-sm font-semibold text-stone-950 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {isSubmitting ? "Saving..." : "Create Governance Record"}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => router.push("/governance")}
-                  className="rounded-full border border-stone-700 px-6 py-3 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </form>
-
-          <aside className="grid gap-6 content-start">
-            <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-6">
-              <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-                Direct related records
-              </p>
-
-              <div className="mt-5 grid gap-3">
-                <div className="rounded-2xl border border-stone-800 bg-stone-950 p-4">
-                  <p className="font-mono text-xs uppercase tracking-[0.2em] text-stone-600">
-                    Related marae
-                  </p>
-
-                  {selectedMarae ? (
-                    <a
-                      href={`/marae/${selectedMarae.id}`}
-                      className="mt-3 block text-sm font-semibold text-stone-200 underline decoration-stone-700 underline-offset-4 transition hover:text-white hover:decoration-white"
-                    >
-                      {selectedMarae.name || selectedMarae.id}
-                    </a>
-                  ) : (
-                    <p className="mt-3 text-sm text-stone-500">
-                      No marae selected.
-                    </p>
-                  )}
-                </div>
-
-                <div className="rounded-2xl border border-stone-800 bg-stone-950 p-4">
-                  <p className="font-mono text-xs uppercase tracking-[0.2em] text-stone-600">
-                    Related whenua
-                  </p>
-
-                  {selectedWhenua ? (
-                    <a
-                      href={`/whenua/${selectedWhenua.id}`}
-                      className="mt-3 block text-sm font-semibold text-stone-200 underline decoration-stone-700 underline-offset-4 transition hover:text-white hover:decoration-white"
-                    >
-                      {selectedWhenua.title || selectedWhenua.id}
-                    </a>
-                  ) : (
-                    <p className="mt-3 text-sm text-stone-500">
-                      No whenua selected.
-                    </p>
-                  )}
-                </div>
-              </div>
+              <input
+                id="record_type"
+                name="record_type"
+                type="text"
+                placeholder="Example: mandate, policy, resolution, authority record"
+                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+              />
             </div>
 
-            <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-6">
-              <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-                Future related records
-              </p>
+            <div>
+              <label
+                htmlFor="effective_date"
+                className="text-sm font-medium text-stone-300"
+              >
+                Effective Date
+              </label>
 
-              <div className="mt-5 grid gap-3">
-                {futureLinks.map((item) => (
-                  <div
-                    key={item}
-                    className="rounded-2xl border border-stone-800 bg-stone-950 p-4"
-                  >
-                    <p className="text-sm font-semibold text-white">{item}</p>
+              <input
+                id="effective_date"
+                name="effective_date"
+                type="date"
+                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+              />
+            </div>
+          </div>
 
-                    <p className="mt-1 text-xs leading-5 text-stone-600">
-                      Available after the governance record exists.
-                    </p>
-                  </div>
+          <div>
+            <label
+              htmlFor="summary"
+              className="text-sm font-medium text-stone-300"
+            >
+              Summary
+            </label>
+
+            <textarea
+              id="summary"
+              name="summary"
+              rows={6}
+              placeholder="Enter the governance summary, decision context, mandate explanation, or authority notes"
+              className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="status"
+              className="text-sm font-medium text-stone-300"
+            >
+              Status
+            </label>
+
+            <select
+              id="status"
+              name="status"
+              defaultValue=""
+              className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+            >
+              <option value="">Select status</option>
+              <option value="draft">Draft</option>
+              <option value="active">Active</option>
+              <option value="under review">Under Review</option>
+              <option value="approved">Approved</option>
+              <option value="archived">Archived</option>
+            </select>
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-2">
+            <div>
+              <label
+                htmlFor="related_marae_id"
+                className="text-sm font-medium text-stone-300"
+              >
+                Related Marae
+              </label>
+
+              <select
+                id="related_marae_id"
+                name="related_marae_id"
+                defaultValue=""
+                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+              >
+                <option value="">No related marae</option>
+
+                {maraeRecords.map((marae) => (
+                  <option key={marae.id} value={marae.id}>
+                    {getMaraeName(marae)}
+                  </option>
                 ))}
+              </select>
+            </div>
+
+            <div>
+              <label
+                htmlFor="related_whenua_id"
+                className="text-sm font-medium text-stone-300"
+              >
+                Related Whenua
+              </label>
+
+              <select
+                id="related_whenua_id"
+                name="related_whenua_id"
+                defaultValue=""
+                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+              >
+                <option value="">No related whenua</option>
+
+                {whenuaRecords.map((whenua) => (
+                  <option key={whenua.id} value={whenua.id}>
+                    {getWhenuaTitle(whenua)}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 pt-2">
+            <button
+              type="submit"
+              className="rounded-xl bg-stone-100 px-5 py-3 text-sm font-semibold text-stone-950 transition hover:bg-white"
+            >
+              Create Governance Record
+            </button>
+
+            <Link
+              href="/governance"
+              className="rounded-xl border border-stone-700 px-5 py-3 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
+            >
+              Cancel
+            </Link>
+          </div>
+        </form>
+      </section>
+
+      <section className="mt-8 grid gap-6 xl:grid-cols-2">
+        <div className="rounded-2xl border border-stone-800 bg-stone-900 p-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-semibold text-white">
+                Available Marae
+              </h2>
+
+              <p className="mt-1 text-sm text-stone-400">
+                Existing marae records available for optional selection.
+              </p>
+            </div>
+
+            <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
+              {maraeRecords.length} records
+            </div>
+          </div>
+
+          {maraeRecords.length === 0 ? (
+            <div className="mt-6 rounded-xl border border-stone-800 bg-stone-950 p-6">
+              <h3 className="text-base font-semibold text-white">
+                No marae records available
+              </h3>
+
+              <p className="mt-2 text-sm text-stone-400">
+                Add marae records before linking them to governance records.
+              </p>
+
+              <div className="mt-5">
+                <Link
+                  href="/marae/new"
+                  className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+                >
+                  Add Marae
+                </Link>
               </div>
             </div>
+          ) : (
+            <div className="mt-6 overflow-x-auto rounded-2xl border border-stone-800">
+              <table className="w-full min-w-[560px] border-collapse text-left text-sm">
+                <thead className="bg-stone-950 text-stone-400">
+                  <tr>
+                    <th className="px-4 py-3 font-medium">Name</th>
+                    <th className="px-4 py-3 font-medium">Location</th>
+                    <th className="px-4 py-3 font-medium">Open</th>
+                  </tr>
+                </thead>
 
-            <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-6">
-              <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-                Record flow
-              </p>
+                <tbody>
+                  {maraeRecords.map((marae) => (
+                    <tr
+                      key={marae.id}
+                      className="border-t border-stone-800 bg-stone-900 transition hover:bg-stone-950"
+                    >
+                      <td className="px-4 py-4">
+                        <Link
+                          href={maraePath(marae.id)}
+                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                        >
+                          {getMaraeName(marae)}
+                        </Link>
+                      </td>
 
-              <p className="mt-5 text-sm leading-7 text-stone-400">
-                Create the governance record first. Then connect it to hui,
-                minutes, decisions, documents, tasks, and the future activity
-                log.
+                      <td className="px-4 py-4 text-stone-300">
+                        {formatValue(marae.location)}
+                      </td>
+
+                      <td className="px-4 py-4">
+                        <Link
+                          href={maraePath(marae.id)}
+                          className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                        >
+                          View marae
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        <div className="rounded-2xl border border-stone-800 bg-stone-900 p-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-semibold text-white">
+                Available Whenua
+              </h2>
+
+              <p className="mt-1 text-sm text-stone-400">
+                Existing whenua records available for optional selection.
               </p>
             </div>
 
-            <div className="rounded-3xl border border-stone-800 bg-stone-900/60 p-6">
-              <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-                Linked actions
+            <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
+              {whenuaRecords.length} records
+            </div>
+          </div>
+
+          {whenuaRecords.length === 0 ? (
+            <div className="mt-6 rounded-xl border border-stone-800 bg-stone-950 p-6">
+              <h3 className="text-base font-semibold text-white">
+                No whenua records available
+              </h3>
+
+              <p className="mt-2 text-sm text-stone-400">
+                Add whenua records before linking them to governance records.
               </p>
 
-              <div className="mt-5 grid gap-3">
-                <a
-                  href="/marae"
-                  className="rounded-2xl border border-stone-800 bg-stone-950 p-4 text-sm font-semibold text-stone-300 transition hover:border-stone-600 hover:bg-stone-900 hover:text-white"
+              <div className="mt-5">
+                <Link
+                  href="/whenua/new"
+                  className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
                 >
-                  View Marae
-                </a>
-
-                <a
-                  href="/whenua"
-                  className="rounded-2xl border border-stone-800 bg-stone-950 p-4 text-sm font-semibold text-stone-300 transition hover:border-stone-600 hover:bg-stone-900 hover:text-white"
-                >
-                  View Whenua
-                </a>
-
-                <a
-                  href="/decisions"
-                  className="rounded-2xl border border-stone-800 bg-stone-950 p-4 text-sm font-semibold text-stone-300 transition hover:border-stone-600 hover:bg-stone-900 hover:text-white"
-                >
-                  View Decisions
-                </a>
+                  Add Whenua
+                </Link>
               </div>
             </div>
-          </aside>
+          ) : (
+            <div className="mt-6 overflow-x-auto rounded-2xl border border-stone-800">
+              <table className="w-full min-w-[620px] border-collapse text-left text-sm">
+                <thead className="bg-stone-950 text-stone-400">
+                  <tr>
+                    <th className="px-4 py-3 font-medium">Title</th>
+                    <th className="px-4 py-3 font-medium">Block</th>
+                    <th className="px-4 py-3 font-medium">Location</th>
+                    <th className="px-4 py-3 font-medium">Open</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {whenuaRecords.map((whenua) => (
+                    <tr
+                      key={whenua.id}
+                      className="border-t border-stone-800 bg-stone-900 transition hover:bg-stone-950"
+                    >
+                      <td className="px-4 py-4">
+                        <Link
+                          href={whenuaPath(whenua.id)}
+                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                        >
+                          {getWhenuaTitle(whenua)}
+                        </Link>
+                      </td>
+
+                      <td className="px-4 py-4 text-stone-300">
+                        {formatValue(whenua.block_name)}
+                      </td>
+
+                      <td className="px-4 py-4 text-stone-300">
+                        {formatValue(whenua.location)}
+                      </td>
+
+                      <td className="px-4 py-4">
+                        <Link
+                          href={whenuaPath(whenua.id)}
+                          className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                        >
+                          View whenua
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </section>
     </AppShell>
