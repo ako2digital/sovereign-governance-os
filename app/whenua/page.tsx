@@ -58,7 +58,7 @@ export default async function WhenuaPage() {
         <h1 className="mt-3 text-3xl font-semibold text-white">Whenua</h1>
 
         <p className="mt-4 max-w-2xl text-stone-400">
-          Manage land records, block names, locations, legal descriptions,
+          Manage whenua records, block names, locations, legal descriptions,
           historical notes, external references, status, and sensitivity levels.
         </p>
       </section>
@@ -140,7 +140,7 @@ export default async function WhenuaPage() {
                         {record.title || "Untitled whenua record"}
                       </p>
 
-                      <p className="mt-1 font-mono text-xs text-stone-500">
+                      <p className="mt-1 font-mono text-xs text-stone-600">
                         {record.id}
                       </p>
                     </td>
@@ -179,118 +179,6 @@ export default async function WhenuaPage() {
             </table>
           </div>
         )}
-      </section>
-
-      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <h2 className="text-lg font-semibold text-white">
-              Related Records
-            </h2>
-
-            <p className="mt-1 text-sm text-stone-400">
-              Useful pathways connected to whenua records.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <Link
-              href="/whenua/new"
-              className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
-            >
-              Add Whenua
-            </Link>
-
-            <Link
-              href="/documents"
-              className="rounded-xl border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
-            >
-              View Documents
-            </Link>
-          </div>
-        </div>
-
-        <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-          <Link
-            href="/whenua/new"
-            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
-          >
-            <h3 className="text-sm font-semibold text-white">Add Whenua</h3>
-            <p className="mt-1 text-sm text-stone-400">
-              Create a new land record.
-            </p>
-          </Link>
-
-          <Link
-            href="/documents"
-            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
-          >
-            <h3 className="text-sm font-semibold text-white">Documents</h3>
-            <p className="mt-1 text-sm text-stone-400">
-              Evidence, maps, legal records, letters, and supporting files.
-            </p>
-          </Link>
-
-          <Link
-            href="/governance"
-            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
-          >
-            <h3 className="text-sm font-semibold text-white">Governance</h3>
-            <p className="mt-1 text-sm text-stone-400">
-              Mandates, authority, decisions, and governance context.
-            </p>
-          </Link>
-
-          <Link
-            href="/marae"
-            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
-          >
-            <h3 className="text-sm font-semibold text-white">Marae</h3>
-            <p className="mt-1 text-sm text-stone-400">
-              Marae records that may connect to whenua.
-            </p>
-          </Link>
-
-          <Link
-            href="/hui"
-            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
-          >
-            <h3 className="text-sm font-semibold text-white">Hui</h3>
-            <p className="mt-1 text-sm text-stone-400">
-              Future hui records connected to whenua kaupapa.
-            </p>
-          </Link>
-
-          <Link
-            href="/decisions"
-            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
-          >
-            <h3 className="text-sm font-semibold text-white">Decisions</h3>
-            <p className="mt-1 text-sm text-stone-400">
-              Future decisions created from whenua-related work.
-            </p>
-          </Link>
-
-          <Link
-            href="/tasks"
-            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
-          >
-            <h3 className="text-sm font-semibold text-white">Tasks</h3>
-            <p className="mt-1 text-sm text-stone-400">
-              Future follow-up actions for whenua matters.
-            </p>
-          </Link>
-
-          <Link
-            href="/activity"
-            className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
-          >
-            <h3 className="text-sm font-semibold text-white">Activity</h3>
-            <p className="mt-1 text-sm text-stone-400">
-              Future record history and audit trail.
-            </p>
-          </Link>
-        </div>
       </section>
     </AppShell>
   );
