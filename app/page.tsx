@@ -40,47 +40,61 @@ const modules = [
     href: "/hui",
     description:
       "Meeting records connected to minutes, decisions, tasks, and documents.",
-    status: "Next",
+    status: "Live",
   },
   {
     title: "Minutes",
     href: "/minutes",
     description: "Formal notes and summaries from hui records.",
-    status: "Planned",
+    status: "Live",
   },
   {
     title: "Decisions",
     href: "/decisions",
     description:
       "Decision records connected to hui, governance, and follow-up actions.",
-    status: "Planned",
+    status: "Live",
   },
   {
     title: "Documents",
     href: "/documents",
     description:
       "Supporting files, evidence, maps, photos, and formal records.",
-    status: "Planned",
+    status: "Live",
   },
   {
     title: "Pānui",
     href: "/panui",
     description: "Communication records, notices, updates, and announcements.",
-    status: "Planned",
+    status: "Live",
   },
   {
     title: "Tasks",
     href: "/tasks",
     description:
       "Follow-up actions connected to hui, decisions, documents, and whenua.",
-    status: "Planned",
+    status: "Live",
   },
   {
     title: "Activity",
     href: "/activity",
     description: "Audit trail for actions, updates, and record history.",
-    status: "Planned",
+    status: "Live",
   },
+];
+
+const quickActions = [
+  { title: "Add Person", href: "/people/new" },
+  { title: "Add Whakapapa Relationship", href: "/whakapapa/new" },
+  { title: "Add Whenua Record", href: "/whenua/new" },
+  { title: "Add Marae Record", href: "/marae/new" },
+  { title: "Add Governance Record", href: "/governance/new" },
+  { title: "Add Hui", href: "/hui/new" },
+  { title: "Add Minutes", href: "/minutes/new" },
+  { title: "Add Decision", href: "/decisions/new" },
+  { title: "Add Document", href: "/documents/new" },
+  { title: "Add Pānui", href: "/panui/new" },
+  { title: "Add Task", href: "/tasks/new" },
 ];
 
 const activityItems = [
@@ -114,38 +128,80 @@ const activityItems = [
     status: "Complete",
     href: "/governance",
   },
-];
-
-const nextActions = [
   {
-    title: "Standardise Hui pages",
-    area: "Governance / Hui",
+    action: "Hui records connected",
+    area: "Governance",
+    status: "Complete",
     href: "/hui",
   },
   {
-    title: "Connect Minutes module",
-    area: "Governance / Minutes",
+    action: "Minutes records connected",
+    area: "Governance",
+    status: "Complete",
     href: "/minutes",
   },
   {
-    title: "Connect Decisions module",
-    area: "Governance / Decisions",
+    action: "Decisions records connected",
+    area: "Governance",
+    status: "Complete",
     href: "/decisions",
   },
   {
-    title: "Connect Documents module",
-    area: "Records / Documents",
+    action: "Documents register connected",
+    area: "Records",
+    status: "Complete",
     href: "/documents",
+  },
+  {
+    action: "Pānui register connected",
+    area: "Records",
+    status: "Complete",
+    href: "/panui",
+  },
+  {
+    action: "Tasks register connected",
+    area: "Records",
+    status: "Complete",
+    href: "/tasks",
+  },
+  {
+    action: "Activity log connected",
+    area: "Records",
+    status: "Complete",
+    href: "/activity",
+  },
+];
+
+const roadmapPhases = [
+  {
+    phase: "Phase 1",
+    title: "Governance Registry",
+    note: "Stable record management for people, whenua, marae, governance, hui, minutes, decisions, documents, pānui, tasks, and activity history.",
+    current: true,
+  },
+  {
+    phase: "Phase 2",
+    title: "Activity Logging + Edit Workflows",
+    note: "System-generated activity history and structured editing across existing records.",
+    current: false,
+  },
+  {
+    phase: "Phase 3",
+    title: "Permissions + Verification",
+    note: "Role-based access and verification workflows for governance records.",
+    current: false,
+  },
+  {
+    phase: "Phase 4",
+    title: "Whakapapa Graph + Advanced Relational Layer",
+    note: "The full whakapapa graph, beyond today's basic relationship register.",
+    current: false,
   },
 ];
 
 function statusClass(status: string) {
   if (status === "Live") {
     return "border-green-900 bg-green-950/30 text-green-300";
-  }
-
-  if (status === "Next") {
-    return "border-stone-600 bg-stone-100 text-stone-950";
   }
 
   return "border-stone-700 bg-stone-950 text-stone-400";
@@ -164,9 +220,15 @@ export default function HomePage() {
         </h1>
 
         <p className="mt-4 max-w-3xl text-stone-400">
-          A practical record system for people, whakapapa, whenua, marae,
-          governance, hui, minutes, decisions, documents, tasks, pānui, and
-          activity history.
+          This is the first build layer: a governance documentation registry.
+          It organises records, documentation, hui, minutes, decisions,
+          whenua, marae, pānui, tasks, and activity history in one place.
+        </p>
+
+        <p className="mt-3 max-w-3xl text-stone-400">
+          Later layers will add the full whakapapa graph, permissions,
+          verification workflows, stronger audit automation, and role-based
+          access.
         </p>
       </section>
 
@@ -178,7 +240,7 @@ export default function HomePage() {
             </h2>
 
             <p className="mt-1 text-sm text-stone-400">
-              Core system areas and current build status.
+              Core system areas — all live for this MVP build.
             </p>
           </div>
 
@@ -215,6 +277,30 @@ export default function HomePage() {
               <p className="mt-4 text-sm font-medium text-stone-500 transition group-hover:text-white">
                 Open {module.title} →
               </p>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <div>
+          <h2 className="text-lg font-semibold text-white">Quick Actions</h2>
+
+          <p className="mt-1 text-sm text-stone-400">
+            Jump straight to adding a new record in an existing module.
+          </p>
+        </div>
+
+        <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {quickActions.map((action) => (
+            <a
+              key={action.href}
+              href={action.href}
+              className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+            >
+              <h3 className="text-sm font-semibold text-white">
+                {action.title}
+              </h3>
             </a>
           ))}
         </div>
@@ -279,38 +365,42 @@ export default function HomePage() {
         </section>
 
         <section className="rounded-2xl border border-stone-800 bg-stone-900 p-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <h2 className="text-lg font-semibold text-white">
-                Next Actions
-              </h2>
+          <div>
+            <h2 className="text-lg font-semibold text-white">Roadmap</h2>
 
-              <p className="mt-1 text-sm text-stone-400">
-                Work queue for the next build pass.
-              </p>
-            </div>
-
-            <a
-              href="/tasks"
-              className="rounded-xl border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
-            >
-              View Tasks
-            </a>
+            <p className="mt-1 text-sm text-stone-400">
+              Build phases for the Sovereign Governance OS.
+            </p>
           </div>
 
           <div className="mt-6 grid gap-3">
-            {nextActions.map((item) => (
-              <a
-                key={item.title}
-                href={item.href}
-                className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+            {roadmapPhases.map((item) => (
+              <div
+                key={item.phase}
+                className="rounded-xl border border-stone-800 bg-stone-950 p-4"
               >
-                <h3 className="text-sm font-semibold text-white">
+                <div className="flex items-start justify-between gap-4">
+                  <p className="font-mono text-xs uppercase tracking-[0.2em] text-stone-500">
+                    {item.phase}
+                  </p>
+
+                  <span
+                    className={`rounded-full border px-3 py-1 text-xs font-medium ${
+                      item.current
+                        ? "border-green-900 bg-green-950/30 text-green-300"
+                        : "border-stone-700 bg-stone-950 text-stone-400"
+                    }`}
+                  >
+                    {item.current ? "Current" : "Upcoming"}
+                  </span>
+                </div>
+
+                <h3 className="mt-2 text-sm font-semibold text-white">
                   {item.title}
                 </h3>
 
-                <p className="mt-1 text-sm text-stone-400">{item.area}</p>
-              </a>
+                <p className="mt-1 text-sm text-stone-400">{item.note}</p>
+              </div>
             ))}
           </div>
         </section>
