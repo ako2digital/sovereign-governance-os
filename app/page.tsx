@@ -212,24 +212,37 @@ export default function HomePage() {
     <AppShell title="Dashboard" eyebrow="Sovereign Governance OS">
       <section className="rounded-3xl border border-stone-800 bg-stone-900/50 p-8">
         <p className="text-xs uppercase tracking-[0.25em] text-stone-500">
-          Operations Dashboard
+          Governance Command Centre
         </p>
 
-        <h1 className="mt-3 text-3xl font-semibold text-white">
+        <h1 className="mt-3 text-4xl font-semibold tracking-tight text-white">
           Sovereign Governance OS
         </h1>
 
-        <p className="mt-4 max-w-3xl text-stone-400">
-          This is the first build layer: a governance documentation registry.
-          It organises records, documentation, hui, minutes, decisions,
-          whenua, marae, pānui, tasks, and activity history in one place.
+        <p className="mt-4 max-w-3xl text-lg leading-relaxed text-stone-200">
+          A sovereign registry for governance records, documentation, hui,
+          decisions, whenua, marae, pānui, tasks, and activity history.
         </p>
 
-        <p className="mt-3 max-w-3xl text-stone-400">
-          Later layers will add the full whakapapa graph, permissions,
-          verification workflows, stronger audit automation, and role-based
-          access.
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-stone-500">
+          Later layers extend this foundation with the full whakapapa graph,
+          permissions, verification, stronger activity automation, and
+          role-based access.
         </p>
+
+        <div className="mt-6 flex flex-wrap items-center gap-3">
+          <div className="rounded-full border border-green-900 bg-green-950/30 px-4 py-2 text-xs font-medium uppercase tracking-[0.2em] text-green-300">
+            Live Registry
+          </div>
+
+          <div className="rounded-full border border-stone-700 bg-stone-950 px-4 py-2 text-xs font-medium uppercase tracking-[0.2em] text-stone-400">
+            {modules.length} Modules
+          </div>
+
+          <div className="rounded-full border border-stone-700 bg-stone-950 px-4 py-2 text-xs font-medium uppercase tracking-[0.2em] text-stone-400">
+            {quickActions.length} Quick Actions
+          </div>
+        </div>
       </section>
 
       <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
@@ -240,7 +253,7 @@ export default function HomePage() {
             </h2>
 
             <p className="mt-1 text-sm text-stone-400">
-              Core system areas — all live for this MVP build.
+              Core system areas — live across the registry.
             </p>
           </div>
 
@@ -249,12 +262,12 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {modules.map((module) => (
             <a
               key={module.title}
               href={module.href}
-              className="group rounded-2xl border border-stone-800 bg-stone-950 p-5 transition hover:border-stone-600 hover:bg-stone-900"
+              className="group rounded-2xl border border-stone-800 border-l-2 border-l-green-900/70 bg-stone-950 p-6 transition hover:border-stone-600 hover:border-l-green-700 hover:bg-stone-900"
             >
               <div className="flex items-start justify-between gap-4">
                 <h3 className="text-base font-semibold text-white">
@@ -274,7 +287,7 @@ export default function HomePage() {
                 {module.description}
               </p>
 
-              <p className="mt-4 text-sm font-medium text-stone-500 transition group-hover:text-white">
+              <p className="mt-5 text-sm font-medium text-stone-500 transition group-hover:text-white">
                 Open {module.title} →
               </p>
             </a>
@@ -284,10 +297,18 @@ export default function HomePage() {
 
       <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
         <div>
-          <h2 className="text-lg font-semibold text-white">Quick Actions</h2>
+          <div className="flex items-center gap-3">
+            <h2 className="text-lg font-semibold text-white">
+              Quick Actions
+            </h2>
+
+            <span className="rounded-full border border-stone-700 bg-stone-950 px-3 py-1 text-xs font-medium uppercase tracking-[0.2em] text-stone-400">
+              Create
+            </span>
+          </div>
 
           <p className="mt-1 text-sm text-stone-400">
-            Jump straight to adding a new record in an existing module.
+            Create a new record directly in an existing module.
           </p>
         </div>
 
@@ -296,8 +317,12 @@ export default function HomePage() {
             <a
               key={action.href}
               href={action.href}
-              className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+              className="group flex items-center gap-3 rounded-xl border border-stone-800 bg-stone-950/60 p-4 transition hover:border-stone-600 hover:bg-stone-900"
             >
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-stone-700 text-sm font-semibold text-stone-400 transition group-hover:border-stone-500 group-hover:text-white">
+                +
+              </span>
+
               <h3 className="text-sm font-semibold text-white">
                 {action.title}
               </h3>
@@ -369,7 +394,7 @@ export default function HomePage() {
             <h2 className="text-lg font-semibold text-white">Roadmap</h2>
 
             <p className="mt-1 text-sm text-stone-400">
-              Build phases for the Sovereign Governance OS.
+              Phase 1 is live today. Later phases extend this foundation.
             </p>
           </div>
 
@@ -391,7 +416,7 @@ export default function HomePage() {
                         : "border-stone-700 bg-stone-950 text-stone-400"
                     }`}
                   >
-                    {item.current ? "Current" : "Upcoming"}
+                    {item.current ? "Current" : "Planned"}
                   </span>
                 </div>
 
