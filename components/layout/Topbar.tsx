@@ -1,3 +1,5 @@
+import ThemeToggle from "@/components/theme/ThemeToggle";
+
 type TopbarProps = {
   title?: string;
   eyebrow?: string;
@@ -21,6 +23,8 @@ export default function Topbar({
         </div>
 
         <div className="flex items-center gap-4">
+          <ThemeToggle />
+
           <a
             href="/people/new"
             className="rounded-full bg-stone-100 px-5 py-2.5 text-sm font-semibold text-stone-950 transition hover:bg-white"

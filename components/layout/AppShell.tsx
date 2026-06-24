@@ -13,7 +13,7 @@ export default function AppShell({
   eyebrow,
 }: AppShellProps) {
   return (
-    <main className="min-h-screen bg-stone-950 text-stone-100">
+    <main className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
       <div className="pointer-events-none fixed inset-0 opacity-30">
         <div className="absolute left-0 top-0 h-px w-full bg-stone-100/10" />
         <div className="absolute bottom-0 left-0 h-px w-full bg-stone-100/10" />
