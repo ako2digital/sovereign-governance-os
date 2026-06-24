@@ -208,13 +208,13 @@ export default function HomePage() {
       <section className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] shadow-sm dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)]">
         <div className="absolute inset-x-0 top-0 h-[2px] bg-[var(--accent)]" />
 
-        <div className="grid gap-10 p-10 lg:grid-cols-[1.5fr_1fr] lg:items-center lg:gap-16 lg:p-16">
+        <div className="grid gap-10 p-6 sm:p-10 lg:grid-cols-[1.5fr_1fr] lg:items-center lg:gap-16 lg:p-16">
           <div>
             <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
               Governance Command Centre
             </p>
 
-            <h1 className="mt-4 text-4xl font-semibold tracking-tight text-[var(--foreground)] lg:text-6xl">
+            <h1 className="mt-4 text-3xl font-semibold tracking-tight text-[var(--foreground)] sm:text-4xl lg:text-6xl">
               Sovereign Governance OS
             </h1>
 
@@ -402,6 +402,14 @@ export default function HomePage() {
           ))}
         </div>
       </Panel>
+
+      <p className="mb-20 mt-10 text-center text-xs text-[var(--muted-foreground)]">
+        Testing on a phone? Open the Network URL shown by{" "}
+        <code className="rounded bg-[var(--muted)] px-1.5 py-0.5 font-mono text-[var(--foreground)]">
+          npm run dev
+        </code>{" "}
+        while connected to the same Wi-Fi.
+      </p>
 
       <details className="group fixed bottom-6 right-6 z-30">
         <summary className="flex w-fit list-none items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--foreground)] px-5 py-3 text-sm font-semibold text-[var(--background)] shadow-lg shadow-black/20 transition hover:opacity-90 [&::-webkit-details-marker]:hidden">
