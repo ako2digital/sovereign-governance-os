@@ -1,3 +1,4 @@
+import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 
 const modules = [
@@ -83,7 +84,7 @@ const modules = [
   },
 ];
 
-const quickActions = [
+const createOptions = [
   { title: "Add Person", href: "/people/new" },
   { title: "Add Whakapapa Relationship", href: "/whakapapa/new" },
   { title: "Add Whenua Record", href: "/whenua/new" },
@@ -95,81 +96,6 @@ const quickActions = [
   { title: "Add Document", href: "/documents/new" },
   { title: "Add Pānui", href: "/panui/new" },
   { title: "Add Task", href: "/tasks/new" },
-];
-
-const activityItems = [
-  {
-    action: "People register connected",
-    area: "Core Records",
-    status: "Complete",
-    href: "/people",
-  },
-  {
-    action: "Whakapapa relationships connected",
-    area: "Core Records",
-    status: "Complete",
-    href: "/whakapapa",
-  },
-  {
-    action: "Whenua records connected",
-    area: "Core Records",
-    status: "Complete",
-    href: "/whenua",
-  },
-  {
-    action: "Marae records connected",
-    area: "Governance",
-    status: "Complete",
-    href: "/marae",
-  },
-  {
-    action: "Governance records connected",
-    area: "Governance",
-    status: "Complete",
-    href: "/governance",
-  },
-  {
-    action: "Hui records connected",
-    area: "Governance",
-    status: "Complete",
-    href: "/hui",
-  },
-  {
-    action: "Minutes records connected",
-    area: "Governance",
-    status: "Complete",
-    href: "/minutes",
-  },
-  {
-    action: "Decisions records connected",
-    area: "Governance",
-    status: "Complete",
-    href: "/decisions",
-  },
-  {
-    action: "Documents register connected",
-    area: "Records",
-    status: "Complete",
-    href: "/documents",
-  },
-  {
-    action: "Pānui register connected",
-    area: "Records",
-    status: "Complete",
-    href: "/panui",
-  },
-  {
-    action: "Tasks register connected",
-    area: "Records",
-    status: "Complete",
-    href: "/tasks",
-  },
-  {
-    action: "Activity log connected",
-    area: "Records",
-    status: "Complete",
-    href: "/activity",
-  },
 ];
 
 const roadmapPhases = [
@@ -199,356 +125,302 @@ const roadmapPhases = [
   },
 ];
 
-const themeDirections = [
+const currentPhase = roadmapPhases.find((phase) => phase.current);
+
+const overviewStats = [
   {
-    theme: "Dark Theme",
-    title: "Sovereign Command Centre",
-    badge: "Active",
-    description:
-      "Charcoal surfaces, thin stone borders, and green live-status accents for the operational, day-to-day view of the registry.",
-    swatches: [
-      "border-stone-700 bg-stone-950",
-      "border-stone-700 bg-stone-800",
-      "border-green-900 bg-green-600",
-    ],
-    light: false,
+    label: "Modules live",
+    value: String(modules.length),
+    caption: "Registry areas in production",
+    accent: false,
   },
   {
-    theme: "Light Theme",
-    title: "Registry Dossier",
-    badge: "Direction",
-    description:
-      "Off-white, cream, and stone tones for an archival, paper-register feel — a future documentation-mode direction, contained here as a design reference.",
-    swatches: [
-      "border-stone-300 bg-stone-100",
-      "border-stone-300 bg-stone-200",
-      "border-stone-400 bg-stone-950",
-    ],
-    light: true,
+    label: "Current phase",
+    value: currentPhase?.phase ?? "Phase 1",
+    caption: currentPhase?.title ?? "Governance Registry",
+    accent: false,
+  },
+  {
+    label: "System status",
+    value: "Live",
+    caption: "Registry operating normally",
+    accent: true,
   },
 ];
 
-function statusClass(status: string) {
-  if (status === "Live") {
-    return "border-green-900 bg-green-950/30 text-green-300";
-  }
+function Dot() {
+  return <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />;
+}
 
-  return "border-stone-700 bg-stone-950 text-stone-400";
+function Panel({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <section
+      className={`rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-8 lg:p-10 ${className}`}
+    >
+      {children}
+    </section>
+  );
+}
+
+function SectionHeader({
+  eyebrow,
+  title,
+  description,
+  meta,
+}: {
+  eyebrow: string;
+  title: string;
+  description?: string;
+  meta?: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-wrap items-start justify-between gap-4">
+      <div>
+        <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+          {eyebrow}
+        </p>
+
+        <h2 className="mt-1 text-2xl font-semibold tracking-tight text-[var(--foreground)]">
+          {title}
+        </h2>
+
+        {description ? (
+          <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+            {description}
+          </p>
+        ) : null}
+      </div>
+
+      {meta}
+    </div>
+  );
 }
 
 export default function HomePage() {
   return (
     <AppShell title="Dashboard" eyebrow="Sovereign Governance OS">
-      <section className="rounded-3xl border border-stone-700/60 bg-stone-900/60 p-8 shadow-2xl shadow-black/40 lg:p-10">
-        <p className="font-mono text-xs uppercase tracking-[0.3em] text-stone-500">
-          Governance Command Centre
-        </p>
+      <section className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] shadow-sm dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)]">
+        <div className="absolute inset-x-0 top-0 h-[2px] bg-[var(--accent)]" />
 
-        <h1 className="mt-3 text-4xl font-semibold tracking-tight text-white lg:text-5xl">
-          Sovereign Governance OS
-        </h1>
+        <div className="grid gap-10 p-10 lg:grid-cols-[1.5fr_1fr] lg:items-center lg:gap-16 lg:p-16">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+              Governance Command Centre
+            </p>
 
-        <p className="mt-5 max-w-2xl text-lg leading-relaxed text-stone-100">
-          A sovereign registry for governance records, documentation, hui,
-          decisions, whenua, marae, pānui, tasks, and activity history.
-        </p>
+            <h1 className="mt-4 text-4xl font-semibold tracking-tight text-[var(--foreground)] lg:text-6xl">
+              Sovereign Governance OS
+            </h1>
 
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-stone-500">
-          Later layers extend this foundation with the full whakapapa graph,
-          permissions, verification, activity automation, and role-based
-          access.
-        </p>
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-[var(--foreground)]">
+              A sovereign registry for governance records, documentation,
+              hui, decisions, whenua, marae, pānui, tasks, and activity
+              history.
+            </p>
 
-        <div className="mt-6 flex flex-wrap items-center gap-3">
-          <div className="rounded-full border border-green-900 bg-green-950/30 px-4 py-2 text-xs font-medium uppercase tracking-[0.2em] text-green-300">
-            Live Registry
+            <p className="mt-4 max-w-xl text-sm leading-6 text-[var(--muted-foreground)]">
+              Later layers extend this foundation with the full whakapapa
+              graph, permissions, verification, activity automation, and
+              role-based access.
+            </p>
+
+            <div className="mt-9 flex flex-wrap items-center gap-3">
+              <Link
+                href="/people/new"
+                className="rounded-lg bg-[var(--foreground)] px-5 py-2.5 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
+              >
+                New Record
+              </Link>
+
+              <Link
+                href="/design-test"
+                className="rounded-lg border border-[var(--border)] px-5 py-2.5 text-sm font-semibold text-[var(--foreground)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] dark:hover:bg-white/5"
+              >
+                Design Preview
+              </Link>
+            </div>
           </div>
 
-          <div className="rounded-full border border-stone-700 bg-stone-950 px-4 py-2 text-xs font-medium uppercase tracking-[0.2em] text-stone-400">
-            {modules.length} Modules
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-7 dark:bg-white/5 dark:backdrop-blur-sm dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]">
+            <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+              Registry Summary
+            </p>
+
+            <dl className="mt-5 divide-y divide-[var(--border)]">
+              <div className="flex items-center justify-between py-3 first:pt-0">
+                <dt className="text-sm text-[var(--muted-foreground)]">
+                  Status
+                </dt>
+                <dd className="inline-flex items-center gap-2 text-sm font-medium text-[var(--foreground)]">
+                  <Dot />
+                  Live
+                </dd>
+              </div>
+
+              <div className="flex items-center justify-between py-3">
+                <dt className="text-sm text-[var(--muted-foreground)]">
+                  Modules
+                </dt>
+                <dd className="text-sm font-medium text-[var(--foreground)]">
+                  {modules.length} active
+                </dd>
+              </div>
+
+              <div className="flex items-center justify-between py-3 last:pb-0">
+                <dt className="text-sm text-[var(--muted-foreground)]">
+                  Current phase
+                </dt>
+                <dd className="text-sm font-medium text-[var(--foreground)]">
+                  {currentPhase?.phase ?? "Phase 1"}
+                </dd>
+              </div>
+            </dl>
           </div>
-
-          <div className="rounded-full border border-stone-700 bg-stone-950 px-4 py-2 text-xs font-medium uppercase tracking-[0.2em] text-stone-400">
-            {quickActions.length} Quick Actions
-          </div>
-        </div>
-
-        <div className="mt-7 flex flex-wrap items-center gap-3">
-          <a
-            href="/people/new"
-            className="rounded-xl bg-stone-100 px-5 py-3 text-sm font-semibold text-stone-950 shadow-lg shadow-black/30 transition hover:bg-white"
-          >
-            New Record
-          </a>
-
-          <a
-            href="/design-test"
-            className="rounded-xl border border-stone-700 bg-stone-950 px-5 py-3 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
-          >
-            Design Preview
-          </a>
         </div>
       </section>
 
-      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-950/40 p-6 shadow-lg shadow-black/20">
-        <div>
-          <h2 className="text-lg font-semibold text-white">Visual System</h2>
+      <section className="mt-14">
+        <SectionHeader
+          eyebrow="Registry Overview"
+          title="System at a glance"
+          description="Live counts pulled directly from the registry's active modules."
+        />
 
-          <p className="mt-1 text-sm text-stone-400">
-            Two design directions for the registry — the operational dark
-            view in use today, and an archival paper-register direction
-            reserved for later.
-          </p>
-        </div>
-
-        <div className="mt-6 grid gap-5 md:grid-cols-2">
-          {themeDirections.map((direction) => (
+        <div className="mt-6 grid gap-5 sm:grid-cols-3">
+          {overviewStats.map((stat) => (
             <div
-              key={direction.theme}
-              className={
-                direction.light
-                  ? "rounded-2xl border border-stone-300 bg-stone-100 p-6 text-stone-950 shadow-lg shadow-black/20"
-                  : "rounded-2xl border border-stone-700/60 bg-stone-900 p-6 shadow-lg shadow-black/20"
-              }
+              key={stat.label}
+              className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6"
             >
-              <div className="flex items-center justify-between gap-4">
-                <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-stone-500">
-                  {direction.theme}
+              <p className="text-sm text-[var(--muted-foreground)]">
+                {stat.label}
+              </p>
+
+              <p
+                className={`mt-2 text-3xl font-semibold ${
+                  stat.accent
+                    ? "text-[var(--accent)]"
+                    : "text-[var(--foreground)]"
+                }`}
+              >
+                {stat.value}
+              </p>
+
+              <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+                {stat.caption}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <Panel className="mt-14">
+        <SectionHeader
+          eyebrow="Module Register"
+          title="Core Systems"
+          description="Every system below is live across the registry."
+          meta={
+            <span className="text-sm text-[var(--muted-foreground)]">
+              {modules.length} modules
+            </span>
+          }
+        />
+
+        <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {modules.map((module) => (
+            <Link
+              key={module.title}
+              href={module.href}
+              className="group relative overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-6 transition-colors hover:border-[var(--accent)]"
+            >
+              <span className="pointer-events-none absolute inset-0 bg-[var(--accent)] opacity-0 transition-opacity duration-200 group-hover:opacity-10" />
+
+              <div className="relative flex items-center justify-between gap-3">
+                <h3 className="text-base font-semibold text-[var(--foreground)]">
+                  {module.title}
+                </h3>
+
+                <span className="flex items-center gap-2 text-[var(--muted-foreground)] transition-colors group-hover:text-[var(--accent)]">
+                  <Dot />
+                  <span aria-hidden="true" className="text-base leading-none">
+                    ›
+                  </span>
+                </span>
+              </div>
+
+              <p className="relative mt-2 text-sm leading-6 text-[var(--muted-foreground)]">
+                {module.description}
+              </p>
+            </Link>
+          ))}
+        </div>
+      </Panel>
+
+      <Panel className="mt-14">
+        <SectionHeader
+          eyebrow="Future Layers"
+          title="Roadmap"
+          description="Phase 1 is live today. Later phases extend this foundation."
+        />
+
+        <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+          {roadmapPhases.map((item) => (
+            <div
+              key={item.phase}
+              className="rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-5"
+            >
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-medium text-[var(--foreground)]">
+                  {item.phase}
                 </p>
 
                 <span
-                  className={
-                    direction.badge === "Active"
-                      ? "rounded-full border border-green-900 bg-green-950/30 px-3 py-1 text-xs font-medium text-green-300"
-                      : direction.light
-                        ? "rounded-full border border-stone-400 bg-white px-3 py-1 text-xs font-medium text-stone-600"
-                        : "rounded-full border border-stone-700 bg-stone-950 px-3 py-1 text-xs font-medium text-stone-400"
-                  }
+                  className={`text-xs font-medium ${
+                    item.current
+                      ? "text-[var(--accent)]"
+                      : "text-[var(--muted-foreground)]"
+                  }`}
                 >
-                  {direction.badge}
+                  {item.current ? "Current" : "Planned"}
                 </span>
               </div>
 
-              <h3
-                className={
-                  direction.light
-                    ? "mt-3 text-base font-semibold text-stone-950"
-                    : "mt-3 text-base font-semibold text-white"
-                }
-              >
-                {direction.title}
+              <h3 className="mt-3 text-sm font-semibold text-[var(--foreground)]">
+                {item.title}
               </h3>
 
-              <p
-                className={
-                  direction.light
-                    ? "mt-2 text-sm leading-6 text-stone-600"
-                    : "mt-2 text-sm leading-6 text-stone-400"
-                }
-              >
-                {direction.description}
+              <p className="mt-2 text-sm leading-6 text-[var(--muted-foreground)]">
+                {item.note}
               </p>
-
-              <div className="mt-5 flex gap-2">
-                {direction.swatches.map((swatch) => (
-                  <span
-                    key={swatch}
-                    className={`h-6 w-6 rounded-md border ${swatch}`}
-                  />
-                ))}
-              </div>
             </div>
           ))}
         </div>
-      </section>
+      </Panel>
 
-      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-950/40 p-6 shadow-lg shadow-black/20">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <h2 className="text-lg font-semibold text-white">
-              Module Register
-            </h2>
+      <details className="group fixed bottom-6 right-6 z-30">
+        <summary className="flex w-fit list-none items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--foreground)] px-5 py-3 text-sm font-semibold text-[var(--background)] shadow-lg shadow-black/20 transition hover:opacity-90 [&::-webkit-details-marker]:hidden">
+          <span aria-hidden="true">+</span>
+          New Record
+        </summary>
 
-            <p className="mt-1 text-sm text-stone-400">
-              Core system areas — live across the registry.
-            </p>
-          </div>
-
-          <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
-            {modules.length} modules
-          </div>
-        </div>
-
-        <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {modules.map((module, index) => (
-            <a
-              key={module.title}
-              href={module.href}
-              className="group rounded-2xl border border-stone-700/60 bg-stone-900 p-6 shadow-lg shadow-black/20 transition hover:border-stone-500 hover:bg-stone-800"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-stone-600">
-                    {String(index + 1).padStart(2, "0")}
-                  </p>
-
-                  <h3 className="mt-1 text-base font-semibold text-white">
-                    {module.title}
-                  </h3>
-                </div>
-
-                <span
-                  className={`rounded-full border px-3 py-1 text-xs font-medium ${statusClass(
-                    module.status
-                  )}`}
-                >
-                  {module.status}
-                </span>
-              </div>
-
-              <p className="mt-3 text-sm leading-6 text-stone-400">
-                {module.description}
-              </p>
-
-              <p className="mt-5 text-sm font-medium text-stone-500 transition group-hover:text-white">
-                Open {module.title} →
-              </p>
-            </a>
-          ))}
-        </div>
-      </section>
-
-      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-950/40 p-6 shadow-lg shadow-black/20">
-        <div className="flex items-center gap-3">
-          <h2 className="text-lg font-semibold text-white">Quick Actions</h2>
-
-          <span className="rounded-full border border-stone-700 bg-stone-950 px-3 py-1 text-xs font-medium uppercase tracking-[0.2em] text-stone-400">
-            Create
-          </span>
-        </div>
-
-        <p className="mt-1 text-sm text-stone-400">
-          Create a new record directly in an existing module.
-        </p>
-
-        <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {quickActions.map((action) => (
-            <a
+        <div className="absolute bottom-full right-0 mb-3 max-h-[70vh] w-64 overflow-y-auto rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-2 shadow-xl shadow-black/10 dark:bg-white/5 dark:backdrop-blur-md dark:shadow-black/40">
+          {createOptions.map((action) => (
+            <Link
               key={action.href}
               href={action.href}
-              className="group flex items-center gap-3 rounded-xl border border-stone-700/60 bg-stone-900 p-4 shadow-md shadow-black/20 transition hover:border-stone-500 hover:bg-stone-800"
+              className="block rounded-lg px-3 py-2 text-sm text-[var(--foreground)] transition-colors hover:bg-[var(--muted)]"
             >
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-stone-700 text-sm font-semibold text-stone-400 transition group-hover:border-stone-500 group-hover:text-white">
-                +
-              </span>
-
-              <h3 className="text-sm font-semibold text-white">
-                {action.title}
-              </h3>
-            </a>
+              {action.title}
+            </Link>
           ))}
         </div>
-      </section>
-
-      <div className="mt-8 grid gap-8 xl:grid-cols-2">
-        <section className="rounded-2xl border border-stone-700/60 bg-stone-900/60 p-6 shadow-lg shadow-black/20">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <h2 className="text-lg font-semibold text-white">
-                Current Activity
-              </h2>
-
-              <p className="mt-1 text-sm text-stone-400">
-                System progress and connected records.
-              </p>
-            </div>
-
-            <a
-              href="/activity"
-              className="rounded-xl border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
-            >
-              View Activity
-            </a>
-          </div>
-
-          <div className="mt-6 overflow-hidden rounded-2xl border border-stone-800">
-            <table className="w-full border-collapse text-left text-sm">
-              <thead className="bg-stone-950 text-stone-400">
-                <tr>
-                  <th className="px-4 py-3 font-medium">Action</th>
-                  <th className="px-4 py-3 font-medium">Area</th>
-                  <th className="px-4 py-3 font-medium">Status</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {activityItems.map((item) => (
-                  <tr
-                    key={item.action}
-                    className="border-t border-stone-800 bg-stone-900"
-                  >
-                    <td className="px-4 py-4">
-                      <a
-                        href={item.href}
-                        className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
-                      >
-                        {item.action}
-                      </a>
-                    </td>
-
-                    <td className="px-4 py-4 text-stone-300">{item.area}</td>
-
-                    <td className="px-4 py-4 text-stone-300">
-                      {item.status}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <section className="rounded-2xl border border-stone-700/60 bg-stone-900/60 p-6 shadow-lg shadow-black/20">
-          <div>
-            <h2 className="text-lg font-semibold text-white">Roadmap</h2>
-
-            <p className="mt-1 text-sm text-stone-400">
-              Phase 1 is live today. Later phases extend this foundation.
-            </p>
-          </div>
-
-          <div className="mt-6 grid gap-3">
-            {roadmapPhases.map((item) => (
-              <div
-                key={item.phase}
-                className="rounded-xl border border-stone-700/60 bg-stone-950 p-4 shadow-md shadow-black/20"
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <p className="font-mono text-xs uppercase tracking-[0.2em] text-stone-500">
-                    {item.phase}
-                  </p>
-
-                  <span
-                    className={`rounded-full border px-3 py-1 text-xs font-medium ${
-                      item.current
-                        ? "border-green-900 bg-green-950/30 text-green-300"
-                        : "border-stone-700 bg-stone-950 text-stone-400"
-                    }`}
-                  >
-                    {item.current ? "Current" : "Planned"}
-                  </span>
-                </div>
-
-                <h3 className="mt-2 text-sm font-semibold text-white">
-                  {item.title}
-                </h3>
-
-                <p className="mt-1 text-sm text-stone-400">{item.note}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-      </div>
+      </details>
     </AppShell>
   );
 }
