@@ -3,15 +3,38 @@ import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 import { supabase } from "@/lib/supabaseClient";
 
-async function createPerson(formData: FormData) {
+type EditPersonPageProps = {
+  params: Promise<{ id: string }>;
+};
+
+type PersonRecord = {
+  id: string;
+  full_name: string;
+  preferred_name: string | null;
+  other_names: string | null;
+  email: string | null;
+  phone: string | null;
+  role_title: string | null;
+  affiliation: string | null;
+  marae: string | null;
+  hapu: string | null;
+  iwi: string | null;
+  status: string | null;
+  sensitivity_level: string | null;
+  profile_summary: string | null;
+  notes: string | null;
+  consent_status: string | null;
+};
+
+async function updatePerson(id: string, formData: FormData) {
   "use server";
 
   const fullName = String(formData.get("full_name") || "").trim();
   if (!fullName) return;
 
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("people")
-    .insert({
+    .update({
       full_name: fullName,
       preferred_name:
         String(formData.get("preferred_name") || "").trim() || null,
@@ -31,15 +54,15 @@ async function createPerson(formData: FormData) {
       notes: String(formData.get("notes") || "").trim() || null,
       consent_status:
         String(formData.get("consent_status") || "").trim() || null,
+      updated_at: new Date().toISOString(),
     })
-    .select("id")
-    .single();
+    .eq("id", id);
 
-  if (error || !data) {
-    throw new Error(error?.message ?? "Failed to create person record.");
+  if (error) {
+    throw new Error(error.message);
   }
 
-  redirect(`/people/${(data as { id: string }).id}`);
+  redirect(`/people/${id}`);
 }
 
 const inputClass =
@@ -53,22 +76,88 @@ const labelClass = "block text-sm font-medium text-[var(--foreground)]";
 const groupHeadingClass =
   "text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]";
 
-export default function AddPersonPage() {
+export default async function EditPersonPage({ params }: EditPersonPageProps) {
+  const { id } = await params;
+
+  const { data, error } = await supabase
+    .from("people")
+    .select(
+      `
+      id,
+      full_name,
+      preferred_name,
+      other_names,
+      email,
+      phone,
+      role_title,
+      affiliation,
+      marae,
+      hapu,
+      iwi,
+      status,
+      sensitivity_level,
+      profile_summary,
+      notes,
+      consent_status
+    `
+    )
+    .eq("id", id)
+    .maybeSingle();
+
+  const person = data as PersonRecord | null;
+
+  if (error) {
+    return (
+      <AppShell title="Edit Person" eyebrow="People Module">
+        <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
+          <h1 className="text-3xl font-semibold text-red-400">Database error</h1>
+          <pre className="mt-4 whitespace-pre-wrap text-sm text-red-400">
+            {error.message}
+          </pre>
+        </section>
+      </AppShell>
+    );
+  }
+
+  if (!person) {
+    return (
+      <AppShell title="Edit Person" eyebrow="People Module">
+        <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
+          <h1 className="text-3xl font-semibold text-[var(--foreground)]">
+            Person not found
+          </h1>
+
+          <p className="mt-3 text-sm text-[var(--muted-foreground)]">
+            No person record exists for this ID.
+          </p>
+
+          <Link
+            href="/people"
+            className="mt-5 inline-block rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-semibold text-[var(--muted-foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
+          >
+            Back to People
+          </Link>
+        </section>
+      </AppShell>
+    );
+  }
+
+  const boundUpdatePerson = updatePerson.bind(null, person.id);
+
   return (
-    <AppShell title="Add Person" eyebrow="People Module">
+    <AppShell title="Edit Person" eyebrow="People Module">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          New Person Record
+          Edit Person Record
         </p>
 
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--foreground)]">
-          Add Person
+          {person.full_name}
         </h1>
 
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--muted-foreground)]">
-          Create a new identity record. This person can be connected to
-          whakapapa relationships, hui, tasks, governance roles, and knowledge
-          archives.
+        <p className="mt-3 text-sm text-[var(--muted-foreground)]">
+          Update the details for this person record. All changes are saved
+          immediately on submit.
         </p>
       </section>
 
@@ -79,14 +168,14 @@ export default function AddPersonPage() {
           </h2>
 
           <Link
-            href="/people"
+            href={`/people/${id}`}
             className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-semibold text-[var(--muted-foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
           >
-            Back to People
+            Cancel
           </Link>
         </div>
 
-        <form action={createPerson} className="mt-6 space-y-8">
+        <form action={boundUpdatePerson} className="mt-6 space-y-8">
           {/* Core identity */}
           <div>
             <h3 className={groupHeadingClass}>Core Identity</h3>
@@ -105,6 +194,7 @@ export default function AddPersonPage() {
                   name="full_name"
                   type="text"
                   required
+                  defaultValue={person.full_name ?? ""}
                   placeholder="Legal or full name"
                   className={inputClass}
                 />
@@ -119,6 +209,7 @@ export default function AddPersonPage() {
                   id="preferred_name"
                   name="preferred_name"
                   type="text"
+                  defaultValue={person.preferred_name ?? ""}
                   placeholder="Name used in everyday correspondence"
                   className={inputClass}
                 />
@@ -133,6 +224,7 @@ export default function AddPersonPage() {
                   id="other_names"
                   name="other_names"
                   type="text"
+                  defaultValue={person.other_names ?? ""}
                   placeholder="Maiden name or other known names"
                   className={inputClass}
                 />
@@ -154,6 +246,7 @@ export default function AddPersonPage() {
                   id="email"
                   name="email"
                   type="email"
+                  defaultValue={person.email ?? ""}
                   placeholder="name@example.com"
                   className={inputClass}
                 />
@@ -168,6 +261,7 @@ export default function AddPersonPage() {
                   id="phone"
                   name="phone"
                   type="tel"
+                  defaultValue={person.phone ?? ""}
                   placeholder="Phone number"
                   className={inputClass}
                 />
@@ -189,6 +283,7 @@ export default function AddPersonPage() {
                   id="role_title"
                   name="role_title"
                   type="text"
+                  defaultValue={person.role_title ?? ""}
                   placeholder="Example: Trustee, Kaumātua, Secretary"
                   className={inputClass}
                 />
@@ -203,6 +298,7 @@ export default function AddPersonPage() {
                   id="affiliation"
                   name="affiliation"
                   type="text"
+                  defaultValue={person.affiliation ?? ""}
                   placeholder="Organisation, trust, or group name"
                   className={inputClass}
                 />
@@ -226,6 +322,7 @@ export default function AddPersonPage() {
                   id="marae"
                   name="marae"
                   type="text"
+                  defaultValue={person.marae ?? ""}
                   placeholder="Marae name"
                   className={inputClass}
                 />
@@ -240,6 +337,7 @@ export default function AddPersonPage() {
                   id="hapu"
                   name="hapu"
                   type="text"
+                  defaultValue={person.hapu ?? ""}
                   placeholder="Hapū name"
                   className={inputClass}
                 />
@@ -254,6 +352,7 @@ export default function AddPersonPage() {
                   id="iwi"
                   name="iwi"
                   type="text"
+                  defaultValue={person.iwi ?? ""}
                   placeholder="Iwi name"
                   className={inputClass}
                 />
@@ -274,7 +373,7 @@ export default function AddPersonPage() {
                 <select
                   id="status"
                   name="status"
-                  defaultValue="active"
+                  defaultValue={person.status ?? "active"}
                   className={selectClass}
                 >
                   <option value="active">Active</option>
@@ -291,7 +390,7 @@ export default function AddPersonPage() {
                 <select
                   id="sensitivity_level"
                   name="sensitivity_level"
-                  defaultValue=""
+                  defaultValue={person.sensitivity_level ?? ""}
                   className={selectClass}
                 >
                   <option value="">Select sensitivity</option>
@@ -310,7 +409,7 @@ export default function AddPersonPage() {
                 <select
                   id="consent_status"
                   name="consent_status"
-                  defaultValue=""
+                  defaultValue={person.consent_status ?? ""}
                   className={selectClass}
                 >
                   <option value="">Select consent status</option>
@@ -337,6 +436,7 @@ export default function AddPersonPage() {
                   id="profile_summary"
                   name="profile_summary"
                   rows={3}
+                  defaultValue={person.profile_summary ?? ""}
                   placeholder="Brief summary of this person's role, contribution, or significance"
                   className={inputClass}
                 />
@@ -351,6 +451,7 @@ export default function AddPersonPage() {
                   id="notes"
                   name="notes"
                   rows={4}
+                  defaultValue={person.notes ?? ""}
                   placeholder="Additional context, notes, or reference information"
                   className={inputClass}
                 />
@@ -363,11 +464,11 @@ export default function AddPersonPage() {
               type="submit"
               className="rounded-xl bg-[var(--foreground)] px-5 py-3 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
             >
-              Create Person
+              Save Changes
             </button>
 
             <Link
-              href="/people"
+              href={`/people/${id}`}
               className="rounded-xl border border-[var(--border)] px-5 py-3 text-sm font-semibold text-[var(--muted-foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
             >
               Cancel
