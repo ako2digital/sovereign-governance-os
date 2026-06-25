@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { Dot, StatusBadge } from "@/components/ui-system/primitives";
 
 const navigation = [
   { name: "Dashboard", href: "/", group: "Overview" },
@@ -34,22 +35,22 @@ function IdentityCard() {
   return (
     <Link
       href="/"
-      className="mb-8 flex items-center justify-between rounded-2xl border border-stone-700/80 bg-gradient-to-br from-stone-900 to-stone-950 px-4 py-4 shadow-lg shadow-black/30 transition hover:border-stone-600"
+      className="mb-8 flex items-center justify-between rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-4 shadow-sm transition hover:border-[var(--accent)] dark:bg-white/5 dark:backdrop-blur-sm dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]"
     >
       <div>
-        <p className="font-mono text-xs uppercase tracking-[0.25em] text-stone-500">
+        <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
           Sovereign OS
         </p>
 
-        <p className="mt-1 text-sm font-semibold text-white">
+        <p className="mt-1 text-sm font-semibold text-[var(--foreground)]">
           Governance Registry
         </p>
       </div>
 
-      <span className="flex items-center gap-1.5 rounded-full border border-green-900 bg-green-950/40 px-3 py-1 font-mono text-[11px] text-green-400">
-        <span className="h-1.5 w-1.5 rounded-full bg-green-400" />
+      <StatusBadge>
+        <Dot />
         Live
-      </span>
+      </StatusBadge>
     </Link>
   );
 }
@@ -65,7 +66,7 @@ function NavGroups({
     <nav className="space-y-8">
       {groups.map((group) => (
         <div key={group}>
-          <p className="mb-3 px-3 font-mono text-[11px] uppercase tracking-[0.25em] text-stone-600">
+          <p className="mb-3 px-3 text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
             {group}
           </p>
 
@@ -81,28 +82,19 @@ function NavGroups({
                     href={item.href}
                     onClick={onNavigate}
                     aria-current={active ? "page" : undefined}
-                    className={`group flex items-center justify-between rounded-xl border px-3 py-2.5 text-sm transition ${
+                    className={`group flex items-center gap-3 rounded-xl border px-3 py-2.5 text-sm transition-colors ${
                       active
-                        ? "border-stone-700 bg-stone-800/80 text-white shadow-sm shadow-black/30"
-                        : "border-transparent text-stone-400 hover:border-stone-800 hover:bg-stone-900 hover:text-white"
+                        ? "border-[var(--border)] bg-[var(--surface-raised)] text-[var(--foreground)]"
+                        : "border-transparent text-[var(--muted-foreground)] hover:border-[var(--border)] hover:bg-[var(--surface)] hover:text-[var(--foreground)]"
                     }`}
                   >
-                    <span className="flex items-center gap-3">
-                      <span
-                        className={`h-1.5 w-1.5 rounded-full transition ${
-                          active
-                            ? "bg-green-400"
-                            : "bg-stone-700 group-hover:bg-stone-400"
-                        }`}
-                      />
-                      {item.name}
-                    </span>
-
-                    {active ? (
-                      <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-green-400">
-                        Active
-                      </span>
-                    ) : null}
+                    <Dot
+                      muted={!active}
+                      className={
+                        active ? "" : "group-hover:bg-[var(--muted-foreground)]"
+                      }
+                    />
+                    {item.name}
                   </Link>
                 );
               })}
@@ -123,17 +115,17 @@ export default function Sidebar() {
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Open navigation"
-        className="fixed left-4 top-4 z-50 flex h-11 w-11 items-center justify-center rounded-xl border border-stone-700 bg-stone-950/90 text-stone-200 shadow-lg shadow-black/40 lg:hidden"
+        className="fixed left-4 top-4 z-50 flex h-11 w-11 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--foreground)] shadow-lg shadow-black/10 dark:bg-white/5 dark:backdrop-blur-sm dark:shadow-black/40 lg:hidden"
       >
         <span className="sr-only">Open navigation</span>
         <span className="space-y-1">
-          <span className="block h-0.5 w-5 bg-stone-200" />
-          <span className="block h-0.5 w-5 bg-stone-200" />
-          <span className="block h-0.5 w-5 bg-stone-200" />
+          <span className="block h-0.5 w-5 bg-[var(--foreground)]" />
+          <span className="block h-0.5 w-5 bg-[var(--foreground)]" />
+          <span className="block h-0.5 w-5 bg-[var(--foreground)]" />
         </span>
       </button>
 
-      <aside className="hidden w-72 shrink-0 border-r border-stone-800 bg-stone-950/90 px-5 py-5 lg:block">
+      <aside className="hidden w-72 shrink-0 border-r border-[var(--border)] bg-[var(--surface)] px-5 py-5 dark:bg-white/5 dark:backdrop-blur-sm lg:block">
         <IdentityCard />
         <NavGroups pathname={pathname} />
       </aside>
@@ -146,13 +138,13 @@ export default function Sidebar() {
             aria-hidden="true"
           />
 
-          <aside className="relative z-10 flex h-full w-72 flex-col border-r border-stone-800 bg-stone-950 px-5 py-5 shadow-2xl shadow-black/60">
+          <aside className="relative z-10 flex h-full w-72 flex-col border-r border-[var(--border)] bg-[var(--surface)] px-5 py-5 shadow-2xl shadow-black/30 dark:shadow-black/60">
             <div className="mb-4 flex items-center justify-end">
               <button
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label="Close navigation"
-                className="rounded-lg border border-stone-700 px-3 py-1.5 text-xs font-medium text-stone-300 transition hover:border-stone-500 hover:text-white"
+                className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--muted-foreground)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
               >
                 Close
               </button>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Dot } from "@/components/ui-system/primitives";
 
 const STORAGE_KEY = "sovereign-theme";
 
@@ -30,8 +31,9 @@ export default function ThemeToggle() {
       type="button"
       onClick={toggleTheme}
       aria-label="Toggle color theme"
-      className="rounded-full border border-stone-700 bg-stone-950 px-4 py-2 text-sm font-medium text-stone-300 transition hover:border-stone-500 hover:text-white"
+      className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--muted-foreground)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] dark:bg-white/5 dark:backdrop-blur-sm"
     >
+      <Dot />
       {theme === null ? "Theme" : theme === "dark" ? "Light mode" : "Dark mode"}
     </button>
   );
