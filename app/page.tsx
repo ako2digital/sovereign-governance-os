@@ -1,5 +1,11 @@
 import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
+import {
+  Dot,
+  StatusBadge,
+  buttonPrimaryClass,
+  buttonSecondaryClass,
+} from "@/components/ui-system/primitives";
 
 const modules = [
   {
@@ -148,10 +154,6 @@ const overviewStats = [
   },
 ];
 
-function Dot() {
-  return <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />;
-}
-
 function Panel({
   children,
   className = "",
@@ -161,7 +163,7 @@ function Panel({
 }) {
   return (
     <section
-      className={`rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-8 lg:p-10 ${className}`}
+      className={`rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-8 shadow-sm dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.04)] lg:p-10 ${className}`}
     >
       {children}
     </section>
@@ -230,18 +232,12 @@ export default function HomePage() {
               role-based access.
             </p>
 
-            <div className="mt-9 flex flex-wrap items-center gap-3">
-              <Link
-                href="/people/new"
-                className="rounded-lg bg-[var(--foreground)] px-5 py-2.5 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
-              >
+            <div className="mt-10 flex flex-wrap items-center gap-3">
+              <Link href="/people/new" className={buttonPrimaryClass}>
                 New Record
               </Link>
 
-              <Link
-                href="/design-test"
-                className="rounded-lg border border-[var(--border)] px-5 py-2.5 text-sm font-semibold text-[var(--foreground)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] dark:hover:bg-white/5"
-              >
+              <Link href="/design-test" className={buttonSecondaryClass}>
                 Design Preview
               </Link>
             </div>
@@ -257,9 +253,11 @@ export default function HomePage() {
                 <dt className="text-sm text-[var(--muted-foreground)]">
                   Status
                 </dt>
-                <dd className="inline-flex items-center gap-2 text-sm font-medium text-[var(--foreground)]">
-                  <Dot />
-                  Live
+                <dd>
+                  <StatusBadge>
+                    <Dot />
+                    Live
+                  </StatusBadge>
                 </dd>
               </div>
 
@@ -296,7 +294,7 @@ export default function HomePage() {
           {overviewStats.map((stat) => (
             <div
               key={stat.label}
-              className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6"
+              className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-sm dark:bg-white/5 dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] dark:backdrop-blur-sm"
             >
               <p className="text-sm text-[var(--muted-foreground)]">
                 {stat.label}
@@ -337,9 +335,9 @@ export default function HomePage() {
             <Link
               key={module.title}
               href={module.href}
-              className="group relative overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-6 transition-colors hover:border-[var(--accent)]"
+              className="group relative overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-6 shadow-sm transition-colors dark:bg-white/5 dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] dark:backdrop-blur-sm hover:border-[var(--accent)]"
             >
-              <span className="pointer-events-none absolute inset-0 bg-[var(--accent)] opacity-0 transition-opacity duration-200 group-hover:opacity-10" />
+              <span className="pointer-events-none absolute inset-0 bg-[var(--accent)] opacity-0 transition-opacity duration-200 group-hover:opacity-15" />
 
               <div className="relative flex items-center justify-between gap-3">
                 <h3 className="text-base font-semibold text-[var(--foreground)]">
@@ -373,7 +371,7 @@ export default function HomePage() {
           {roadmapPhases.map((item) => (
             <div
               key={item.phase}
-              className="rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-5"
+              className="rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-5 shadow-sm dark:bg-white/5 dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] dark:backdrop-blur-sm"
             >
               <div className="flex items-center justify-between gap-3">
                 <p className="text-sm font-medium text-[var(--foreground)]">
@@ -412,7 +410,7 @@ export default function HomePage() {
       </p>
 
       <details className="group fixed bottom-6 right-6 z-30">
-        <summary className="flex w-fit list-none items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--foreground)] px-5 py-3 text-sm font-semibold text-[var(--background)] shadow-lg shadow-black/20 transition hover:opacity-90 [&::-webkit-details-marker]:hidden">
+        <summary className="flex w-fit list-none items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--foreground)] px-5 py-3 text-sm font-semibold text-[var(--background)] shadow-lg shadow-black/20 transition hover:opacity-90 dark:shadow-black/40 [&::-webkit-details-marker]:hidden">
           <span aria-hidden="true">+</span>
           New Record
         </summary>
