@@ -20,6 +20,10 @@ type FileRecord = {
   created_at?: string | null;
 };
 
+type EvidenceArchivePageProps = {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
 const EVIDENCE_CATEGORIES = [
   { key: "governance", label: "Governance" },
   { key: "financial", label: "Financial" },
@@ -47,15 +51,26 @@ function recordLink(recordType: string, recordId: string): string {
   return routes[recordType] ?? `/${recordType}/${recordId}`;
 }
 
-export default async function EvidenceArchivePage() {
-  const { data, error } = await supabase
+export default async function EvidenceArchivePage({ searchParams }: EvidenceArchivePageProps) {
+  const sp = await searchParams;
+
+  const q = typeof sp.q === "string" ? sp.q.trim() : "";
+  const filterCategory = typeof sp.category === "string" ? sp.category.trim() : "";
+
+  let query = supabase
     .from("record_files")
     .select(
       "id, file_name, file_description, document_type, evidence_category, record_type, record_id, source_url, public_url, sensitivity_level, verification_status, expiry_date, created_at"
     )
     .order("evidence_category", { ascending: true });
 
+  if (q) query = query.ilike("file_name", `%${q}%`);
+  if (filterCategory) query = query.eq("evidence_category", filterCategory);
+
+  const { data, error } = await query;
+
   const files = (data ?? []) as FileRecord[];
+  const hasFilters = !!(q || filterCategory);
 
   const byCategory: Record<string, FileRecord[]> = {};
   for (const f of files) {
@@ -117,6 +132,58 @@ export default async function EvidenceArchivePage() {
         <ReportStatCard label="Verified" value={verified.length} subtext="registered or verified" />
       </section>
 
+      {/* ── Search & Filter ── */}
+      <section className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5">
+        <h2 className="text-sm font-medium text-[var(--foreground)]">Search &amp; Filter</h2>
+        <form method="GET" action="/library/evidence" className="mt-4 grid gap-4 sm:grid-cols-3">
+          <div className="sm:col-span-2">
+            <label htmlFor="q" className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+              File name
+            </label>
+            <input
+              id="q"
+              name="q"
+              type="text"
+              defaultValue={q}
+              placeholder="Search by file name…"
+              className="mt-1.5 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-2.5 text-sm text-[var(--foreground)] outline-none transition placeholder:text-[var(--muted-foreground)] focus:border-[var(--accent)]"
+            />
+          </div>
+          <div>
+            <label htmlFor="category" className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+              Category
+            </label>
+            <select
+              id="category"
+              name="category"
+              defaultValue={filterCategory}
+              className="mt-1.5 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-3 py-2.5 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--accent)]"
+            >
+              <option value="">All categories</option>
+              {EVIDENCE_CATEGORIES.map((c) => (
+                <option key={c.key} value={c.key}>{c.label}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex items-end gap-3 sm:col-span-3">
+            <button
+              type="submit"
+              className="rounded-xl bg-[var(--foreground)] px-5 py-2.5 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
+            >
+              Apply
+            </button>
+            {hasFilters && (
+              <Link
+                href="/library/evidence"
+                className="rounded-xl border border-[var(--border)] px-5 py-2.5 text-sm font-semibold text-[var(--muted-foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
+              >
+                Clear
+              </Link>
+            )}
+          </div>
+        </form>
+      </section>
+
       {error && (
         <div className="mt-6 rounded-xl border border-red-900 bg-red-950/30 p-4 text-sm text-red-400">
           <p className="font-semibold">Database error</p>
@@ -127,12 +194,12 @@ export default async function EvidenceArchivePage() {
       {files.length === 0 && !error && (
         <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-8">
           <h2 className="text-lg font-semibold text-[var(--foreground)]">
-            No evidence references yet
+            {hasFilters ? "No files matched" : "No evidence references yet"}
           </h2>
           <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-            Add file references to records (hui, marae, whenua, decisions) and
-            assign an evidence category. References with a category will appear
-            here, organised by type.
+            {hasFilters
+              ? "Try adjusting or clearing the filters above."
+              : "Add file references to records (hui, marae, whenua, decisions) and assign an evidence category. References with a category will appear here, organised by type."}
           </p>
         </section>
       )}

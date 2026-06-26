@@ -39,7 +39,19 @@ type FileRow = {
   created_at?: string | null;
 };
 
-export default async function GovernanceChainReportPage() {
+type GovernanceChainPageProps = {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+const YEAR_OPTIONS = ["2021", "2022", "2023", "2024", "2025", "2026"];
+
+export default async function GovernanceChainReportPage({ searchParams }: GovernanceChainPageProps) {
+  const sp = await searchParams;
+  const filterYear = typeof sp.year === "string" ? sp.year.trim() : "";
+
+  const yearStart = filterYear ? `${filterYear}-01-01` : null;
+  const yearEnd = filterYear ? `${filterYear}-12-31` : null;
+
   const [
     huiCount,
     minutesCount,
@@ -58,16 +70,26 @@ export default async function GovernanceChainReportPage() {
     supabase.from("tasks").select("*", { count: "exact", head: true }),
     supabase.from("record_files").select("*", { count: "exact", head: true }),
     supabase.from("record_links").select("*", { count: "exact", head: true }),
-    supabase
-      .from("hui")
-      .select("id, title, hui_date, date, location, status")
-      .order("created_at", { ascending: false })
-      .limit(8),
-    supabase
-      .from("decisions")
-      .select("id, title, decision_date, effective_date, status")
-      .order("created_at", { ascending: false })
-      .limit(8),
+    (() => {
+      let q = supabase
+        .from("hui")
+        .select("id, title, hui_date, date, location, status")
+        .order("hui_date", { ascending: false })
+        .limit(20);
+      if (yearStart) q = q.gte("hui_date", yearStart);
+      if (yearEnd) q = q.lte("hui_date", yearEnd);
+      return q;
+    })(),
+    (() => {
+      let q = supabase
+        .from("decisions")
+        .select("id, title, decision_date, effective_date, status")
+        .order("decision_date", { ascending: false })
+        .limit(20);
+      if (yearStart) q = q.gte("decision_date", yearStart);
+      if (yearEnd) q = q.lte("decision_date", yearEnd);
+      return q;
+    })(),
     supabase
       .from("tasks")
       .select("id, title, status, priority, due_date")
@@ -106,12 +128,43 @@ export default async function GovernanceChainReportPage() {
             </h1>
             <p className="mt-1 text-sm text-[var(--muted-foreground)]">
               Generated {generatedAt}
+              {filterYear ? ` · Filtered to ${filterYear}` : " · All years"}
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3 print:hidden">
+            <form method="GET" action="/reports/governance-chain" className="flex items-center gap-2">
+              <label htmlFor="year" className="text-xs font-medium text-[var(--muted-foreground)]">
+                Year
+              </label>
+              <select
+                id="year"
+                name="year"
+                defaultValue={filterYear}
+                className="rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--accent)]"
+              >
+                <option value="">All years</option>
+                {YEAR_OPTIONS.map((y) => (
+                  <option key={y} value={y}>{y}</option>
+                ))}
+              </select>
+              <button
+                type="submit"
+                className="rounded-xl bg-[var(--foreground)] px-3 py-2 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
+              >
+                Filter
+              </button>
+              {filterYear && (
+                <Link
+                  href="/reports/governance-chain"
+                  className="rounded-xl border border-[var(--border)] px-3 py-2 text-sm font-semibold text-[var(--muted-foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
+                >
+                  Clear
+                </Link>
+              )}
+            </form>
             <Link
               href="/reports"
-              className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-semibold text-[var(--muted-foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)] print:hidden"
+              className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-semibold text-[var(--muted-foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
             >
               All Reports
             </Link>

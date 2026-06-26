@@ -20,6 +20,10 @@ type FileRecord = {
   created_at?: string | null;
 };
 
+type LibraryFilesPageProps = {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
 function recordLink(recordType: string, recordId: string): string {
   const routes: Record<string, string> = {
     hui: `/hui/${recordId}`,
@@ -35,15 +39,54 @@ function recordLink(recordType: string, recordId: string): string {
   return routes[recordType] ?? `/${recordType}/${recordId}`;
 }
 
-export default async function LibraryFilesPage() {
-  const { data, error } = await supabase
+const DOC_TYPES = [
+  "resolution", "policy", "agreement", "deed", "minutes", "report",
+  "certificate", "correspondence", "financial", "plan", "map", "photo",
+  "recording", "other",
+];
+const EVIDENCE_CATS = [
+  "governance", "financial", "legal", "land", "operational",
+  "historical", "cultural", "environmental", "other",
+];
+const SENSITIVITY_LEVELS = ["public", "internal", "restricted", "highly sensitive"];
+const VERIFICATION_STATUSES = ["unregistered", "pending", "verified", "certified"];
+const RECORD_TYPES = [
+  "hui", "minutes", "decisions", "tasks", "documents",
+  "marae_records", "whenua", "people", "governance_records",
+];
+
+function cap(s: string) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+export default async function LibraryFilesPage({ searchParams }: LibraryFilesPageProps) {
+  const sp = await searchParams;
+
+  const q = typeof sp.q === "string" ? sp.q.trim() : "";
+  const docType = typeof sp.doc_type === "string" ? sp.doc_type.trim() : "";
+  const category = typeof sp.category === "string" ? sp.category.trim() : "";
+  const sensitivity = typeof sp.sensitivity === "string" ? sp.sensitivity.trim() : "";
+  const verification = typeof sp.verification === "string" ? sp.verification.trim() : "";
+  const recordType = typeof sp.record_type === "string" ? sp.record_type.trim() : "";
+
+  let query = supabase
     .from("record_files")
     .select(
       "id, file_name, file_description, document_type, evidence_category, record_type, record_id, source_url, public_url, sensitivity_level, verification_status, review_date, expiry_date, created_at"
     )
     .order("created_at", { ascending: false });
 
+  if (q) query = query.ilike("file_name", `%${q}%`);
+  if (docType) query = query.eq("document_type", docType);
+  if (category) query = query.eq("evidence_category", category);
+  if (sensitivity) query = query.eq("sensitivity_level", sensitivity);
+  if (verification) query = query.eq("verification_status", verification);
+  if (recordType) query = query.eq("record_type", recordType);
+
+  const { data, error } = await query;
+
   const files = (data ?? []) as FileRecord[];
+  const hasFilters = !!(q || docType || category || sensitivity || verification || recordType);
 
   return (
     <AppShell title="File Index" eyebrow="Library">
@@ -83,38 +126,152 @@ export default async function LibraryFilesPage() {
         </div>
       </section>
 
-      {/* ── Index Table ── */}
-      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <h2 className="text-lg font-semibold text-[var(--foreground)]">
-              All File References
-            </h2>
-            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-              {files.length} {files.length === 1 ? "reference" : "references"}{" "}
-              registered
-            </p>
+      {/* ── Search & Filter ── */}
+      <section className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5">
+        <h2 className="text-sm font-medium text-[var(--foreground)]">Search &amp; Filter</h2>
+        <form method="GET" action="/library/files" className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="sm:col-span-2 lg:col-span-3">
+            <label htmlFor="q" className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+              File name
+            </label>
+            <input
+              id="q"
+              name="q"
+              type="text"
+              defaultValue={q}
+              placeholder="Search by file name…"
+              className="mt-1.5 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-2.5 text-sm text-[var(--foreground)] outline-none transition placeholder:text-[var(--muted-foreground)] focus:border-[var(--accent)]"
+            />
           </div>
+          <div>
+            <label htmlFor="doc_type" className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+              Document Type
+            </label>
+            <select
+              id="doc_type"
+              name="doc_type"
+              defaultValue={docType}
+              className="mt-1.5 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-3 py-2.5 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--accent)]"
+            >
+              <option value="">All types</option>
+              {DOC_TYPES.map((t) => (
+                <option key={t} value={t}>{cap(t)}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="category" className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+              Evidence Category
+            </label>
+            <select
+              id="category"
+              name="category"
+              defaultValue={category}
+              className="mt-1.5 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-3 py-2.5 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--accent)]"
+            >
+              <option value="">All categories</option>
+              {EVIDENCE_CATS.map((c) => (
+                <option key={c} value={c}>{cap(c)}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="sensitivity" className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+              Sensitivity
+            </label>
+            <select
+              id="sensitivity"
+              name="sensitivity"
+              defaultValue={sensitivity}
+              className="mt-1.5 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-3 py-2.5 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--accent)]"
+            >
+              <option value="">All levels</option>
+              {SENSITIVITY_LEVELS.map((s) => (
+                <option key={s} value={s}>{cap(s)}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="verification" className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+              Verification
+            </label>
+            <select
+              id="verification"
+              name="verification"
+              defaultValue={verification}
+              className="mt-1.5 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-3 py-2.5 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--accent)]"
+            >
+              <option value="">All statuses</option>
+              {VERIFICATION_STATUSES.map((v) => (
+                <option key={v} value={v}>{cap(v)}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="record_type" className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+              Record Type
+            </label>
+            <select
+              id="record_type"
+              name="record_type"
+              defaultValue={recordType}
+              className="mt-1.5 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-3 py-2.5 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--accent)]"
+            >
+              <option value="">All records</option>
+              {RECORD_TYPES.map((r) => (
+                <option key={r} value={r}>{cap(r.replace(/_/g, " "))}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex items-end gap-3 sm:col-span-2 lg:col-span-3">
+            <button
+              type="submit"
+              className="rounded-xl bg-[var(--foreground)] px-5 py-2.5 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
+            >
+              Apply Filters
+            </button>
+            {hasFilters && (
+              <Link
+                href="/library/files"
+                className="rounded-xl border border-[var(--border)] px-5 py-2.5 text-sm font-semibold text-[var(--muted-foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
+              >
+                Clear Filters
+              </Link>
+            )}
+          </div>
+        </form>
+      </section>
+
+      {/* ── Index Table ── */}
+      <section className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
+        <div className="mb-4">
+          <h2 className="text-lg font-semibold text-[var(--foreground)]">
+            {hasFilters ? "Filtered Results" : "All File References"}
+          </h2>
+          <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+            {files.length} {files.length === 1 ? "reference" : "references"}{" "}
+            {hasFilters ? "matched" : "registered"}
+          </p>
         </div>
 
         {error ? (
-          <div className="mt-6 rounded-xl border border-red-900 bg-red-950/30 p-4 text-sm text-red-400">
+          <div className="rounded-xl border border-red-900 bg-red-950/30 p-4 text-sm text-red-400">
             <p className="font-semibold">Database error</p>
             <pre className="mt-2 whitespace-pre-wrap">{error.message}</pre>
           </div>
         ) : files.length === 0 ? (
-          <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-6">
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-6">
             <h3 className="text-base font-semibold text-[var(--foreground)]">
-              No file references yet
+              {hasFilters ? "No files matched these filters" : "No file references yet"}
             </h3>
             <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-              File and evidence references will appear here as they are added to
-              hui, marae, whenua, and other records. Use the "Add File
-              Reference" button on any record detail page.
+              {hasFilters
+                ? "Try adjusting or clearing the filters above."
+                : "File and evidence references will appear here as they are added to hui, marae, whenua, and other records."}
             </p>
           </div>
         ) : (
-          <div className="mt-6 overflow-x-auto rounded-2xl border border-[var(--border)]">
+          <div className="overflow-x-auto rounded-2xl border border-[var(--border)]">
             <table className="w-full min-w-[960px] border-collapse text-left text-sm">
               <thead className="border-b border-[var(--border)] bg-[var(--surface-raised)] text-[var(--muted-foreground)]">
                 <tr>

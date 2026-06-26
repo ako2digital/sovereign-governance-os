@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+﻿import { redirect } from "next/navigation";
 import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 import { supabase } from "@/lib/supabaseClient";
@@ -126,25 +126,25 @@ export default async function AddTaskPage() {
 
   return (
     <AppShell title="Add Task" eyebrow="Tasks Module">
-      <section className="rounded-3xl border border-stone-800 bg-stone-900/50 p-8">
-        <p className="text-xs uppercase tracking-[0.25em] text-stone-500">
+      <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
+        <p className="text-xs uppercase tracking-[0.25em] text-[var(--muted-foreground)]">
           New Task Record
         </p>
 
-        <h1 className="mt-3 text-3xl font-semibold text-white">Add Task</h1>
+        <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">Add Task</h1>
 
-        <p className="mt-4 max-w-2xl text-stone-400">
+        <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
           Create a task record with its title, description, status, priority,
           due date, optional assigned person, and optional hui reference.
         </p>
       </section>
 
-      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-white">Task Details</h2>
+            <h2 className="text-lg font-semibold text-[var(--foreground)]">Task Details</h2>
 
-            <p className="mt-1 text-sm text-stone-400">
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
               Enter the confirmed task information. Only the title is required
               at this stage.
             </p>
@@ -152,7 +152,7 @@ export default async function AddTaskPage() {
 
           <Link
             href="/tasks"
-            className="rounded-xl border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
+            className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-semibold text-[var(--muted-foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
           >
             Back to Tasks
           </Link>
@@ -193,7 +193,7 @@ export default async function AddTaskPage() {
           <div>
             <label
               htmlFor="title"
-              className="text-sm font-medium text-stone-300"
+              className="text-sm font-medium text-[var(--muted-foreground)]"
             >
               Title
             </label>
@@ -204,14 +204,14 @@ export default async function AddTaskPage() {
               type="text"
               required
               placeholder="Example: Prepare draft agenda for next hui"
-              className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+              className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition placeholder:text-[var(--muted-foreground)] focus:border-[var(--accent)]"
             />
           </div>
 
           <div>
             <label
               htmlFor="description"
-              className="text-sm font-medium text-stone-300"
+              className="text-sm font-medium text-[var(--muted-foreground)]"
             >
               Description
             </label>
@@ -221,7 +221,7 @@ export default async function AddTaskPage() {
               name="description"
               rows={6}
               placeholder="Enter task details, expected outcome, context, or follow-up notes"
-              className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+              className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition placeholder:text-[var(--muted-foreground)] focus:border-[var(--accent)]"
             />
           </div>
 
@@ -229,7 +229,7 @@ export default async function AddTaskPage() {
             <div>
               <label
                 htmlFor="status"
-                className="text-sm font-medium text-stone-300"
+                className="text-sm font-medium text-[var(--muted-foreground)]"
               >
                 Status
               </label>
@@ -238,7 +238,7 @@ export default async function AddTaskPage() {
                 id="status"
                 name="status"
                 defaultValue=""
-                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+                className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--accent)]"
               >
                 <option value="">Select status</option>
                 <option value="todo">To Do</option>
@@ -252,7 +252,7 @@ export default async function AddTaskPage() {
             <div>
               <label
                 htmlFor="priority"
-                className="text-sm font-medium text-stone-300"
+                className="text-sm font-medium text-[var(--muted-foreground)]"
               >
                 Priority
               </label>
@@ -261,7 +261,7 @@ export default async function AddTaskPage() {
                 id="priority"
                 name="priority"
                 defaultValue=""
-                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+                className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--accent)]"
               >
                 <option value="">Select priority</option>
                 <option value="low">Low</option>
@@ -274,7 +274,7 @@ export default async function AddTaskPage() {
             <div>
               <label
                 htmlFor="due_date"
-                className="text-sm font-medium text-stone-300"
+                className="text-sm font-medium text-[var(--muted-foreground)]"
               >
                 Due Date
               </label>
@@ -283,7 +283,7 @@ export default async function AddTaskPage() {
                 id="due_date"
                 name="due_date"
                 type="date"
-                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+                className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--accent)]"
               />
             </div>
           </div>
@@ -292,7 +292,7 @@ export default async function AddTaskPage() {
             <div>
               <label
                 htmlFor="assigned_to_id"
-                className="text-sm font-medium text-stone-300"
+                className="text-sm font-medium text-[var(--muted-foreground)]"
               >
                 Assigned Person
               </label>
@@ -301,7 +301,7 @@ export default async function AddTaskPage() {
                 id="assigned_to_id"
                 name="assigned_to_id"
                 defaultValue=""
-                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+                className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--accent)]"
               >
                 <option value="">No assigned person</option>
 
@@ -316,7 +316,7 @@ export default async function AddTaskPage() {
             <div>
               <label
                 htmlFor="related_hui_id"
-                className="text-sm font-medium text-stone-300"
+                className="text-sm font-medium text-[var(--muted-foreground)]"
               >
                 Related Hui
               </label>
@@ -325,7 +325,7 @@ export default async function AddTaskPage() {
                 id="related_hui_id"
                 name="related_hui_id"
                 defaultValue=""
-                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+                className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--accent)]"
               >
                 <option value="">No related hui</option>
 
@@ -341,12 +341,12 @@ export default async function AddTaskPage() {
           <div>
             <label
               htmlFor="related_decision_id"
-              className="text-sm font-medium text-stone-300"
+              className="text-sm font-medium text-[var(--muted-foreground)]"
             >
               Linked Decision
             </label>
 
-            <p className="mt-1 text-xs text-stone-500">
+            <p className="mt-1 text-xs text-[var(--muted-foreground)]">
               Link this task to the decision that produced it — this completes the governance chain.
             </p>
 
@@ -354,7 +354,7 @@ export default async function AddTaskPage() {
               id="related_decision_id"
               name="related_decision_id"
               defaultValue=""
-              className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+              className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--accent)]"
             >
               <option value="">No linked decision</option>
 
@@ -370,14 +370,14 @@ export default async function AddTaskPage() {
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <button
               type="submit"
-              className="rounded-xl bg-stone-100 px-5 py-3 text-sm font-semibold text-stone-950 transition hover:bg-white"
+              className="rounded-xl bg-[var(--foreground)] px-5 py-3 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
             >
               Create Task
             </button>
 
             <Link
               href="/tasks"
-              className="rounded-xl border border-stone-700 px-5 py-3 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
+              className="rounded-xl border border-[var(--border)] px-5 py-3 text-sm font-semibold text-[var(--muted-foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
             >
               Cancel
             </Link>
@@ -386,46 +386,46 @@ export default async function AddTaskPage() {
       </section>
 
       <section className="mt-8 grid gap-6 xl:grid-cols-2">
-        <div className="rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-lg font-semibold text-[var(--foreground)]">
                 Available People
               </h2>
 
-              <p className="mt-1 text-sm text-stone-400">
+              <p className="mt-1 text-sm text-[var(--muted-foreground)]">
                 Existing people records available for optional assignment.
               </p>
             </div>
 
-            <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
+            <div className="rounded-full border border-[var(--border)] px-4 py-2 text-sm text-[var(--muted-foreground)]">
               {peopleRecords.length} records
             </div>
           </div>
 
           {peopleRecords.length === 0 ? (
-            <div className="mt-6 rounded-xl border border-stone-800 bg-stone-950 p-6">
-              <h3 className="text-base font-semibold text-white">
+            <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-6">
+              <h3 className="text-base font-semibold text-[var(--foreground)]">
                 No people records available
               </h3>
 
-              <p className="mt-2 text-sm text-stone-400">
+              <p className="mt-2 text-sm text-[var(--muted-foreground)]">
                 Add people records before assigning tasks.
               </p>
 
               <div className="mt-5">
                 <Link
                   href="/people/new"
-                  className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+                  className="rounded-xl bg-[var(--foreground)] px-4 py-2 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
                 >
                   Add Person
                 </Link>
               </div>
             </div>
           ) : (
-            <div className="mt-6 overflow-x-auto rounded-2xl border border-stone-800">
+            <div className="mt-6 overflow-x-auto rounded-2xl border border-[var(--border)]">
               <table className="w-full min-w-[560px] border-collapse text-left text-sm">
-                <thead className="bg-stone-950 text-stone-400">
+                <thead className="bg-[var(--surface-raised)] text-[var(--muted-foreground)]">
                   <tr>
                     <th className="px-4 py-3 font-medium">Full Name</th>
                     <th className="px-4 py-3 font-medium">Created</th>
@@ -437,25 +437,25 @@ export default async function AddTaskPage() {
                   {peopleRecords.map((person) => (
                     <tr
                       key={person.id}
-                      className="border-t border-stone-800 bg-stone-900 transition hover:bg-stone-950"
+                      className="border-t border-[var(--border)] bg-[var(--surface)] transition hover:bg-[var(--surface-raised)]"
                     >
                       <td className="px-4 py-4">
                         <Link
                           href={personPath(person.id)}
-                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                         >
                           {getPersonName(person)}
                         </Link>
                       </td>
 
-                      <td className="px-4 py-4 text-stone-300">
+                      <td className="px-4 py-4 text-[var(--muted-foreground)]">
                         {formatDate(person.created_at)}
                       </td>
 
                       <td className="px-4 py-4">
                         <Link
                           href={personPath(person.id)}
-                          className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                          className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                         >
                           View person
                         </Link>
@@ -468,46 +468,46 @@ export default async function AddTaskPage() {
           )}
         </div>
 
-        <div className="rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-lg font-semibold text-[var(--foreground)]">
                 Available Hui
               </h2>
 
-              <p className="mt-1 text-sm text-stone-400">
+              <p className="mt-1 text-sm text-[var(--muted-foreground)]">
                 Existing hui records available for optional task linking.
               </p>
             </div>
 
-            <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
+            <div className="rounded-full border border-[var(--border)] px-4 py-2 text-sm text-[var(--muted-foreground)]">
               {huiRecords.length} records
             </div>
           </div>
 
           {huiRecords.length === 0 ? (
-            <div className="mt-6 rounded-xl border border-stone-800 bg-stone-950 p-6">
-              <h3 className="text-base font-semibold text-white">
+            <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-6">
+              <h3 className="text-base font-semibold text-[var(--foreground)]">
                 No hui records available
               </h3>
 
-              <p className="mt-2 text-sm text-stone-400">
+              <p className="mt-2 text-sm text-[var(--muted-foreground)]">
                 Add hui records before linking tasks to hui.
               </p>
 
               <div className="mt-5">
                 <Link
                   href="/hui/new"
-                  className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+                  className="rounded-xl bg-[var(--foreground)] px-4 py-2 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
                 >
                   Add Hui
                 </Link>
               </div>
             </div>
           ) : (
-            <div className="mt-6 overflow-x-auto rounded-2xl border border-stone-800">
+            <div className="mt-6 overflow-x-auto rounded-2xl border border-[var(--border)]">
               <table className="w-full min-w-[620px] border-collapse text-left text-sm">
-                <thead className="bg-stone-950 text-stone-400">
+                <thead className="bg-[var(--surface-raised)] text-[var(--muted-foreground)]">
                   <tr>
                     <th className="px-4 py-3 font-medium">Title</th>
                     <th className="px-4 py-3 font-medium">Date</th>
@@ -520,29 +520,29 @@ export default async function AddTaskPage() {
                   {huiRecords.map((hui) => (
                     <tr
                       key={hui.id}
-                      className="border-t border-stone-800 bg-stone-900 transition hover:bg-stone-950"
+                      className="border-t border-[var(--border)] bg-[var(--surface)] transition hover:bg-[var(--surface-raised)]"
                     >
                       <td className="px-4 py-4">
                         <Link
                           href={huiPath(hui.id)}
-                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                         >
                           {getHuiTitle(hui)}
                         </Link>
                       </td>
 
-                      <td className="px-4 py-4 text-stone-300">
+                      <td className="px-4 py-4 text-[var(--muted-foreground)]">
                         {formatDate(getHuiDate(hui))}
                       </td>
 
-                      <td className="px-4 py-4 text-stone-300">
+                      <td className="px-4 py-4 text-[var(--muted-foreground)]">
                         {formatValue(hui.location)}
                       </td>
 
                       <td className="px-4 py-4">
                         <Link
                           href={huiPath(hui.id)}
-                          className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                          className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                         >
                           View hui
                         </Link>
