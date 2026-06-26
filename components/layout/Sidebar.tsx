@@ -19,9 +19,11 @@ const navigation = [
   { name: "Pānui", href: "/panui", group: "Records" },
   { name: "Tasks", href: "/tasks", group: "Records" },
   { name: "Activity", href: "/activity", group: "Records" },
+  { name: "Library", href: "/library", group: "Intelligence" },
+  { name: "Reports", href: "/reports", group: "Intelligence" },
 ];
 
-const groups = ["Overview", "Core Records", "Governance", "Records"];
+const groups = ["Overview", "Core Records", "Governance", "Records", "Intelligence"];
 
 function isActivePath(pathname: string, href: string) {
   if (href === "/") {

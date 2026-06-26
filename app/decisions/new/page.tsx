@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+﻿import { redirect } from "next/navigation";
 import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 import { supabase } from "@/lib/supabaseClient";
@@ -51,7 +51,7 @@ async function createDecision(formData: FormData) {
     return;
   }
 
-  const { error } = await supabase.from("decisions").insert({
+  const { data, error } = await supabase.from("decisions").insert({
     title,
     decision_text: decisionText || null,
     summary: summary || null,
@@ -61,13 +61,13 @@ async function createDecision(formData: FormData) {
     related_hui_id: relatedHuiId || null,
     related_minutes_id: relatedMinutesId || null,
     related_document_id: relatedDocumentId || null,
-  });
+  }).select("id").single();
 
   if (error) {
     throw new Error(error.message);
   }
 
-  redirect("/decisions");
+  redirect(`/decisions/${data.id}`);
 }
 
 function formatValue(value?: string | null) {
@@ -144,30 +144,30 @@ export default async function AddDecisionPage() {
 
   return (
     <AppShell title="Add Decision" eyebrow="Decisions Module">
-      <section className="rounded-3xl border border-stone-800 bg-stone-900/50 p-8">
-        <p className="text-xs uppercase tracking-[0.25em] text-stone-500">
+      <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
+        <p className="text-xs uppercase tracking-[0.25em] text-[var(--muted-foreground)]">
           New Decision Record
         </p>
 
-        <h1 className="mt-3 text-3xl font-semibold text-white">
+        <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">
           Add Decision
         </h1>
 
-        <p className="mt-4 max-w-2xl text-stone-400">
+        <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
           Create a decision record with its title, decision text, summary,
           status, decision date, effective date, and optional links to hui,
           minutes, or document records.
         </p>
       </section>
 
-      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-white">
+            <h2 className="text-lg font-semibold text-[var(--foreground)]">
               Decision Details
             </h2>
 
-            <p className="mt-1 text-sm text-stone-400">
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
               Enter the confirmed decision information. Only the title is
               required at this stage.
             </p>
@@ -175,7 +175,7 @@ export default async function AddDecisionPage() {
 
           <Link
             href="/decisions"
-            className="rounded-xl border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
+            className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-semibold text-[var(--muted-foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
           >
             Back to Decisions
           </Link>
@@ -216,7 +216,7 @@ export default async function AddDecisionPage() {
           <div>
             <label
               htmlFor="title"
-              className="text-sm font-medium text-stone-300"
+              className="text-sm font-medium text-[var(--muted-foreground)]"
             >
               Title
             </label>
@@ -227,14 +227,14 @@ export default async function AddDecisionPage() {
               type="text"
               required
               placeholder="Example: Approve hapū data governance working group"
-              className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+              className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition placeholder:text-[var(--muted-foreground)] focus:border-[var(--accent)]"
             />
           </div>
 
           <div>
             <label
               htmlFor="decision_text"
-              className="text-sm font-medium text-stone-300"
+              className="text-sm font-medium text-[var(--muted-foreground)]"
             >
               Decision Text
             </label>
@@ -244,14 +244,14 @@ export default async function AddDecisionPage() {
               name="decision_text"
               rows={6}
               placeholder="Enter the actual decision, resolution, motion, or confirmed outcome"
-              className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+              className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition placeholder:text-[var(--muted-foreground)] focus:border-[var(--accent)]"
             />
           </div>
 
           <div>
             <label
               htmlFor="summary"
-              className="text-sm font-medium text-stone-300"
+              className="text-sm font-medium text-[var(--muted-foreground)]"
             >
               Summary
             </label>
@@ -261,7 +261,7 @@ export default async function AddDecisionPage() {
               name="summary"
               rows={5}
               placeholder="Enter decision context, reason, or brief supporting explanation"
-              className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+              className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition placeholder:text-[var(--muted-foreground)] focus:border-[var(--accent)]"
             />
           </div>
 
@@ -269,7 +269,7 @@ export default async function AddDecisionPage() {
             <div>
               <label
                 htmlFor="status"
-                className="text-sm font-medium text-stone-300"
+                className="text-sm font-medium text-[var(--muted-foreground)]"
               >
                 Status
               </label>
@@ -278,7 +278,7 @@ export default async function AddDecisionPage() {
                 id="status"
                 name="status"
                 defaultValue=""
-                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+                className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--accent)]"
               >
                 <option value="">Select status</option>
                 <option value="draft">Draft</option>
@@ -293,7 +293,7 @@ export default async function AddDecisionPage() {
             <div>
               <label
                 htmlFor="decision_date"
-                className="text-sm font-medium text-stone-300"
+                className="text-sm font-medium text-[var(--muted-foreground)]"
               >
                 Decision Date
               </label>
@@ -302,14 +302,14 @@ export default async function AddDecisionPage() {
                 id="decision_date"
                 name="decision_date"
                 type="date"
-                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+                className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--accent)]"
               />
             </div>
 
             <div>
               <label
                 htmlFor="effective_date"
-                className="text-sm font-medium text-stone-300"
+                className="text-sm font-medium text-[var(--muted-foreground)]"
               >
                 Effective Date
               </label>
@@ -318,7 +318,7 @@ export default async function AddDecisionPage() {
                 id="effective_date"
                 name="effective_date"
                 type="date"
-                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+                className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--accent)]"
               />
             </div>
           </div>
@@ -327,7 +327,7 @@ export default async function AddDecisionPage() {
             <div>
               <label
                 htmlFor="related_hui_id"
-                className="text-sm font-medium text-stone-300"
+                className="text-sm font-medium text-[var(--muted-foreground)]"
               >
                 Related Hui
               </label>
@@ -336,7 +336,7 @@ export default async function AddDecisionPage() {
                 id="related_hui_id"
                 name="related_hui_id"
                 defaultValue=""
-                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+                className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--accent)]"
               >
                 <option value="">No related hui</option>
 
@@ -351,7 +351,7 @@ export default async function AddDecisionPage() {
             <div>
               <label
                 htmlFor="related_minutes_id"
-                className="text-sm font-medium text-stone-300"
+                className="text-sm font-medium text-[var(--muted-foreground)]"
               >
                 Related Minutes
               </label>
@@ -360,7 +360,7 @@ export default async function AddDecisionPage() {
                 id="related_minutes_id"
                 name="related_minutes_id"
                 defaultValue=""
-                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+                className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--accent)]"
               >
                 <option value="">No related minutes</option>
 
@@ -375,7 +375,7 @@ export default async function AddDecisionPage() {
             <div>
               <label
                 htmlFor="related_document_id"
-                className="text-sm font-medium text-stone-300"
+                className="text-sm font-medium text-[var(--muted-foreground)]"
               >
                 Related Document
               </label>
@@ -384,7 +384,7 @@ export default async function AddDecisionPage() {
                 id="related_document_id"
                 name="related_document_id"
                 defaultValue=""
-                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+                className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--accent)]"
               >
                 <option value="">No related document</option>
 
@@ -400,14 +400,14 @@ export default async function AddDecisionPage() {
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <button
               type="submit"
-              className="rounded-xl bg-stone-100 px-5 py-3 text-sm font-semibold text-stone-950 transition hover:bg-white"
+              className="rounded-xl bg-[var(--foreground)] px-5 py-3 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
             >
               Create Decision
             </button>
 
             <Link
               href="/decisions"
-              className="rounded-xl border border-stone-700 px-5 py-3 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
+              className="rounded-xl border border-[var(--border)] px-5 py-3 text-sm font-semibold text-[var(--muted-foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
             >
               Cancel
             </Link>
@@ -416,46 +416,46 @@ export default async function AddDecisionPage() {
       </section>
 
       <section className="mt-8 grid gap-6 xl:grid-cols-3">
-        <div className="rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-lg font-semibold text-[var(--foreground)]">
                 Available Hui
               </h2>
 
-              <p className="mt-1 text-sm text-stone-400">
+              <p className="mt-1 text-sm text-[var(--muted-foreground)]">
                 Existing hui records available for optional selection.
               </p>
             </div>
 
-            <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
+            <div className="rounded-full border border-[var(--border)] px-4 py-2 text-sm text-[var(--muted-foreground)]">
               {huiRecords.length} records
             </div>
           </div>
 
           {huiRecords.length === 0 ? (
-            <div className="mt-6 rounded-xl border border-stone-800 bg-stone-950 p-6">
-              <h3 className="text-base font-semibold text-white">
+            <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-6">
+              <h3 className="text-base font-semibold text-[var(--foreground)]">
                 No hui records available
               </h3>
 
-              <p className="mt-2 text-sm text-stone-400">
+              <p className="mt-2 text-sm text-[var(--muted-foreground)]">
                 Add hui records before linking them to decisions.
               </p>
 
               <div className="mt-5">
                 <Link
                   href="/hui/new"
-                  className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+                  className="rounded-xl bg-[var(--foreground)] px-4 py-2 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
                 >
                   Add Hui
                 </Link>
               </div>
             </div>
           ) : (
-            <div className="mt-6 overflow-x-auto rounded-2xl border border-stone-800">
+            <div className="mt-6 overflow-x-auto rounded-2xl border border-[var(--border)]">
               <table className="w-full min-w-[520px] border-collapse text-left text-sm">
-                <thead className="bg-stone-950 text-stone-400">
+                <thead className="bg-[var(--surface-raised)] text-[var(--muted-foreground)]">
                   <tr>
                     <th className="px-4 py-3 font-medium">Title</th>
                     <th className="px-4 py-3 font-medium">Date</th>
@@ -467,25 +467,25 @@ export default async function AddDecisionPage() {
                   {huiRecords.map((hui) => (
                     <tr
                       key={hui.id}
-                      className="border-t border-stone-800 bg-stone-900 transition hover:bg-stone-950"
+                      className="border-t border-[var(--border)] bg-[var(--surface)] transition hover:bg-[var(--surface-raised)]"
                     >
                       <td className="px-4 py-4">
                         <Link
                           href={huiPath(hui.id)}
-                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                         >
                           {getHuiTitle(hui)}
                         </Link>
                       </td>
 
-                      <td className="px-4 py-4 text-stone-300">
+                      <td className="px-4 py-4 text-[var(--muted-foreground)]">
                         {formatDate(getHuiDate(hui))}
                       </td>
 
                       <td className="px-4 py-4">
                         <Link
                           href={huiPath(hui.id)}
-                          className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                          className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                         >
                           View hui
                         </Link>
@@ -498,46 +498,46 @@ export default async function AddDecisionPage() {
           )}
         </div>
 
-        <div className="rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-lg font-semibold text-[var(--foreground)]">
                 Available Minutes
               </h2>
 
-              <p className="mt-1 text-sm text-stone-400">
+              <p className="mt-1 text-sm text-[var(--muted-foreground)]">
                 Existing minutes records available for optional selection.
               </p>
             </div>
 
-            <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
+            <div className="rounded-full border border-[var(--border)] px-4 py-2 text-sm text-[var(--muted-foreground)]">
               {minutesRecords.length} records
             </div>
           </div>
 
           {minutesRecords.length === 0 ? (
-            <div className="mt-6 rounded-xl border border-stone-800 bg-stone-950 p-6">
-              <h3 className="text-base font-semibold text-white">
+            <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-6">
+              <h3 className="text-base font-semibold text-[var(--foreground)]">
                 No minutes records available
               </h3>
 
-              <p className="mt-2 text-sm text-stone-400">
+              <p className="mt-2 text-sm text-[var(--muted-foreground)]">
                 Add minutes records before linking them to decisions.
               </p>
 
               <div className="mt-5">
                 <Link
                   href="/minutes/new"
-                  className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+                  className="rounded-xl bg-[var(--foreground)] px-4 py-2 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
                 >
                   Add Minutes
                 </Link>
               </div>
             </div>
           ) : (
-            <div className="mt-6 overflow-x-auto rounded-2xl border border-stone-800">
+            <div className="mt-6 overflow-x-auto rounded-2xl border border-[var(--border)]">
               <table className="w-full min-w-[520px] border-collapse text-left text-sm">
-                <thead className="bg-stone-950 text-stone-400">
+                <thead className="bg-[var(--surface-raised)] text-[var(--muted-foreground)]">
                   <tr>
                     <th className="px-4 py-3 font-medium">Title</th>
                     <th className="px-4 py-3 font-medium">Date</th>
@@ -549,25 +549,25 @@ export default async function AddDecisionPage() {
                   {minutesRecords.map((minutes) => (
                     <tr
                       key={minutes.id}
-                      className="border-t border-stone-800 bg-stone-900 transition hover:bg-stone-950"
+                      className="border-t border-[var(--border)] bg-[var(--surface)] transition hover:bg-[var(--surface-raised)]"
                     >
                       <td className="px-4 py-4">
                         <Link
                           href={minutesPath(minutes.id)}
-                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                         >
                           {getMinutesTitle(minutes)}
                         </Link>
                       </td>
 
-                      <td className="px-4 py-4 text-stone-300">
+                      <td className="px-4 py-4 text-[var(--muted-foreground)]">
                         {formatDate(getMinutesDate(minutes))}
                       </td>
 
                       <td className="px-4 py-4">
                         <Link
                           href={minutesPath(minutes.id)}
-                          className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                          className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                         >
                           View minutes
                         </Link>
@@ -580,46 +580,46 @@ export default async function AddDecisionPage() {
           )}
         </div>
 
-        <div className="rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-lg font-semibold text-[var(--foreground)]">
                 Available Documents
               </h2>
 
-              <p className="mt-1 text-sm text-stone-400">
+              <p className="mt-1 text-sm text-[var(--muted-foreground)]">
                 Existing document records available for optional selection.
               </p>
             </div>
 
-            <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
+            <div className="rounded-full border border-[var(--border)] px-4 py-2 text-sm text-[var(--muted-foreground)]">
               {documentRecords.length} records
             </div>
           </div>
 
           {documentRecords.length === 0 ? (
-            <div className="mt-6 rounded-xl border border-stone-800 bg-stone-950 p-6">
-              <h3 className="text-base font-semibold text-white">
+            <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-6">
+              <h3 className="text-base font-semibold text-[var(--foreground)]">
                 No document records available
               </h3>
 
-              <p className="mt-2 text-sm text-stone-400">
+              <p className="mt-2 text-sm text-[var(--muted-foreground)]">
                 Add document records before linking them to decisions.
               </p>
 
               <div className="mt-5">
                 <Link
                   href="/documents/new"
-                  className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+                  className="rounded-xl bg-[var(--foreground)] px-4 py-2 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
                 >
                   Add Document
                 </Link>
               </div>
             </div>
           ) : (
-            <div className="mt-6 overflow-x-auto rounded-2xl border border-stone-800">
+            <div className="mt-6 overflow-x-auto rounded-2xl border border-[var(--border)]">
               <table className="w-full min-w-[520px] border-collapse text-left text-sm">
-                <thead className="bg-stone-950 text-stone-400">
+                <thead className="bg-[var(--surface-raised)] text-[var(--muted-foreground)]">
                   <tr>
                     <th className="px-4 py-3 font-medium">Title</th>
                     <th className="px-4 py-3 font-medium">Type</th>
@@ -631,25 +631,25 @@ export default async function AddDecisionPage() {
                   {documentRecords.map((document) => (
                     <tr
                       key={document.id}
-                      className="border-t border-stone-800 bg-stone-900 transition hover:bg-stone-950"
+                      className="border-t border-[var(--border)] bg-[var(--surface)] transition hover:bg-[var(--surface-raised)]"
                     >
                       <td className="px-4 py-4">
                         <Link
                           href={documentPath(document.id)}
-                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                         >
                           {getDocumentTitle(document)}
                         </Link>
                       </td>
 
-                      <td className="px-4 py-4 text-stone-300">
+                      <td className="px-4 py-4 text-[var(--muted-foreground)]">
                         {formatValue(document.document_type)}
                       </td>
 
                       <td className="px-4 py-4">
                         <Link
                           href={documentPath(document.id)}
-                          className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                          className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                         >
                           View document
                         </Link>

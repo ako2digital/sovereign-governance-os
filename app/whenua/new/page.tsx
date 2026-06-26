@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+﻿import { redirect } from "next/navigation";
 import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 import { supabase } from "@/lib/supabaseClient";
@@ -27,7 +27,7 @@ async function createWhenua(formData: FormData) {
     return;
   }
 
-  const { error } = await supabase.from("whenua_records").insert({
+  const { data, error } = await supabase.from("whenua_records").insert({
     title,
     block_name: blockName || null,
     location: location || null,
@@ -36,41 +36,41 @@ async function createWhenua(formData: FormData) {
     historical_notes: historicalNotes || null,
     status: status || null,
     sensitivity_level: sensitivityLevel || null,
-  });
+  }).select("id").single();
 
   if (error) {
     throw new Error(error.message);
   }
 
-  redirect("/whenua");
+  redirect(`/whenua/${data.id}`);
 }
 
 export default function AddWhenuaPage() {
   return (
     <AppShell title="Add Whenua" eyebrow="Whenua Module">
-      <section className="rounded-3xl border border-stone-800 bg-stone-900/50 p-8">
-        <p className="text-xs uppercase tracking-[0.25em] text-stone-500">
+      <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
+        <p className="text-xs uppercase tracking-[0.25em] text-[var(--muted-foreground)]">
           New Whenua Record
         </p>
 
-        <h1 className="mt-3 text-3xl font-semibold text-white">
+        <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">
           Add Whenua
         </h1>
 
-        <p className="mt-4 max-w-2xl text-stone-400">
+        <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
           Create a whenua record with its title, block name, location, legal
           description, historical notes, status, and sensitivity level.
         </p>
       </section>
 
-      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-white">
+            <h2 className="text-lg font-semibold text-[var(--foreground)]">
               Whenua Details
             </h2>
 
-            <p className="mt-1 text-sm text-stone-400">
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
               Enter the confirmed land record information. Only the title is
               required at this stage.
             </p>
@@ -78,7 +78,7 @@ export default function AddWhenuaPage() {
 
           <Link
             href="/whenua"
-            className="rounded-xl border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
+            className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-semibold text-[var(--muted-foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
           >
             Back to Whenua
           </Link>
@@ -88,7 +88,7 @@ export default function AddWhenuaPage() {
           <div>
             <label
               htmlFor="title"
-              className="text-sm font-medium text-stone-300"
+              className="text-sm font-medium text-[var(--muted-foreground)]"
             >
               Title
             </label>
@@ -99,7 +99,7 @@ export default function AddWhenuaPage() {
               type="text"
               required
               placeholder="Example: Kaikohe Aerodrome whenua record"
-              className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+              className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition placeholder:text-[var(--muted-foreground)] focus:border-[var(--accent)]"
             />
           </div>
 
@@ -107,7 +107,7 @@ export default function AddWhenuaPage() {
             <div>
               <label
                 htmlFor="block_name"
-                className="text-sm font-medium text-stone-300"
+                className="text-sm font-medium text-[var(--muted-foreground)]"
               >
                 Block Name
               </label>
@@ -117,14 +117,14 @@ export default function AddWhenuaPage() {
                 name="block_name"
                 type="text"
                 placeholder="Enter block name"
-                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+                className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition placeholder:text-[var(--muted-foreground)] focus:border-[var(--accent)]"
               />
             </div>
 
             <div>
               <label
                 htmlFor="location"
-                className="text-sm font-medium text-stone-300"
+                className="text-sm font-medium text-[var(--muted-foreground)]"
               >
                 Location
               </label>
@@ -134,7 +134,7 @@ export default function AddWhenuaPage() {
                 name="location"
                 type="text"
                 placeholder="Enter location"
-                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+                className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition placeholder:text-[var(--muted-foreground)] focus:border-[var(--accent)]"
               />
             </div>
           </div>
@@ -142,7 +142,7 @@ export default function AddWhenuaPage() {
           <div>
             <label
               htmlFor="legal_description"
-              className="text-sm font-medium text-stone-300"
+              className="text-sm font-medium text-[var(--muted-foreground)]"
             >
               Legal Description
             </label>
@@ -152,14 +152,14 @@ export default function AddWhenuaPage() {
               name="legal_description"
               rows={4}
               placeholder="Enter legal description, title reference, survey reference, or known legal notes"
-              className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+              className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition placeholder:text-[var(--muted-foreground)] focus:border-[var(--accent)]"
             />
           </div>
 
           <div>
             <label
               htmlFor="external_reference"
-              className="text-sm font-medium text-stone-300"
+              className="text-sm font-medium text-[var(--muted-foreground)]"
             >
               External Reference
             </label>
@@ -169,14 +169,14 @@ export default function AddWhenuaPage() {
               name="external_reference"
               type="text"
               placeholder="Enter URL, archive reference, council reference, LINZ reference, or source note"
-              className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+              className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition placeholder:text-[var(--muted-foreground)] focus:border-[var(--accent)]"
             />
           </div>
 
           <div>
             <label
               htmlFor="historical_notes"
-              className="text-sm font-medium text-stone-300"
+              className="text-sm font-medium text-[var(--muted-foreground)]"
             >
               Historical Notes
             </label>
@@ -186,7 +186,7 @@ export default function AddWhenuaPage() {
               name="historical_notes"
               rows={6}
               placeholder="Enter known history, acquisition context, whānau notes, evidence notes, or research direction"
-              className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+              className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition placeholder:text-[var(--muted-foreground)] focus:border-[var(--accent)]"
             />
           </div>
 
@@ -194,7 +194,7 @@ export default function AddWhenuaPage() {
             <div>
               <label
                 htmlFor="status"
-                className="text-sm font-medium text-stone-300"
+                className="text-sm font-medium text-[var(--muted-foreground)]"
               >
                 Status
               </label>
@@ -203,7 +203,7 @@ export default function AddWhenuaPage() {
                 id="status"
                 name="status"
                 defaultValue=""
-                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+                className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--accent)]"
               >
                 <option value="">Select status</option>
                 <option value="draft">Draft</option>
@@ -216,7 +216,7 @@ export default function AddWhenuaPage() {
             <div>
               <label
                 htmlFor="sensitivity_level"
-                className="text-sm font-medium text-stone-300"
+                className="text-sm font-medium text-[var(--muted-foreground)]"
               >
                 Sensitivity Level
               </label>
@@ -225,7 +225,7 @@ export default function AddWhenuaPage() {
                 id="sensitivity_level"
                 name="sensitivity_level"
                 defaultValue=""
-                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+                className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--accent)]"
               >
                 <option value="">Select sensitivity</option>
                 <option value="public">Public</option>
@@ -239,14 +239,14 @@ export default function AddWhenuaPage() {
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <button
               type="submit"
-              className="rounded-xl bg-stone-100 px-5 py-3 text-sm font-semibold text-stone-950 transition hover:bg-white"
+              className="rounded-xl bg-[var(--foreground)] px-5 py-3 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
             >
               Create Whenua
             </button>
 
             <Link
               href="/whenua"
-              className="rounded-xl border border-stone-700 px-5 py-3 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
+              className="rounded-xl border border-[var(--border)] px-5 py-3 text-sm font-semibold text-[var(--muted-foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
             >
               Cancel
             </Link>
