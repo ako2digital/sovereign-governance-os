@@ -131,7 +131,7 @@ export default async function DecisionsDetailPage({ params }: DecisionsDetailPag
   };
 
   return (
-    <AppShell title="Decision Detail" eyebrow="Decisions">
+    <AppShell title="Decision Detail" eyebrow="Governance">
       {/* ── Header ── */}
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">

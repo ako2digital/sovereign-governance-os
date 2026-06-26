@@ -53,15 +53,15 @@ function FieldRow({
 }) {
   return (
     <tr
-      className={`border-t border-stone-800 ${
-        darker ? "bg-stone-950" : "bg-stone-900"
+      className={`border-t border-[var(--border)] ${
+        darker ? "bg-[var(--surface-raised)]" : "bg-[var(--surface)]"
       }`}
     >
-      <th className="w-56 px-4 py-4 align-top font-medium text-stone-400">
+      <th className="w-56 px-4 py-4 align-top font-medium text-[var(--muted-foreground)]">
         {label}
       </th>
 
-      <td className="px-4 py-4 text-stone-300">{children}</td>
+      <td className="px-4 py-4 text-[var(--foreground)]">{children}</td>
     </tr>
   );
 }
@@ -100,9 +100,9 @@ export default async function WhakapapaDetailPage({
     relationship?.person_b?.full_name || "Unknown person";
 
   return (
-    <AppShell title="Whakapapa Detail" eyebrow="Core Records">
-      <section className="rounded-3xl border border-stone-800 bg-stone-900/50 p-8">
-        <p className="text-xs uppercase tracking-[0.25em] text-stone-500">
+    <AppShell title="Whakapapa Detail" eyebrow="Whakapapa & People">
+      <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
+        <p className="text-xs uppercase tracking-[0.25em] text-[var(--muted-foreground)]">
           Whakapapa Relationship Record
         </p>
 
@@ -118,22 +118,22 @@ export default async function WhakapapaDetailPage({
           </>
         ) : !relationship ? (
           <>
-            <h1 className="mt-3 text-3xl font-semibold text-white">
+            <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">
               Relationship not found
             </h1>
 
-            <p className="mt-4 max-w-2xl text-stone-400">
+            <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
               No whakapapa relationship exists for this ID. Return to the
               whakapapa register and select an existing relationship record.
             </p>
           </>
         ) : (
           <>
-            <h1 className="mt-3 text-3xl font-semibold text-white">
+            <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">
               {firstPersonName} → {secondPersonName}
             </h1>
 
-            <p className="mt-4 max-w-2xl text-stone-400">
+            <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
               This page displays the selected whakapapa relationship and only
               the records actually linked to it.
             </p>
@@ -141,14 +141,14 @@ export default async function WhakapapaDetailPage({
         )}
       </section>
 
-      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-white">
+            <h2 className="text-lg font-semibold text-[var(--foreground)]">
               Relationship Details
             </h2>
 
-            <p className="mt-1 text-sm text-stone-400">
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
               Confirmed fields from the Supabase whakapapa_relationships table.
             </p>
           </div>
@@ -156,14 +156,14 @@ export default async function WhakapapaDetailPage({
           <div className="flex flex-wrap items-center gap-3">
             <Link
               href="/whakapapa"
-              className="rounded-xl border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
+              className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-semibold text-[var(--foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
             >
               Back to Whakapapa
             </Link>
 
             <Link
               href="/whakapapa/new"
-              className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+              className="rounded-xl bg-[var(--foreground)] px-4 py-2 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
             >
               Add Relationship
             </Link>
@@ -171,13 +171,13 @@ export default async function WhakapapaDetailPage({
         </div>
 
         {relationship ? (
-          <div className="mt-6 overflow-hidden rounded-2xl border border-stone-800">
+          <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--border)]">
             <table className="w-full border-collapse text-left text-sm">
               <tbody>
                 <FieldRow label="First Person" darker>
                   <Link
                     href={personPath(relationship.person_a_id)}
-                    className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                    className="font-medium text-[var(--foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                   >
                     {firstPersonName}
                   </Link>
@@ -190,7 +190,7 @@ export default async function WhakapapaDetailPage({
                 <FieldRow label="Second Person" darker>
                   <Link
                     href={personPath(relationship.person_b_id)}
-                    className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                    className="font-medium text-[var(--foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                   >
                     {secondPersonName}
                   </Link>
@@ -199,7 +199,7 @@ export default async function WhakapapaDetailPage({
                 <FieldRow label="Relationship ID">
                   <Link
                     href={relationshipPath(relationship.id)}
-                    className="font-mono text-xs text-stone-400 underline-offset-4 transition hover:text-white hover:underline"
+                    className="font-mono text-xs text-[var(--muted-foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                   >
                     {relationship.id}
                   </Link>
@@ -208,7 +208,7 @@ export default async function WhakapapaDetailPage({
                 <FieldRow label="First Person ID" darker>
                   <Link
                     href={personPath(relationship.person_a_id)}
-                    className="font-mono text-xs text-stone-400 underline-offset-4 transition hover:text-white hover:underline"
+                    className="font-mono text-xs text-[var(--muted-foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                   >
                     {relationship.person_a_id}
                   </Link>
@@ -217,7 +217,7 @@ export default async function WhakapapaDetailPage({
                 <FieldRow label="Second Person ID">
                   <Link
                     href={personPath(relationship.person_b_id)}
-                    className="font-mono text-xs text-stone-400 underline-offset-4 transition hover:text-white hover:underline"
+                    className="font-mono text-xs text-[var(--muted-foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                   >
                     {relationship.person_b_id}
                   </Link>
@@ -230,12 +230,12 @@ export default async function WhakapapaDetailPage({
             </table>
           </div>
         ) : (
-          <div className="mt-6 rounded-xl border border-stone-800 bg-stone-950 p-6">
-            <h3 className="text-base font-semibold text-white">
+          <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-6">
+            <h3 className="text-base font-semibold text-[var(--foreground)]">
               No relationship record loaded
             </h3>
 
-            <p className="mt-2 text-sm text-stone-400">
+            <p className="mt-2 text-sm text-[var(--muted-foreground)]">
               The relationship record could not be displayed.
             </p>
           </div>
@@ -243,14 +243,14 @@ export default async function WhakapapaDetailPage({
       </section>
 
       {relationship ? (
-        <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-lg font-semibold text-[var(--foreground)]">
                 Related Links
               </h2>
 
-              <p className="mt-1 text-sm text-stone-400">
+              <p className="mt-1 text-sm text-[var(--muted-foreground)]">
                 Only records directly connected to this whakapapa relationship
                 are shown here.
               </p>
@@ -260,51 +260,51 @@ export default async function WhakapapaDetailPage({
           <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             <Link
               href={personPath(relationship.person_a_id)}
-              className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+              className="rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-4 transition hover:border-[var(--accent)] hover:bg-[var(--surface)]"
             >
-              <h3 className="text-sm font-semibold text-white">
+              <h3 className="text-sm font-semibold text-[var(--foreground)]">
                 {firstPersonName}
               </h3>
 
-              <p className="mt-1 text-sm text-stone-400">
+              <p className="mt-1 text-sm text-[var(--muted-foreground)]">
                 Open the first person linked to this relationship.
               </p>
 
-              <p className="mt-4 font-mono text-xs text-stone-600">
+              <p className="mt-4 font-mono text-xs text-[var(--muted-foreground)]">
                 {relationship.person_a_id}
               </p>
             </Link>
 
             <Link
               href={personPath(relationship.person_b_id)}
-              className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+              className="rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-4 transition hover:border-[var(--accent)] hover:bg-[var(--surface)]"
             >
-              <h3 className="text-sm font-semibold text-white">
+              <h3 className="text-sm font-semibold text-[var(--foreground)]">
                 {secondPersonName}
               </h3>
 
-              <p className="mt-1 text-sm text-stone-400">
+              <p className="mt-1 text-sm text-[var(--muted-foreground)]">
                 Open the second person linked to this relationship.
               </p>
 
-              <p className="mt-4 font-mono text-xs text-stone-600">
+              <p className="mt-4 font-mono text-xs text-[var(--muted-foreground)]">
                 {relationship.person_b_id}
               </p>
             </Link>
 
             <Link
               href={relationshipPath(relationship.id)}
-              className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+              className="rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-4 transition hover:border-[var(--accent)] hover:bg-[var(--surface)]"
             >
-              <h3 className="text-sm font-semibold text-white">
+              <h3 className="text-sm font-semibold text-[var(--foreground)]">
                 Current Relationship
               </h3>
 
-              <p className="mt-1 text-sm text-stone-400">
+              <p className="mt-1 text-sm text-[var(--muted-foreground)]">
                 Stay on this relationship detail page.
               </p>
 
-              <p className="mt-4 font-mono text-xs text-stone-600">
+              <p className="mt-4 font-mono text-xs text-[var(--muted-foreground)]">
                 {relationship.id}
               </p>
             </Link>

@@ -58,10 +58,10 @@ export default async function PeoplePage() {
   const peopleRecords = (data ?? []) as PersonRecord[];
 
   return (
-    <AppShell title="People" eyebrow="Core Records">
+    <AppShell title="People" eyebrow="Whakapapa & People">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          People Register
+          Whakapapa & People
         </p>
 
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--foreground)]">
@@ -69,8 +69,10 @@ export default async function PeoplePage() {
         </h1>
 
         <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--muted-foreground)]">
-          Identity records for people connected to whakapapa, hui, tasks,
-          governance roles, and knowledge archives.
+          Identity profiles for every person connected to this organisation —
+          kaumātua, trustees, members, staff, advisors, and whānau. Each record
+          links to whakapapa relationships, hui attendances, assigned tasks,
+          governance roles, and evidence archives.
         </p>
       </section>
 

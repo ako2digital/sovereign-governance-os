@@ -89,7 +89,7 @@ export default async function MinutesDetailPage({ params }: MinutesDetailPagePro
   const linkedHuiDate = linkedHui?.hui_date || linkedHui?.date || null;
 
   return (
-    <AppShell title="Minutes Detail" eyebrow="Minutes">
+    <AppShell title="Minutes Detail" eyebrow="Governance">
       {/* ── Header ── */}
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">

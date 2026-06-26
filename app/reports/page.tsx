@@ -28,9 +28,9 @@ const reportCards: ReportCard[] = [
   },
   {
     title: "Decisions and Actions Report",
-    href: "/reports/governance-chain",
+    href: "/decisions",
     description:
-      "Focused view of formal decisions, linked minutes, and resulting tasks — the governance action record.",
+      "Full register of formal decisions — status, source minutes, linked hui, resulting tasks, and document references.",
     proves: "Proves formal decision-making and follow-through accountability.",
     tables: ["decisions", "minutes", "tasks"],
   },
@@ -74,7 +74,7 @@ export default function ReportsPage() {
       {/* ── Header ── */}
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Reporting Centre
+          Intelligence
         </p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--foreground)]">
           Reports

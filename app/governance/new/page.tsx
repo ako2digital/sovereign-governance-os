@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+﻿import { redirect } from "next/navigation";
 import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 import { supabase } from "@/lib/supabaseClient";
@@ -113,30 +113,30 @@ export default async function AddGovernancePage() {
 
   return (
     <AppShell title="Add Governance" eyebrow="Governance Module">
-      <section className="rounded-3xl border border-stone-800 bg-stone-900/50 p-8">
-        <p className="text-xs uppercase tracking-[0.25em] text-stone-500">
+      <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
+        <p className="text-xs uppercase tracking-wide text-[var(--muted-foreground)]">
           New Governance Record
         </p>
 
-        <h1 className="mt-3 text-3xl font-semibold text-white">
+        <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">
           Add Governance
         </h1>
 
-        <p className="mt-4 max-w-2xl text-stone-400">
+        <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
           Create a governance record with its title, type, summary, status,
           effective date, and optional links to existing marae or whenua
           records.
         </p>
       </section>
 
-      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-white">
+            <h2 className="text-lg font-semibold text-[var(--foreground)]">
               Governance Details
             </h2>
 
-            <p className="mt-1 text-sm text-stone-400">
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
               Enter the confirmed governance information. Only the title is
               required at this stage.
             </p>
@@ -144,7 +144,7 @@ export default async function AddGovernancePage() {
 
           <Link
             href="/governance"
-            className="rounded-xl border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
+            className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-semibold text-[var(--foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
           >
             Back to Governance
           </Link>
@@ -176,7 +176,7 @@ export default async function AddGovernancePage() {
           <div>
             <label
               htmlFor="title"
-              className="text-sm font-medium text-stone-300"
+              className="text-sm font-medium text-[var(--foreground)]"
             >
               Title
             </label>
@@ -187,7 +187,7 @@ export default async function AddGovernancePage() {
               type="text"
               required
               placeholder="Example: Hapū data governance mandate"
-              className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+              className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition placeholder:text-[var(--muted-foreground)] focus:border-[var(--accent)]"
             />
           </div>
 
@@ -195,7 +195,7 @@ export default async function AddGovernancePage() {
             <div>
               <label
                 htmlFor="record_type"
-                className="text-sm font-medium text-stone-300"
+                className="text-sm font-medium text-[var(--foreground)]"
               >
                 Record Type
               </label>
@@ -205,14 +205,14 @@ export default async function AddGovernancePage() {
                 name="record_type"
                 type="text"
                 placeholder="Example: mandate, policy, resolution, authority record"
-                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+                className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition placeholder:text-[var(--muted-foreground)] focus:border-[var(--accent)]"
               />
             </div>
 
             <div>
               <label
                 htmlFor="effective_date"
-                className="text-sm font-medium text-stone-300"
+                className="text-sm font-medium text-[var(--foreground)]"
               >
                 Effective Date
               </label>
@@ -221,7 +221,7 @@ export default async function AddGovernancePage() {
                 id="effective_date"
                 name="effective_date"
                 type="date"
-                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+                className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--accent)]"
               />
             </div>
           </div>
@@ -229,7 +229,7 @@ export default async function AddGovernancePage() {
           <div>
             <label
               htmlFor="summary"
-              className="text-sm font-medium text-stone-300"
+              className="text-sm font-medium text-[var(--foreground)]"
             >
               Summary
             </label>
@@ -239,14 +239,14 @@ export default async function AddGovernancePage() {
               name="summary"
               rows={6}
               placeholder="Enter the governance summary, decision context, mandate explanation, or authority notes"
-              className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+              className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition placeholder:text-[var(--muted-foreground)] focus:border-[var(--accent)]"
             />
           </div>
 
           <div>
             <label
               htmlFor="status"
-              className="text-sm font-medium text-stone-300"
+              className="text-sm font-medium text-[var(--foreground)]"
             >
               Status
             </label>
@@ -255,7 +255,7 @@ export default async function AddGovernancePage() {
               id="status"
               name="status"
               defaultValue=""
-              className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+              className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--accent)]"
             >
               <option value="">Select status</option>
               <option value="draft">Draft</option>
@@ -270,7 +270,7 @@ export default async function AddGovernancePage() {
             <div>
               <label
                 htmlFor="related_marae_id"
-                className="text-sm font-medium text-stone-300"
+                className="text-sm font-medium text-[var(--foreground)]"
               >
                 Related Marae
               </label>
@@ -279,7 +279,7 @@ export default async function AddGovernancePage() {
                 id="related_marae_id"
                 name="related_marae_id"
                 defaultValue=""
-                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+                className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--accent)]"
               >
                 <option value="">No related marae</option>
 
@@ -294,7 +294,7 @@ export default async function AddGovernancePage() {
             <div>
               <label
                 htmlFor="related_whenua_id"
-                className="text-sm font-medium text-stone-300"
+                className="text-sm font-medium text-[var(--foreground)]"
               >
                 Related Whenua
               </label>
@@ -303,7 +303,7 @@ export default async function AddGovernancePage() {
                 id="related_whenua_id"
                 name="related_whenua_id"
                 defaultValue=""
-                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+                className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--accent)]"
               >
                 <option value="">No related whenua</option>
 
@@ -319,14 +319,14 @@ export default async function AddGovernancePage() {
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <button
               type="submit"
-              className="rounded-xl bg-stone-100 px-5 py-3 text-sm font-semibold text-stone-950 transition hover:bg-white"
+              className="rounded-xl bg-[var(--foreground)] px-5 py-3 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
             >
               Create Governance Record
             </button>
 
             <Link
               href="/governance"
-              className="rounded-xl border border-stone-700 px-5 py-3 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
+              className="rounded-xl border border-[var(--border)] px-5 py-3 text-sm font-semibold text-[var(--foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
             >
               Cancel
             </Link>
@@ -335,46 +335,46 @@ export default async function AddGovernancePage() {
       </section>
 
       <section className="mt-8 grid gap-6 xl:grid-cols-2">
-        <div className="rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-lg font-semibold text-[var(--foreground)]">
                 Available Marae
               </h2>
 
-              <p className="mt-1 text-sm text-stone-400">
+              <p className="mt-1 text-sm text-[var(--muted-foreground)]">
                 Existing marae records available for optional selection.
               </p>
             </div>
 
-            <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
+            <div className="rounded-full border border-[var(--border)] px-4 py-2 text-sm text-[var(--foreground)]">
               {maraeRecords.length} records
             </div>
           </div>
 
           {maraeRecords.length === 0 ? (
-            <div className="mt-6 rounded-xl border border-stone-800 bg-stone-950 p-6">
-              <h3 className="text-base font-semibold text-white">
+            <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-6">
+              <h3 className="text-base font-semibold text-[var(--foreground)]">
                 No marae records available
               </h3>
 
-              <p className="mt-2 text-sm text-stone-400">
+              <p className="mt-2 text-sm text-[var(--muted-foreground)]">
                 Add marae records before linking them to governance records.
               </p>
 
               <div className="mt-5">
                 <Link
                   href="/marae/new"
-                  className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+                  className="rounded-xl bg-[var(--foreground)] px-4 py-2 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
                 >
                   Add Marae
                 </Link>
               </div>
             </div>
           ) : (
-            <div className="mt-6 overflow-x-auto rounded-2xl border border-stone-800">
+            <div className="mt-6 overflow-x-auto rounded-2xl border border-[var(--border)]">
               <table className="w-full min-w-[560px] border-collapse text-left text-sm">
-                <thead className="bg-stone-950 text-stone-400">
+                <thead className="bg-[var(--surface-raised)] text-[var(--muted-foreground)]">
                   <tr>
                     <th className="px-4 py-3 font-medium">Name</th>
                     <th className="px-4 py-3 font-medium">Location</th>
@@ -386,25 +386,25 @@ export default async function AddGovernancePage() {
                   {maraeRecords.map((marae) => (
                     <tr
                       key={marae.id}
-                      className="border-t border-stone-800 bg-stone-900 transition hover:bg-stone-950"
+                      className="border-t border-[var(--border)] bg-[var(--surface)] transition hover:bg-[var(--surface-raised)]"
                     >
                       <td className="px-4 py-4">
                         <Link
                           href={maraePath(marae.id)}
-                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                          className="font-medium text-[var(--foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                         >
                           {getMaraeName(marae)}
                         </Link>
                       </td>
 
-                      <td className="px-4 py-4 text-stone-300">
+                      <td className="px-4 py-4 text-[var(--foreground)]">
                         {formatValue(marae.location)}
                       </td>
 
                       <td className="px-4 py-4">
                         <Link
                           href={maraePath(marae.id)}
-                          className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                          className="text-sm font-medium text-[var(--foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                         >
                           View marae
                         </Link>
@@ -417,46 +417,46 @@ export default async function AddGovernancePage() {
           )}
         </div>
 
-        <div className="rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-lg font-semibold text-[var(--foreground)]">
                 Available Whenua
               </h2>
 
-              <p className="mt-1 text-sm text-stone-400">
+              <p className="mt-1 text-sm text-[var(--muted-foreground)]">
                 Existing whenua records available for optional selection.
               </p>
             </div>
 
-            <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
+            <div className="rounded-full border border-[var(--border)] px-4 py-2 text-sm text-[var(--foreground)]">
               {whenuaRecords.length} records
             </div>
           </div>
 
           {whenuaRecords.length === 0 ? (
-            <div className="mt-6 rounded-xl border border-stone-800 bg-stone-950 p-6">
-              <h3 className="text-base font-semibold text-white">
+            <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-6">
+              <h3 className="text-base font-semibold text-[var(--foreground)]">
                 No whenua records available
               </h3>
 
-              <p className="mt-2 text-sm text-stone-400">
+              <p className="mt-2 text-sm text-[var(--muted-foreground)]">
                 Add whenua records before linking them to governance records.
               </p>
 
               <div className="mt-5">
                 <Link
                   href="/whenua/new"
-                  className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+                  className="rounded-xl bg-[var(--foreground)] px-4 py-2 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
                 >
                   Add Whenua
                 </Link>
               </div>
             </div>
           ) : (
-            <div className="mt-6 overflow-x-auto rounded-2xl border border-stone-800">
+            <div className="mt-6 overflow-x-auto rounded-2xl border border-[var(--border)]">
               <table className="w-full min-w-[620px] border-collapse text-left text-sm">
-                <thead className="bg-stone-950 text-stone-400">
+                <thead className="bg-[var(--surface-raised)] text-[var(--muted-foreground)]">
                   <tr>
                     <th className="px-4 py-3 font-medium">Title</th>
                     <th className="px-4 py-3 font-medium">Block</th>
@@ -469,29 +469,29 @@ export default async function AddGovernancePage() {
                   {whenuaRecords.map((whenua) => (
                     <tr
                       key={whenua.id}
-                      className="border-t border-stone-800 bg-stone-900 transition hover:bg-stone-950"
+                      className="border-t border-[var(--border)] bg-[var(--surface)] transition hover:bg-[var(--surface-raised)]"
                     >
                       <td className="px-4 py-4">
                         <Link
                           href={whenuaPath(whenua.id)}
-                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                          className="font-medium text-[var(--foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                         >
                           {getWhenuaTitle(whenua)}
                         </Link>
                       </td>
 
-                      <td className="px-4 py-4 text-stone-300">
+                      <td className="px-4 py-4 text-[var(--foreground)]">
                         {formatValue(whenua.block_name)}
                       </td>
 
-                      <td className="px-4 py-4 text-stone-300">
+                      <td className="px-4 py-4 text-[var(--foreground)]">
                         {formatValue(whenua.location)}
                       </td>
 
                       <td className="px-4 py-4">
                         <Link
                           href={whenuaPath(whenua.id)}
-                          className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                          className="text-sm font-medium text-[var(--foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                         >
                           View whenua
                         </Link>

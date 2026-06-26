@@ -539,7 +539,7 @@ export default async function AddDocumentPage() {
                       <td className="px-4 py-4">
                         <Link
                           href={huiPath(hui.id)}
-                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
+                          className="font-medium text-[var(--foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                         >
                           {getHuiTitle(hui)}
                         </Link>
@@ -552,7 +552,7 @@ export default async function AddDocumentPage() {
                       <td className="px-4 py-4">
                         <Link
                           href={huiPath(hui.id)}
-                          className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
+                          className="text-sm font-medium text-[var(--foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                         >
                           View hui
                         </Link>
@@ -621,7 +621,7 @@ export default async function AddDocumentPage() {
                       <td className="px-4 py-4">
                         <Link
                           href={whenuaPath(whenua.id)}
-                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
+                          className="font-medium text-[var(--foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                         >
                           {getWhenuaTitle(whenua)}
                         </Link>
@@ -634,7 +634,7 @@ export default async function AddDocumentPage() {
                       <td className="px-4 py-4">
                         <Link
                           href={whenuaPath(whenua.id)}
-                          className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
+                          className="text-sm font-medium text-[var(--foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                         >
                           View whenua
                         </Link>
@@ -703,7 +703,7 @@ export default async function AddDocumentPage() {
                       <td className="px-4 py-4">
                         <Link
                           href={maraePath(marae.id)}
-                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
+                          className="font-medium text-[var(--foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                         >
                           {getMaraeName(marae)}
                         </Link>
@@ -716,7 +716,7 @@ export default async function AddDocumentPage() {
                       <td className="px-4 py-4">
                         <Link
                           href={maraePath(marae.id)}
-                          className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
+                          className="text-sm font-medium text-[var(--foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                         >
                           View marae
                         </Link>

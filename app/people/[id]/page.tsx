@@ -211,7 +211,7 @@ export default async function PeopleDetailPage({
   const personName = person?.full_name || "Unknown person";
 
   return (
-    <AppShell title="Person Detail" eyebrow="Core Records">
+    <AppShell title="Person Detail" eyebrow="Whakapapa & People">
       {/* Hero */}
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">

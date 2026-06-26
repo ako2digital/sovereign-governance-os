@@ -48,7 +48,7 @@ export function Navigation() {
                 isScrolled ? "text-xl" : "text-2xl"
               }`}
             >
-              Sovereign OS
+              Tangata
             </span>
             <span
               className={`font-mono text-stone-500 transition-all duration-500 ${

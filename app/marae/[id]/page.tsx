@@ -176,7 +176,7 @@ export default async function MaraeDetailPage({
   const previousRoles = roleTerms.filter((r) => r.status !== "active");
 
   return (
-    <AppShell title="Marae Detail" eyebrow="Core Records">
+    <AppShell title="Marae Detail" eyebrow="Marae">
       {/* ── Header ── */}
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">

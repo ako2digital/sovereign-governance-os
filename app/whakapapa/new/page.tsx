@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+﻿import { redirect } from "next/navigation";
 import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 import { supabase } from "@/lib/supabaseClient";
@@ -71,68 +71,68 @@ export default async function AddWhakapapaPage() {
 
   return (
     <AppShell title="Add Whakapapa" eyebrow="Whakapapa Module">
-      <section className="rounded-3xl border border-stone-800 bg-stone-900/50 p-8">
-        <p className="text-xs uppercase tracking-[0.25em] text-stone-500">
+      <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
+        <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
           New Whakapapa Record
         </p>
 
-        <h1 className="mt-3 text-3xl font-semibold text-white">
+        <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">
           Add Whakapapa Relationship
         </h1>
 
-        <p className="mt-4 max-w-2xl text-stone-400">
+        <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
           Create a relationship record between two existing people. This builds
           the relational layer used for whakapapa mapping and future
           verification work.
         </p>
       </section>
 
-      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-white">
+            <h2 className="text-lg font-semibold text-[var(--foreground)]">
               Relationship Details
             </h2>
 
-            <p className="mt-1 text-sm text-stone-400">
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
               Select two existing people and define the relationship type.
             </p>
           </div>
 
           <Link
             href="/whakapapa"
-            className="rounded-xl border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
+            className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-semibold text-[var(--muted-foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
           >
             Back to Whakapapa
           </Link>
         </div>
 
         {error ? (
-          <div className="mt-6 rounded-xl border border-red-900 bg-red-950/40 p-4 text-sm text-red-300">
+          <div className="mt-6 rounded-xl border border-red-900 bg-red-950/30 p-4 text-sm text-red-400">
             <p className="font-semibold">Database error</p>
             <pre className="mt-3 whitespace-pre-wrap">{error.message}</pre>
           </div>
         ) : peopleRecords.length < 2 ? (
-          <div className="mt-6 rounded-xl border border-stone-800 bg-stone-950 p-6">
-            <h3 className="text-base font-semibold text-white">
+          <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6">
+            <h3 className="text-base font-semibold text-[var(--foreground)]">
               At least two people are required
             </h3>
 
-            <p className="mt-2 text-sm text-stone-400">
+            <p className="mt-2 text-sm text-[var(--muted-foreground)]">
               Add two person records before creating a whakapapa relationship.
             </p>
 
             <div className="mt-5 flex flex-wrap gap-3">
               <Link
                 href="/people/new"
-                className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+                className="rounded-xl bg-[var(--foreground)] px-4 py-2 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
               >
                 Add Person
               </Link>
 
               <Link
                 href="/people"
-                className="rounded-xl border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
+                className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-semibold text-[var(--muted-foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
               >
                 View People
               </Link>
@@ -144,7 +144,7 @@ export default async function AddWhakapapaPage() {
               <div>
                 <label
                   htmlFor="person_a_id"
-                  className="text-sm font-medium text-stone-300"
+                  className="text-sm font-medium text-[var(--foreground)]"
                 >
                   First Person
                 </label>
@@ -153,7 +153,7 @@ export default async function AddWhakapapaPage() {
                   id="person_a_id"
                   name="person_a_id"
                   required
-                  className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+                  className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--accent)]"
                 >
                   <option value="">Select first person</option>
 
@@ -168,7 +168,7 @@ export default async function AddWhakapapaPage() {
               <div>
                 <label
                   htmlFor="person_b_id"
-                  className="text-sm font-medium text-stone-300"
+                  className="text-sm font-medium text-[var(--foreground)]"
                 >
                   Second Person
                 </label>
@@ -177,7 +177,7 @@ export default async function AddWhakapapaPage() {
                   id="person_b_id"
                   name="person_b_id"
                   required
-                  className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+                  className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition focus:border-[var(--accent)]"
                 >
                   <option value="">Select second person</option>
 
@@ -193,7 +193,7 @@ export default async function AddWhakapapaPage() {
             <div>
               <label
                 htmlFor="relationship_type"
-                className="text-sm font-medium text-stone-300"
+                className="text-sm font-medium text-[var(--foreground)]"
               >
                 Relationship Type
               </label>
@@ -204,21 +204,21 @@ export default async function AddWhakapapaPage() {
                 type="text"
                 required
                 placeholder="Example: parent, child, sibling, spouse, tupuna, descendant"
-                className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition placeholder:text-stone-600 focus:border-stone-400"
+                className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 text-sm text-[var(--foreground)] outline-none transition placeholder:text-[var(--muted-foreground)] focus:border-[var(--accent)]"
               />
             </div>
 
             <div className="flex flex-wrap items-center gap-3 pt-2">
               <button
                 type="submit"
-                className="rounded-xl bg-stone-100 px-5 py-3 text-sm font-semibold text-stone-950 transition hover:bg-white"
+                className="rounded-xl bg-[var(--foreground)] px-5 py-3 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
               >
                 Create Relationship
               </button>
 
               <Link
                 href="/whakapapa"
-                className="rounded-xl border border-stone-700 px-5 py-3 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
+                className="rounded-xl border border-[var(--border)] px-5 py-3 text-sm font-semibold text-[var(--foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
               >
                 Cancel
               </Link>
@@ -227,37 +227,37 @@ export default async function AddWhakapapaPage() {
         )}
       </section>
 
-      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-white">
+            <h2 className="text-lg font-semibold text-[var(--foreground)]">
               Available People
             </h2>
 
-            <p className="mt-1 text-sm text-stone-400">
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
               Existing people that can be selected for the relationship.
             </p>
           </div>
 
-          <div className="rounded-full border border-stone-700 px-4 py-2 text-sm text-stone-300">
+          <div className="rounded-full border border-[var(--border)] px-4 py-2 text-sm text-[var(--muted-foreground)]">
             {peopleRecords.length} people
           </div>
         </div>
 
         {peopleRecords.length === 0 ? (
-          <div className="mt-6 rounded-xl border border-stone-800 bg-stone-950 p-6">
-            <h3 className="text-base font-semibold text-white">
+          <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6">
+            <h3 className="text-base font-semibold text-[var(--foreground)]">
               No people available
             </h3>
 
-            <p className="mt-2 text-sm text-stone-400">
+            <p className="mt-2 text-sm text-[var(--muted-foreground)]">
               Add people before creating whakapapa relationships.
             </p>
           </div>
         ) : (
-          <div className="mt-6 overflow-x-auto rounded-2xl border border-stone-800">
+          <div className="mt-6 overflow-x-auto rounded-2xl border border-[var(--border)]">
             <table className="w-full min-w-[720px] border-collapse text-left text-sm">
-              <thead className="bg-stone-950 text-stone-400">
+              <thead className="bg-[var(--surface-raised)] text-[var(--muted-foreground)]">
                 <tr>
                   <th className="px-4 py-3 font-medium">Full Name</th>
                   <th className="px-4 py-3 font-medium">Created</th>
@@ -270,25 +270,25 @@ export default async function AddWhakapapaPage() {
                 {peopleRecords.map((person) => (
                   <tr
                     key={person.id}
-                    className="border-t border-stone-800 bg-stone-900 transition hover:bg-stone-950"
+                    className="border-t border-[var(--border)] bg-[var(--surface)] transition hover:bg-[var(--surface-raised)]"
                   >
                     <td className="px-4 py-4">
                       <Link
                         href={personPath(person.id)}
-                        className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                        className="font-medium text-[var(--foreground)] underline-offset-4 transition hover:underline"
                       >
                         {person.full_name}
                       </Link>
                     </td>
 
-                    <td className="px-4 py-4 text-stone-300">
+                    <td className="px-4 py-4 text-[var(--foreground)]">
                       {formatDate(person.created_at)}
                     </td>
 
                     <td className="px-4 py-4">
                       <Link
                         href={personPath(person.id)}
-                        className="font-mono text-xs text-stone-500 underline-offset-4 transition hover:text-white hover:underline"
+                        className="font-mono text-xs text-[var(--muted-foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                       >
                         {person.id}
                       </Link>
@@ -297,7 +297,7 @@ export default async function AddWhakapapaPage() {
                     <td className="px-4 py-4">
                       <Link
                         href={personPath(person.id)}
-                        className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                        className="text-sm font-medium text-[var(--foreground)] underline-offset-4 transition hover:underline"
                       >
                         View person
                       </Link>
