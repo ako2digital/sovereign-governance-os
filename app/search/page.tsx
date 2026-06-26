@@ -289,7 +289,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   }
 
   return (
-    <AppShell title="Search" eyebrow="Sovereign Governance OS">
+    <AppShell title="Search" eyebrow="Tangata">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
           Registry Search

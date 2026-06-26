@@ -380,7 +380,7 @@ export default async function ActivityDetailPage({
   );
 
   return (
-    <AppShell title="Activity Detail" eyebrow="Work & Delivery">
+    <AppShell title="Activity Detail" eyebrow="Overview">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs uppercase tracking-[0.25em] text-[var(--muted-foreground)]">
           Activity Record

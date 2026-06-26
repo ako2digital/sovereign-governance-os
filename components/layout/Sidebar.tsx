@@ -7,33 +7,46 @@ import { Dot, StatusBadge } from "@/components/ui-system/primitives";
 
 const navigation = [
   { name: "Dashboard", href: "/", group: "Overview" },
+  { name: "Activity", href: "/activity", group: "Overview" },
 
   { name: "People", href: "/people", group: "Whakapapa & People" },
   { name: "Whakapapa", href: "/whakapapa", group: "Whakapapa & People" },
 
-  { name: "Whenua", href: "/whenua", group: "Whenua & Marae" },
-  { name: "Marae", href: "/marae", group: "Whenua & Marae" },
-  { name: "Hui", href: "/hui", group: "Whenua & Marae" },
-  { name: "Pānui", href: "/panui", group: "Whenua & Marae" },
+  { name: "Whenua", href: "/whenua", group: "Whenua" },
+
+  { name: "Marae", href: "/marae", group: "Marae" },
+  { name: "Hui", href: "/hui", group: "Marae" },
+  { name: "Pānui", href: "/panui", group: "Marae" },
 
   { name: "Governance Records", href: "/governance", group: "Governance" },
   { name: "Minutes", href: "/minutes", group: "Governance" },
   { name: "Decisions", href: "/decisions", group: "Governance" },
 
+  { name: "Finance", href: "/finance", group: "Finance & Assets" },
+  { name: "Funding Readiness", href: "/reports/funding-readiness", group: "Finance & Assets" },
+
   { name: "Tasks", href: "/tasks", group: "Work & Delivery" },
-  { name: "Activity", href: "/activity", group: "Work & Delivery" },
 
   { name: "Library", href: "/library", group: "Library & Archive" },
   { name: "Documents", href: "/documents", group: "Library & Archive" },
+  { name: "Files", href: "/library/files", group: "Library & Archive" },
+  { name: "Evidence", href: "/library/evidence", group: "Library & Archive" },
 
   { name: "Reports", href: "/reports", group: "Intelligence" },
+  { name: "Governance Chain", href: "/reports/governance-chain", group: "Intelligence" },
+  { name: "Hui Participation", href: "/reports/hui-participation", group: "Intelligence" },
+  { name: "Marae Governance", href: "/reports/marae-governance", group: "Intelligence" },
+  { name: "Evidence & Files", href: "/reports/evidence-files", group: "Intelligence" },
+  { name: "Document Register", href: "/reports/document-register", group: "Intelligence" },
 ];
 
 const groups = [
   "Overview",
   "Whakapapa & People",
-  "Whenua & Marae",
+  "Whenua",
+  "Marae",
   "Governance",
+  "Finance & Assets",
   "Work & Delivery",
   "Library & Archive",
   "Intelligence",
@@ -41,6 +54,9 @@ const groups = [
 
 function isActivePath(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
+  if (href === "/reports") return pathname === "/reports";
+  if (href === "/library") return pathname === "/library";
+  if (href === "/activity") return pathname === "/activity" || pathname.startsWith("/activity/");
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
@@ -48,14 +64,14 @@ function IdentityCard() {
   return (
     <Link
       href="/"
-      className="mb-8 flex items-center justify-between rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-4 shadow-sm transition hover:border-[var(--accent)] dark:bg-white/5 dark:backdrop-blur-sm dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05)]"
+      className="mb-6 flex items-center justify-between rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3 shadow-sm transition hover:border-[var(--accent)] dark:bg-white/5"
     >
       <div>
-        <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Sovereign OS
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
+          Tangata
         </p>
-        <p className="mt-1 text-sm font-semibold text-[var(--foreground)]">
-          Governance Registry
+        <p className="mt-0.5 text-xs font-medium text-[var(--foreground)]">
+          Governance OS
         </p>
       </div>
       <StatusBadge>
@@ -74,10 +90,10 @@ function NavGroups({
   onNavigate?: () => void;
 }) {
   return (
-    <nav className="space-y-7">
+    <nav className="space-y-5">
       {groups.map((group) => (
         <div key={group}>
-          <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
+          <p className="mb-1.5 px-2 text-[9px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
             {group}
           </p>
           <div className="space-y-0.5">
@@ -91,15 +107,15 @@ function NavGroups({
                     href={item.href}
                     onClick={onNavigate}
                     aria-current={active ? "page" : undefined}
-                    className={`group flex items-center gap-3 rounded-xl border px-3 py-2 text-sm transition-colors ${
+                    className={`group flex items-center gap-2.5 rounded-lg border px-2.5 py-1.5 text-[13px] transition-colors ${
                       active
-                        ? "border-[var(--border)] bg-[var(--surface-raised)] text-[var(--foreground)]"
+                        ? "border-[var(--border)] bg-[var(--surface-raised)] font-medium text-[var(--foreground)]"
                         : "border-transparent text-[var(--muted-foreground)] hover:border-[var(--border)] hover:bg-[var(--surface)] hover:text-[var(--foreground)]"
                     }`}
                   >
                     <Dot
                       muted={!active}
-                      className={active ? "" : "group-hover:bg-[var(--muted-foreground)]"}
+                      className={active ? "" : "opacity-40 group-hover:opacity-70"}
                     />
                     {item.name}
                   </Link>
@@ -122,19 +138,19 @@ export default function Sidebar() {
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Open navigation"
-        className="fixed left-4 top-4 z-50 flex h-11 w-11 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--foreground)] shadow-lg shadow-black/10 dark:bg-white/5 dark:backdrop-blur-sm dark:shadow-black/40 lg:hidden"
+        className="fixed left-4 top-4 z-50 flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--foreground)] shadow-md shadow-black/10 dark:bg-white/5 lg:hidden"
       >
         <span className="sr-only">Open navigation</span>
-        <span className="space-y-1">
-          <span className="block h-0.5 w-5 bg-[var(--foreground)]" />
-          <span className="block h-0.5 w-5 bg-[var(--foreground)]" />
-          <span className="block h-0.5 w-5 bg-[var(--foreground)]" />
+        <span className="space-y-[5px]">
+          <span className="block h-[2px] w-5 bg-current" />
+          <span className="block h-[2px] w-5 bg-current" />
+          <span className="block h-[2px] w-5 bg-current" />
         </span>
       </button>
 
-      <aside className="hidden w-64 shrink-0 border-r border-[var(--border)] bg-[var(--surface)] px-4 py-5 dark:bg-white/5 dark:backdrop-blur-sm lg:block">
+      <aside className="hidden w-60 shrink-0 border-r border-[var(--border)] bg-[var(--surface)] px-3 py-4 dark:bg-white/[0.03] lg:flex lg:flex-col">
         <IdentityCard />
-        <div className="overflow-y-auto">
+        <div className="flex-1 overflow-y-auto">
           <NavGroups pathname={pathname} />
         </div>
       </aside>
@@ -142,17 +158,16 @@ export default function Sidebar() {
       {open ? (
         <div className="fixed inset-0 z-50 flex lg:hidden">
           <div
-            className="absolute inset-0 bg-black/70"
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
             onClick={() => setOpen(false)}
             aria-hidden="true"
           />
-          <aside className="relative z-10 flex h-full w-64 flex-col border-r border-[var(--border)] bg-[var(--surface)] px-4 py-5 shadow-2xl shadow-black/30 dark:shadow-black/60">
-            <div className="mb-4 flex items-center justify-end">
+          <aside className="relative z-10 flex h-full w-60 flex-col border-r border-[var(--border)] bg-[var(--surface)] px-3 py-4 shadow-2xl dark:shadow-black/60">
+            <div className="mb-3 flex items-center justify-end">
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                aria-label="Close navigation"
-                className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--muted-foreground)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                className="rounded-lg border border-[var(--border)] px-2.5 py-1 text-xs font-medium text-[var(--muted-foreground)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
               >
                 Close
               </button>

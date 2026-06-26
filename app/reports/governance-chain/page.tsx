@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 import ReportStatCard from "@/components/reports/ReportStatCard";
 import PrintButton from "@/components/reports/PrintButton";
@@ -115,7 +115,7 @@ export default async function GovernanceChainReportPage({ searchParams }: Govern
   });
 
   return (
-    <AppShell title="Governance Chain" eyebrow="Reports">
+    <AppShell title="Governance Chain" eyebrow="Intelligence">
       {/* ── Header ── */}
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8 print:border-none print:p-0">
         <div className="flex flex-wrap items-start justify-between gap-4">

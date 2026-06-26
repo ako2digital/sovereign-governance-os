@@ -49,10 +49,10 @@ export default async function WhenuaPage() {
   const whenuaRecords = (data ?? []) as WhenuaRecord[];
 
   return (
-    <AppShell title="Whenua" eyebrow="Whenua & Marae">
+    <AppShell title="Whenua" eyebrow="Whenua">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Whenua & Marae
+          Whenua
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">Whenua</h1>

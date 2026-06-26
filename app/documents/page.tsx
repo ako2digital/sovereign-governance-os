@@ -89,7 +89,7 @@ export default async function DocumentsPage() {
             </h2>
 
             <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-              Live records pulled from the Supabase documents table.
+              {documentRecords.length} {documentRecords.length === 1 ? "document" : "documents"} on record
             </p>
           </div>
 

@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 import PrintButton from "@/components/reports/PrintButton";
 import { supabase } from "@/lib/supabaseClient";
@@ -214,7 +214,7 @@ export default async function FundingReadinessPage() {
   });
 
   return (
-    <AppShell title="Funding Readiness" eyebrow="Reports">
+    <AppShell title="Funding Readiness" eyebrow="Intelligence">
       {/* ── Header ── */}
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8 print:border-none print:p-0">
         <div className="flex flex-wrap items-start justify-between gap-4">

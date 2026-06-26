@@ -57,10 +57,10 @@ export default async function HuiPage() {
   const huiRecords = (data ?? []) as HuiRecord[];
 
   return (
-    <AppShell title="Hui" eyebrow="Whenua & Marae">
+    <AppShell title="Hui" eyebrow="Marae">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Whenua & Marae
+          Marae
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">Hui</h1>

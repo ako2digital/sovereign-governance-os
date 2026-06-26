@@ -1,5 +1,4 @@
 import ThemeToggle from "@/components/theme/ThemeToggle";
-import { Dot, StatusBadge } from "@/components/ui-system/primitives";
 import SearchBar from "./SearchBar";
 
 type TopbarProps = {
@@ -8,30 +7,24 @@ type TopbarProps = {
 };
 
 export default function Topbar({
-  title = "Sovereign Governance OS",
-  eyebrow = "Governance Registry",
+  title = "Tangata",
+  eyebrow = "Governance OS",
 }: TopbarProps) {
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--border)] bg-[var(--surface)] py-4 pl-20 pr-6 dark:bg-white/5 dark:backdrop-blur-xl lg:px-10">
+    <header className="sticky top-0 z-40 border-b border-[var(--border)] bg-[var(--surface)] py-3 pl-16 pr-4 dark:bg-[var(--surface)] lg:pl-6 lg:pr-8">
       <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-4">
         <div className="min-w-0">
-          <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
             {eyebrow}
           </p>
-          <h2 className="mt-1 truncate text-lg font-semibold tracking-tight text-[var(--foreground)] sm:text-xl">
+          <h2 className="mt-0.5 truncate text-base font-semibold tracking-tight text-[var(--foreground)] sm:text-lg">
             {title}
           </h2>
         </div>
 
-        <div className="flex shrink-0 items-center gap-3">
+        <div className="flex shrink-0 items-center gap-2">
           <SearchBar />
           <ThemeToggle />
-          <div className="hidden sm:block">
-            <StatusBadge>
-              <Dot />
-              Live
-            </StatusBadge>
-          </div>
         </div>
       </div>
     </header>

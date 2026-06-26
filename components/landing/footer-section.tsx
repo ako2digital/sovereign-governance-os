@@ -36,7 +36,7 @@ const footerLinks = [
             <div>
               <a href="/design-test" className="inline-flex items-center gap-2">
                 <span className="text-2xl font-semibold tracking-tight">
-                  Sovereign OS
+                  Tangata
                 </span>
                 <span className="font-mono text-xs text-stone-500">MVP</span>
               </a>

@@ -86,7 +86,7 @@ export default async function MinutesPage() {
             </h2>
 
             <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-              Live records pulled from the Supabase minutes table.
+              {minutesRecords.length} {minutesRecords.length === 1 ? "record" : "records"} on file
             </p>
           </div>
 

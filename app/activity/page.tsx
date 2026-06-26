@@ -101,7 +101,7 @@ export default async function ActivityPage() {
   const activityRecords = (data ?? []) as ActivityRecord[];
 
   return (
-    <AppShell title="Activity" eyebrow="Work & Delivery">
+    <AppShell title="Activity" eyebrow="Overview">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
           Work & Delivery
@@ -125,7 +125,7 @@ export default async function ActivityPage() {
             </h2>
 
             <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-              Live records pulled from the Supabase activity_log table.
+              {activityRecords.length} {activityRecords.length === 1 ? "entry" : "entries"} on record
             </p>
           </div>
 

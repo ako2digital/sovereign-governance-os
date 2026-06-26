@@ -63,10 +63,10 @@ export default async function PanuiPage() {
   const panuiRecords = (data ?? []) as PanuiRecord[];
 
   return (
-    <AppShell title="Pānui" eyebrow="Whenua & Marae">
+    <AppShell title="Pānui" eyebrow="Marae">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Whenua & Marae
+          Marae
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">Pānui</h1>
@@ -88,7 +88,7 @@ export default async function PanuiPage() {
             </h2>
 
             <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-              Live records pulled from the Supabase panui table.
+              {panuiRecords.length} {panuiRecords.length === 1 ? "pānui" : "pānui"} on record
             </p>
           </div>
 

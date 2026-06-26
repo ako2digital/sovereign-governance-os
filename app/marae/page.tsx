@@ -50,10 +50,10 @@ export default async function MaraePage() {
   const maraeRecords = (data ?? []) as MaraeRecord[];
 
   return (
-    <AppShell title="Marae" eyebrow="Whenua & Marae">
+    <AppShell title="Marae" eyebrow="Marae">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Whenua & Marae
+          Marae
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">Marae</h1>
@@ -75,7 +75,7 @@ export default async function MaraePage() {
             </h2>
 
             <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-              Live records pulled from the Supabase marae_records table.
+              {maraeRecords.length} {maraeRecords.length === 1 ? "profile" : "profiles"} on record
             </p>
           </div>
 
