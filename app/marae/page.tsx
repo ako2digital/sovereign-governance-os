@@ -50,17 +50,20 @@ export default async function MaraePage() {
   const maraeRecords = (data ?? []) as MaraeRecord[];
 
   return (
-    <AppShell title="Marae" eyebrow="Core Records">
+    <AppShell title="Marae" eyebrow="Whenua & Marae">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Marae Register
+          Whenua & Marae
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">Marae</h1>
 
         <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
-          Manage marae records, locations, descriptions, notes, status, and
-          supporting context for governance and relational infrastructure.
+          Institutional profiles for each marae — the living centre of hapū
+          identity, tikanga, and governance. Marae records link to linked
+          whenua, governance instruments, hui held on-site, and supporting
+          documents. Each profile anchors the governance chain to its physical
+          and cultural place.
         </p>
       </section>
 

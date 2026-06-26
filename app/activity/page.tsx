@@ -101,17 +101,19 @@ export default async function ActivityPage() {
   const activityRecords = (data ?? []) as ActivityRecord[];
 
   return (
-    <AppShell title="Activity" eyebrow="System Records">
+    <AppShell title="Activity" eyebrow="Work & Delivery">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Activity Register
+          Work & Delivery
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">Activity</h1>
 
         <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
-          Review system activity, record changes, module events, linked record
-          references, person references, and operational history.
+          The operational audit trail — a chronological log of events, record
+          changes, and governance actions across the system. Activity is not for
+          primary governance work; it surfaces the history behind decisions and
+          tasks for accountability, investigation, and reporting.
         </p>
       </section>
 

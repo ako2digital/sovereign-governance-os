@@ -62,10 +62,10 @@ export default async function DocumentsPage() {
   const documentRecords = (data ?? []) as DocumentRecord[];
 
   return (
-    <AppShell title="Documents" eyebrow="Core Records">
+    <AppShell title="Documents" eyebrow="Library & Archive">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Documents Register
+          Library & Archive
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">
@@ -73,8 +73,11 @@ export default async function DocumentsPage() {
         </h1>
 
         <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
-          Manage document records, file references, document types, status,
-          sensitivity levels, summaries, and confirmed relational references.
+          Document records and file references for the governance archive —
+          deeds, reports, contracts, plans, correspondence, and supporting
+          materials. Documents are the evidence layer that gives governance
+          decisions their legal and historical weight. Link documents to the
+          hui, whenua, or decisions they support.
         </p>
       </section>
 

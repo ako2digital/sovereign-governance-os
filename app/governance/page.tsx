@@ -59,20 +59,22 @@ export default async function GovernancePage() {
   const governanceRecords = (data ?? []) as GovernanceRecord[];
 
   return (
-    <AppShell title="Governance" eyebrow="Core Records">
+    <AppShell title="Governance Records" eyebrow="Governance">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Governance Register
+          Governance
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">
-          Governance
+          Governance Records
         </h1>
 
         <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
-          Manage governance records, mandates, authority records, status,
-          effective dates, summaries, and confirmed links to whenua or marae
-          records.
+          The formal authority layer — mandates, trust deeds, incorporation
+          documents, bylaws, and other governance instruments that define the
+          legal and tikanga basis for this organisation's decisions. Link
+          governance records to the specific whenua or marae they govern and to
+          the hui that gave them authority.
         </p>
       </section>
 
@@ -84,7 +86,7 @@ export default async function GovernancePage() {
             </h2>
 
             <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-              Live records pulled from the Supabase governance_records table.
+              {governanceRecords.length} {governanceRecords.length === 1 ? "record" : "records"} on file
             </p>
           </div>
 

@@ -74,7 +74,7 @@ export default function ReportsPage() {
       {/* ── Header ── */}
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Reporting Centre
+          Intelligence
         </p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--foreground)]">
           Reports

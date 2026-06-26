@@ -60,10 +60,10 @@ export default async function WhakapapaPage() {
     (data ?? []) as unknown as WhakapapaRelationship[];
 
   return (
-    <AppShell title="Whakapapa" eyebrow="Core Records">
+    <AppShell title="Whakapapa" eyebrow="Whakapapa & People">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Whakapapa Register
+          Whakapapa & People
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">
@@ -71,9 +71,10 @@ export default async function WhakapapaPage() {
         </h1>
 
         <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
-          Manage relationship records between people. Each whakapapa record
-          links two identity records together and can later support verification,
-          whakapapa mapping, and related record history.
+          Relationship records connecting people through whakapapa lines —
+          whānau, hapū, and iwi links. Each record maps two people together with
+          a named relationship type, forming the foundation for governance
+          succession, trusteeship verification, and beneficiary tracing.
         </p>
       </section>
 
@@ -85,8 +86,7 @@ export default async function WhakapapaPage() {
             </h2>
 
             <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-              Live records pulled from the Supabase whakapapa_relationships
-              table.
+              {relationshipRecords.length} {relationshipRecords.length === 1 ? "relationship" : "relationships"} on record
             </p>
           </div>
 

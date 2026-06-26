@@ -91,11 +91,11 @@ export default async function LibraryPage() {
     (people.count ?? 0);
 
   return (
-    <AppShell title="Library" eyebrow="Intelligence">
+    <AppShell title="Library" eyebrow="Library & Archive">
       {/* ── Header ── */}
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Central Archive
+          Library & Archive
         </p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--foreground)]">
           Library

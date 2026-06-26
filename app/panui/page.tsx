@@ -63,18 +63,20 @@ export default async function PanuiPage() {
   const panuiRecords = (data ?? []) as PanuiRecord[];
 
   return (
-    <AppShell title="Pānui" eyebrow="Core Records">
+    <AppShell title="Pānui" eyebrow="Whenua & Marae">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Pānui Register
+          Whenua & Marae
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">Pānui</h1>
 
         <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
-          Manage pānui records, publication dates, status, content summaries,
-          linked hui references, linked document references, and communication
-          history.
+          Community notices, newsletters, and announcements published to
+          whānau, members, and external stakeholders. Pānui records link to the
+          hui they announce or follow up on, carry publication dates, and can
+          reference supporting documents — keeping community communication
+          traceable within the governance record.
         </p>
       </section>
 

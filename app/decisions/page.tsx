@@ -79,10 +79,10 @@ export default async function DecisionsPage() {
   const decisionRecords = (data ?? []) as DecisionRecord[];
 
   return (
-    <AppShell title="Decisions" eyebrow="Core Records">
+    <AppShell title="Decisions" eyebrow="Governance">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Decisions Register
+          Governance
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">
@@ -90,8 +90,11 @@ export default async function DecisionsPage() {
         </h1>
 
         <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
-          Manage decision records, decision dates, status, linked hui,
-          linked minutes, linked documents, and supporting governance context.
+          The formal decision register — every resolution passed by governance,
+          with status, effective date, source hui, confirming minutes, and
+          resulting tasks tracked in a single chain. This register is the
+          primary evidence layer for accountability reporting and funder
+          compliance.
         </p>
       </section>
 
@@ -103,7 +106,7 @@ export default async function DecisionsPage() {
             </h2>
 
             <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-              Live records pulled from the Supabase decisions table.
+              {decisionRecords.length} {decisionRecords.length === 1 ? "decision" : "decisions"} on record
             </p>
           </div>
 

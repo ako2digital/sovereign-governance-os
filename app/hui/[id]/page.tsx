@@ -218,7 +218,7 @@ export default async function HuiDetailPage({ params }: HuiDetailPageProps) {
   ).length;
 
   return (
-    <AppShell title="Hui Detail" eyebrow="Core Records">
+    <AppShell title="Hui Detail" eyebrow="Whenua & Marae">
       {/* ── Header ── */}
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">

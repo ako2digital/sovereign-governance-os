@@ -57,17 +57,20 @@ export default async function HuiPage() {
   const huiRecords = (data ?? []) as HuiRecord[];
 
   return (
-    <AppShell title="Hui" eyebrow="Core Records">
+    <AppShell title="Hui" eyebrow="Whenua & Marae">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Hui Register
+          Whenua & Marae
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">Hui</h1>
 
         <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
-          Manage hui records, dates, locations, status, kaupapa, notes, and
-          meeting context for the governance system.
+          The formal meeting register — the starting point of the governance
+          chain. Every hui can generate minutes, produce formal decisions, and
+          create assigned tasks. Hui records track date, location, kaupapa,
+          and attendance, providing the authoritative source for all downstream
+          governance evidence.
         </p>
       </section>
 
@@ -77,7 +80,7 @@ export default async function HuiPage() {
             <h2 className="text-lg font-semibold text-[var(--foreground)]">Hui Register</h2>
 
             <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-              Live records pulled from the Supabase hui table.
+              {huiRecords.length} {huiRecords.length === 1 ? "hui" : "hui"} on record
             </p>
           </div>
 

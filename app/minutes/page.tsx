@@ -62,17 +62,19 @@ export default async function MinutesPage() {
   const minutesRecords = (data ?? []) as MinutesRecord[];
 
   return (
-    <AppShell title="Minutes" eyebrow="Core Records">
+    <AppShell title="Minutes" eyebrow="Governance">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Minutes Register
+          Governance
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">Minutes</h1>
 
         <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
-          Manage meeting minutes, summaries, approvals, status, linked hui
-          references, and supporting meeting records.
+          The official record of what was said, agreed, and resolved at every
+          hui. Minutes are the authoritative narrative link between a meeting
+          and its formal decisions — they make the governance chain auditable
+          and defensible to funders, auditors, and future generations.
         </p>
       </section>
 

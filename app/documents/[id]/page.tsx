@@ -130,7 +130,7 @@ export default async function DocumentsDetailPage({ params }: DocumentsDetailPag
   const linkedMaraeName = linkedMarae?.name || linkedMarae?.title || "Untitled marae record";
 
   return (
-    <AppShell title="Document Detail" eyebrow="Records">
+    <AppShell title="Document Detail" eyebrow="Library & Archive">
       {/* ── Header ── */}
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">

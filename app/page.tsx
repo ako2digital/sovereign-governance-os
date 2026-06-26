@@ -1,88 +1,111 @@
 import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 
-const modules = [
+type ModuleGroup = {
+  group: string;
+  description: string;
+  modules: { title: string; href: string; description: string }[];
+};
+
+const moduleGroups: ModuleGroup[] = [
   {
-    title: "People",
-    href: "/people",
-    description:
-      "Identity records for people connected to whakapapa, hui, tasks, roles, and activity.",
-    status: "Live",
+    group: "Whakapapa & People",
+    description: "Identity, relationships, and kinship records.",
+    modules: [
+      {
+        title: "People",
+        href: "/people",
+        description: "Identity profiles: trustees, kaumātua, members, staff, and whānau.",
+      },
+      {
+        title: "Whakapapa",
+        href: "/whakapapa",
+        description: "Whānau and kinship relationships connecting people records.",
+      },
+    ],
   },
   {
-    title: "Whakapapa",
-    href: "/whakapapa",
-    description: "Relationship records connecting one person to another.",
-    status: "Live",
+    group: "Whenua & Marae",
+    description: "Land, place, hui, and community communication.",
+    modules: [
+      {
+        title: "Whenua",
+        href: "/whenua",
+        description: "Land blocks, legal descriptions, historical notes, and land evidence.",
+      },
+      {
+        title: "Marae",
+        href: "/marae",
+        description: "Institutional profiles for marae — the hub of hapū governance and culture.",
+      },
+      {
+        title: "Hui",
+        href: "/hui",
+        description: "Meetings — the starting point of every governance chain.",
+      },
+      {
+        title: "Pānui",
+        href: "/panui",
+        description: "Community notices, newsletters, and announcements.",
+      },
+    ],
   },
   {
-    title: "Whenua",
-    href: "/whenua",
-    description:
-      "Land records, legal descriptions, historical notes, and references.",
-    status: "Live",
+    group: "Governance",
+    description: "The formal authority, decision, and evidence chain.",
+    modules: [
+      {
+        title: "Governance Records",
+        href: "/governance",
+        description: "Mandates, trust deeds, bylaws, and governance instruments.",
+      },
+      {
+        title: "Minutes",
+        href: "/minutes",
+        description: "Official meeting records — the authoritative narrative of every hui.",
+      },
+      {
+        title: "Decisions",
+        href: "/decisions",
+        description: "Formal decision register with source hui, status, and follow-up tasks.",
+      },
+    ],
   },
   {
-    title: "Marae",
-    href: "/marae",
-    description:
-      "Marae records connected to whenua, hui, governance, and documents.",
-    status: "Live",
+    group: "Work & Delivery",
+    description: "Actions from decisions and the audit trail.",
+    modules: [
+      {
+        title: "Tasks",
+        href: "/tasks",
+        description: "Decisions turned into assigned actions with owner, priority, and deadline.",
+      },
+      {
+        title: "Activity",
+        href: "/activity",
+        description: "Operational audit trail — events, record changes, and action history.",
+      },
+    ],
   },
   {
-    title: "Governance",
-    href: "/governance",
-    description:
-      "Mandates, policies, authority records, decisions, and governance context.",
-    status: "Live",
-  },
-  {
-    title: "Hui",
-    href: "/hui",
-    description:
-      "Meeting records connected to minutes, decisions, tasks, and documents.",
-    status: "Live",
-  },
-  {
-    title: "Minutes",
-    href: "/minutes",
-    description: "Formal notes and summaries from hui records.",
-    status: "Live",
-  },
-  {
-    title: "Decisions",
-    href: "/decisions",
-    description:
-      "Decision records connected to hui, governance, and follow-up actions.",
-    status: "Live",
-  },
-  {
-    title: "Documents",
-    href: "/documents",
-    description:
-      "Supporting files, evidence, maps, photos, and formal records.",
-    status: "Live",
-  },
-  {
-    title: "Pānui",
-    href: "/panui",
-    description: "Communication records, notices, updates, and announcements.",
-    status: "Live",
-  },
-  {
-    title: "Tasks",
-    href: "/tasks",
-    description:
-      "Follow-up actions connected to hui, decisions, documents, and whenua.",
-    status: "Live",
-  },
-  {
-    title: "Activity",
-    href: "/activity",
-    description: "Audit trail for actions, updates, and record history.",
-    status: "Live",
+    group: "Library & Archive",
+    description: "Documents, evidence, and the central archive.",
+    modules: [
+      {
+        title: "Library",
+        href: "/library",
+        description: "Central archive overview — all records, documents, and evidence in one place.",
+      },
+      {
+        title: "Documents",
+        href: "/documents",
+        description: "Deeds, reports, contracts, plans, and supporting governance documents.",
+      },
+    ],
   },
 ];
+
+const modules = moduleGroups.flatMap((g) => g.modules);
 
 const createOptions = [
   { title: "Add Person", href: "/people/new" },
@@ -240,10 +263,10 @@ export default function HomePage() {
               </Link>
 
               <Link
-                href="/library"
+                href="/search"
                 className="rounded-lg border border-[var(--border)] px-5 py-2.5 text-sm font-semibold text-[var(--foreground)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] dark:hover:bg-white/5"
               >
-                Library
+                Search Registers
               </Link>
 
               <Link
@@ -330,42 +353,57 @@ export default function HomePage() {
 
       <Panel className="mt-14">
         <SectionHeader
-          eyebrow="Module Register"
-          title="Core Systems"
-          description="Every system below is live across the registry."
+          eyebrow="Register Categories"
+          title="Governance Registers"
+          description="Organised into the seven governance categories this system manages."
           meta={
             <span className="text-sm text-[var(--muted-foreground)]">
-              {modules.length} modules
+              {modules.length} registers
             </span>
           }
         />
 
-        <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {modules.map((module) => (
-            <Link
-              key={module.title}
-              href={module.href}
-              className="group relative overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-6 transition-colors hover:border-[var(--accent)]"
-            >
-              <span className="pointer-events-none absolute inset-0 bg-[var(--accent)] opacity-0 transition-opacity duration-200 group-hover:opacity-10" />
-
-              <div className="relative flex items-center justify-between gap-3">
-                <h3 className="text-base font-semibold text-[var(--foreground)]">
-                  {module.title}
-                </h3>
-
-                <span className="flex items-center gap-2 text-[var(--muted-foreground)] transition-colors group-hover:text-[var(--accent)]">
-                  <Dot />
-                  <span aria-hidden="true" className="text-base leading-none">
-                    ›
-                  </span>
-                </span>
+        <div className="mt-8 space-y-10">
+          {moduleGroups.map((group) => (
+            <div key={group.group}>
+              <div className="mb-4">
+                <p className="text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
+                  {group.group}
+                </p>
+                <p className="mt-0.5 text-sm text-[var(--muted-foreground)]">
+                  {group.description}
+                </p>
               </div>
 
-              <p className="relative mt-2 text-sm leading-6 text-[var(--muted-foreground)]">
-                {module.description}
-              </p>
-            </Link>
+              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                {group.modules.map((module) => (
+                  <Link
+                    key={module.title}
+                    href={module.href}
+                    className="group relative overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-5 transition-colors hover:border-[var(--accent)]"
+                  >
+                    <span className="pointer-events-none absolute inset-0 bg-[var(--accent)] opacity-0 transition-opacity duration-200 group-hover:opacity-10" />
+
+                    <div className="relative flex items-center justify-between gap-3">
+                      <h3 className="text-sm font-semibold text-[var(--foreground)]">
+                        {module.title}
+                      </h3>
+
+                      <span className="flex items-center gap-2 text-[var(--muted-foreground)] transition-colors group-hover:text-[var(--accent)]">
+                        <Dot />
+                        <span aria-hidden="true" className="text-base leading-none">
+                          ›
+                        </span>
+                      </span>
+                    </div>
+
+                    <p className="relative mt-1.5 text-xs leading-5 text-[var(--muted-foreground)]">
+                      {module.description}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       </Panel>

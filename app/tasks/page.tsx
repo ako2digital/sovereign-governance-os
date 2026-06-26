@@ -53,18 +53,19 @@ export default async function TasksPage() {
   const taskRecords = (data ?? []) as TaskRecord[];
 
   return (
-    <AppShell title="Tasks" eyebrow="Core Records">
+    <AppShell title="Tasks" eyebrow="Work & Delivery">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Tasks Register
+          Work & Delivery
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">Tasks</h1>
 
         <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
-          Manage task records, priorities, due dates, status, assigned people,
-          linked hui references, linked decision references, and linked document
-          references.
+          Decisions turned into action — every task assigned out of a governance
+          resolution, tracked with owner, priority, deadline, and completion
+          status. Linking tasks back to source decisions and hui closes the
+          governance chain and provides the delivery evidence funders require.
         </p>
       </section>
 
@@ -76,7 +77,7 @@ export default async function TasksPage() {
             </h2>
 
             <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-              Live records pulled from the Supabase tasks table.
+              {taskRecords.length} {taskRecords.length === 1 ? "task" : "tasks"} on record
             </p>
           </div>
 

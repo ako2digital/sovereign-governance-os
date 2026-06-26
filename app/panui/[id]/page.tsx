@@ -111,7 +111,7 @@ export default async function PanuiDetailPage({ params }: PanuiDetailPageProps) 
   const docFileUrl = linkedDocument?.file_url ?? null;
 
   return (
-    <AppShell title="Pānui Detail" eyebrow="Records">
+    <AppShell title="Pānui Detail" eyebrow="Whenua & Marae">
       {/* ── Header ── */}
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">

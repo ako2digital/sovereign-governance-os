@@ -100,7 +100,7 @@ export default async function WhakapapaDetailPage({
     relationship?.person_b?.full_name || "Unknown person";
 
   return (
-    <AppShell title="Whakapapa Detail" eyebrow="Core Records">
+    <AppShell title="Whakapapa Detail" eyebrow="Whakapapa & People">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs uppercase tracking-[0.25em] text-[var(--muted-foreground)]">
           Whakapapa Relationship Record

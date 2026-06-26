@@ -87,7 +87,7 @@ export default async function EvidenceArchivePage({ searchParams }: EvidenceArch
   );
 
   return (
-    <AppShell title="Evidence Archive" eyebrow="Library">
+    <AppShell title="Evidence Archive" eyebrow="Library & Archive">
       {/* ── Header ── */}
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">

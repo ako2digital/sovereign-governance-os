@@ -161,7 +161,7 @@ export default async function TaskDetailPage({ params }: TaskDetailPageProps) {
   const taskTitle = task?.title || "Untitled task";
 
   return (
-    <AppShell title="Task Detail" eyebrow="Tasks">
+    <AppShell title="Task Detail" eyebrow="Work & Delivery">
       {/* ── Header ── */}
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">

@@ -49,17 +49,19 @@ export default async function WhenuaPage() {
   const whenuaRecords = (data ?? []) as WhenuaRecord[];
 
   return (
-    <AppShell title="Whenua" eyebrow="Core Records">
+    <AppShell title="Whenua" eyebrow="Whenua & Marae">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Whenua Register
+          Whenua & Marae
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">Whenua</h1>
 
         <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
-          Manage whenua records, block names, locations, legal descriptions,
-          historical notes, external references, status, and sensitivity levels.
+          Land records, legal descriptions, and evidence for every block of
+          land connected to this organisation — Māori freehold, general land,
+          reserves, and customary interests. Attach governance instruments,
+          survey plans, and funding applications as file references.
         </p>
       </section>
 
@@ -71,7 +73,7 @@ export default async function WhenuaPage() {
             </h2>
 
             <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-              Live records pulled from the Supabase whenua_records table.
+              {whenuaRecords.length} {whenuaRecords.length === 1 ? "block" : "blocks"} on record
             </p>
           </div>
 
