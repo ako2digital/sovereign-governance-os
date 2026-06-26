@@ -19,6 +19,15 @@ type HuiRecord = {
   created_at?: string | null;
 };
 
+type DecisionRecord = {
+  id: string;
+  title?: string | null;
+  status?: string | null;
+  decision_date?: string | null;
+  effective_date?: string | null;
+  created_at?: string | null;
+};
+
 async function createTask(formData: FormData) {
   "use server";
 
@@ -29,12 +38,13 @@ async function createTask(formData: FormData) {
   const dueDate = String(formData.get("due_date") || "").trim();
   const assignedToId = String(formData.get("assigned_to_id") || "").trim();
   const relatedHuiId = String(formData.get("related_hui_id") || "").trim();
+  const relatedDecisionId = String(formData.get("related_decision_id") || "").trim();
 
   if (!title) {
     return;
   }
 
-  const { error } = await supabase.from("tasks").insert({
+  const { data, error } = await supabase.from("tasks").insert({
     title,
     description: description || null,
     status: status || null,
@@ -42,13 +52,14 @@ async function createTask(formData: FormData) {
     due_date: dueDate || null,
     assigned_to_id: assignedToId || null,
     related_hui_id: relatedHuiId || null,
-  });
+    related_decision_id: relatedDecisionId || null,
+  }).select("id").single();
 
   if (error) {
     throw new Error(error.message);
   }
 
-  redirect("/tasks");
+  redirect(`/tasks/${data.id}`);
 }
 
 function formatValue(value?: string | null) {
@@ -91,25 +102,27 @@ function getHuiDate(record: HuiRecord) {
   return record.hui_date || record.date || null;
 }
 
-export default async function AddTaskPage() {
-  const { data: peopleData, error: peopleError } = await supabase
-    .from("people")
-    .select(
-      `
-      id,
-      full_name,
-      created_at
-    `
-    )
-    .order("full_name", { ascending: true });
+function getDecisionTitle(record: DecisionRecord) {
+  return record.title || "Untitled decision";
+}
 
-  const { data: huiData, error: huiError } = await supabase
-    .from("hui")
-    .select("*")
-    .order("created_at", { ascending: false });
+export default async function AddTaskPage() {
+  const [peopleResult, huiResult, decisionsResult] = await Promise.all([
+    supabase
+      .from("people")
+      .select("id, full_name, created_at")
+      .order("full_name", { ascending: true }),
+    supabase.from("hui").select("id, title, hui_date, date, location, status, created_at").order("created_at", { ascending: false }),
+    supabase.from("decisions").select("id, title, status, decision_date, effective_date, created_at").order("created_at", { ascending: false }),
+  ]);
+
+  const { data: peopleData, error: peopleError } = peopleResult;
+  const { data: huiData, error: huiError } = huiResult;
+  const { data: decisionsData, error: decisionsError } = decisionsResult;
 
   const peopleRecords = (peopleData ?? []) as PersonRecord[];
   const huiRecords = (huiData ?? []) as HuiRecord[];
+  const decisionRecords = (decisionsData ?? []) as DecisionRecord[];
 
   return (
     <AppShell title="Add Task" eyebrow="Tasks Module">
@@ -145,7 +158,7 @@ export default async function AddTaskPage() {
           </Link>
         </div>
 
-        {peopleError || huiError ? (
+        {peopleError || huiError || decisionsError ? (
           <div className="mt-6 grid gap-4">
             {peopleError ? (
               <div className="rounded-xl border border-red-900 bg-red-950/40 p-4 text-sm text-red-300">
@@ -161,6 +174,15 @@ export default async function AddTaskPage() {
                 <p className="font-semibold">Hui database error</p>
                 <pre className="mt-3 whitespace-pre-wrap">
                   {huiError.message}
+                </pre>
+              </div>
+            ) : null}
+
+            {decisionsError ? (
+              <div className="rounded-xl border border-red-900 bg-red-950/40 p-4 text-sm text-red-300">
+                <p className="font-semibold">Decisions database error</p>
+                <pre className="mt-3 whitespace-pre-wrap">
+                  {decisionsError.message}
                 </pre>
               </div>
             ) : null}
@@ -314,6 +336,35 @@ export default async function AddTaskPage() {
                 ))}
               </select>
             </div>
+          </div>
+
+          <div>
+            <label
+              htmlFor="related_decision_id"
+              className="text-sm font-medium text-stone-300"
+            >
+              Linked Decision
+            </label>
+
+            <p className="mt-1 text-xs text-stone-500">
+              Link this task to the decision that produced it — this completes the governance chain.
+            </p>
+
+            <select
+              id="related_decision_id"
+              name="related_decision_id"
+              defaultValue=""
+              className="mt-2 w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-white outline-none transition focus:border-stone-400"
+            >
+              <option value="">No linked decision</option>
+
+              {decisionRecords.map((decision) => (
+                <option key={decision.id} value={decision.id}>
+                  {getDecisionTitle(decision)}
+                  {decision.status ? ` — ${decision.status}` : ""}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="flex flex-wrap items-center gap-3 pt-2">

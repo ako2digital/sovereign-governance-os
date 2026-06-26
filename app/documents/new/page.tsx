@@ -54,7 +54,7 @@ async function createDocument(formData: FormData) {
     return;
   }
 
-  const { error } = await supabase.from("documents").insert({
+  const { data, error } = await supabase.from("documents").insert({
     title,
     document_type: documentType || null,
     file_url: fileUrl || null,
@@ -67,13 +67,13 @@ async function createDocument(formData: FormData) {
     related_hui_id: relatedHuiId || null,
     related_whenua_id: relatedWhenuaId || null,
     related_marae_id: relatedMaraeId || null,
-  });
+  }).select("id").single();
 
   if (error) {
     throw new Error(error.message);
   }
 
-  redirect("/documents");
+  redirect(`/documents/${data.id}`);
 }
 
 function formatValue(value?: string | null) {

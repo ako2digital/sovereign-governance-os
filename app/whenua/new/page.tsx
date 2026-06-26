@@ -27,7 +27,7 @@ async function createWhenua(formData: FormData) {
     return;
   }
 
-  const { error } = await supabase.from("whenua_records").insert({
+  const { data, error } = await supabase.from("whenua_records").insert({
     title,
     block_name: blockName || null,
     location: location || null,
@@ -36,13 +36,13 @@ async function createWhenua(formData: FormData) {
     historical_notes: historicalNotes || null,
     status: status || null,
     sensitivity_level: sensitivityLevel || null,
-  });
+  }).select("id").single();
 
   if (error) {
     throw new Error(error.message);
   }
 
-  redirect("/whenua");
+  redirect(`/whenua/${data.id}`);
 }
 
 export default function AddWhenuaPage() {

@@ -16,19 +16,19 @@ async function createMarae(formData: FormData) {
     return;
   }
 
-  const { error } = await supabase.from("marae_records").insert({
+  const { data, error } = await supabase.from("marae_records").insert({
     name,
     location: location || null,
     description: description || null,
     notes: notes || null,
     status: status || null,
-  });
+  }).select("id").single();
 
   if (error) {
     throw new Error(error.message);
   }
 
-  redirect("/marae");
+  redirect(`/marae/${data.id}`);
 }
 
 export default function AddMaraePage() {

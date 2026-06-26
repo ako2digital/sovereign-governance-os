@@ -51,7 +51,7 @@ async function createDecision(formData: FormData) {
     return;
   }
 
-  const { error } = await supabase.from("decisions").insert({
+  const { data, error } = await supabase.from("decisions").insert({
     title,
     decision_text: decisionText || null,
     summary: summary || null,
@@ -61,13 +61,13 @@ async function createDecision(formData: FormData) {
     related_hui_id: relatedHuiId || null,
     related_minutes_id: relatedMinutesId || null,
     related_document_id: relatedDocumentId || null,
-  });
+  }).select("id").single();
 
   if (error) {
     throw new Error(error.message);
   }
 
-  redirect("/decisions");
+  redirect(`/decisions/${data.id}`);
 }
 
 function formatValue(value?: string | null) {

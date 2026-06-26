@@ -19,7 +19,7 @@ async function createHui(formData: FormData) {
     return;
   }
 
-  const { error } = await supabase.from("hui").insert({
+  const { data, error } = await supabase.from("hui").insert({
     title,
     hui_date: huiDate || null,
     location: location || null,
@@ -28,13 +28,13 @@ async function createHui(formData: FormData) {
     summary: summary || null,
     notes: notes || null,
     status: status || null,
-  });
+  }).select("id").single();
 
   if (error) {
     throw new Error(error.message);
   }
 
-  redirect("/hui");
+  redirect(`/hui/${data.id}`);
 }
 
 export default function AddHuiPage() {

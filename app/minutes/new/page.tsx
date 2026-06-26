@@ -29,7 +29,7 @@ async function createMinutes(formData: FormData) {
     return;
   }
 
-  const { error } = await supabase.from("minutes").insert({
+  const { data, error } = await supabase.from("minutes").insert({
     title,
     related_hui_id: relatedHuiId || null,
     minutes_date: minutesDate || null,
@@ -38,13 +38,13 @@ async function createMinutes(formData: FormData) {
     notes: notes || null,
     status: status || null,
     approved_at: approvedAt || null,
-  });
+  }).select("id").single();
 
   if (error) {
     throw new Error(error.message);
   }
 
-  redirect("/minutes");
+  redirect(`/minutes/${data.id}`);
 }
 
 function formatValue(value?: string | null) {
