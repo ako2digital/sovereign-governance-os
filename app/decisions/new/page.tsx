@@ -472,7 +472,7 @@ export default async function AddDecisionPage() {
                       <td className="px-4 py-4">
                         <Link
                           href={huiPath(hui.id)}
-                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
+                          className="font-medium text-[var(--foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                         >
                           {getHuiTitle(hui)}
                         </Link>
@@ -485,7 +485,7 @@ export default async function AddDecisionPage() {
                       <td className="px-4 py-4">
                         <Link
                           href={huiPath(hui.id)}
-                          className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
+                          className="text-sm font-medium text-[var(--foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                         >
                           View hui
                         </Link>
@@ -554,7 +554,7 @@ export default async function AddDecisionPage() {
                       <td className="px-4 py-4">
                         <Link
                           href={minutesPath(minutes.id)}
-                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
+                          className="font-medium text-[var(--foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                         >
                           {getMinutesTitle(minutes)}
                         </Link>
@@ -567,7 +567,7 @@ export default async function AddDecisionPage() {
                       <td className="px-4 py-4">
                         <Link
                           href={minutesPath(minutes.id)}
-                          className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
+                          className="text-sm font-medium text-[var(--foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                         >
                           View minutes
                         </Link>
@@ -636,7 +636,7 @@ export default async function AddDecisionPage() {
                       <td className="px-4 py-4">
                         <Link
                           href={documentPath(document.id)}
-                          className="font-medium text-stone-100 underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
+                          className="font-medium text-[var(--foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                         >
                           {getDocumentTitle(document)}
                         </Link>
@@ -649,7 +649,7 @@ export default async function AddDecisionPage() {
                       <td className="px-4 py-4">
                         <Link
                           href={documentPath(document.id)}
-                          className="text-sm font-medium text-stone-100 underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
+                          className="text-sm font-medium text-[var(--foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                         >
                           View document
                         </Link>

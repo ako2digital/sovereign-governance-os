@@ -270,15 +270,15 @@ function FieldRow({
 }) {
   return (
     <tr
-      className={`border-t border-stone-800 ${
-        darker ? "bg-stone-950" : "bg-stone-900"
+      className={`border-t border-[var(--border)] ${
+        darker ? "bg-[var(--surface-raised)]" : "bg-[var(--surface)]"
       }`}
     >
-      <th className="w-56 px-4 py-4 align-top font-medium text-stone-400">
+      <th className="w-56 px-4 py-4 align-top font-medium text-[var(--muted-foreground)]">
         {label}
       </th>
 
-      <td className="px-4 py-4 text-stone-300">{children}</td>
+      <td className="px-4 py-4 text-[var(--foreground)]">{children}</td>
     </tr>
   );
 }
@@ -381,8 +381,8 @@ export default async function ActivityDetailPage({
 
   return (
     <AppShell title="Activity Detail" eyebrow="System Records">
-      <section className="rounded-3xl border border-stone-800 bg-stone-900/50 p-8">
-        <p className="text-xs uppercase tracking-[0.25em] text-stone-500">
+      <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
+        <p className="text-xs uppercase tracking-[0.25em] text-[var(--muted-foreground)]">
           Activity Record
         </p>
 
@@ -398,22 +398,22 @@ export default async function ActivityDetailPage({
           </>
         ) : !activity ? (
           <>
-            <h1 className="mt-3 text-3xl font-semibold text-white">
+            <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">
               Activity record not found
             </h1>
 
-            <p className="mt-4 max-w-2xl text-stone-400">
+            <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
               No activity record exists for this ID. Return to the activity log
               and select an existing record.
             </p>
           </>
         ) : (
           <>
-            <h1 className="mt-3 text-3xl font-semibold text-white">
+            <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">
               {activityTitle}
             </h1>
 
-            <p className="mt-4 max-w-2xl text-stone-400">
+            <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
               This page displays the selected activity record and only the
               records that are actually linked through confirmed IDs.
             </p>
@@ -421,14 +421,14 @@ export default async function ActivityDetailPage({
         )}
       </section>
 
-      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-white">
+            <h2 className="text-lg font-semibold text-[var(--foreground)]">
               Activity Details
             </h2>
 
-            <p className="mt-1 text-sm text-stone-400">
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
               Confirmed fields from the Supabase activity_log table.
             </p>
           </div>
@@ -436,7 +436,7 @@ export default async function ActivityDetailPage({
           <div className="flex flex-wrap items-center gap-3">
             <Link
               href="/activity"
-              className="rounded-xl border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
+              className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-semibold text-[var(--foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
             >
               Back to Activity
             </Link>
@@ -444,11 +444,11 @@ export default async function ActivityDetailPage({
         </div>
 
         {activity ? (
-          <div className="mt-6 overflow-hidden rounded-2xl border border-stone-800">
+          <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--border)]">
             <table className="w-full border-collapse text-left text-sm">
               <tbody>
                 <FieldRow label="Action" darker>
-                  <p className="font-medium text-stone-100">
+                  <p className="font-medium text-[var(--foreground)]">
                     {formatValue(activity.action || activity.event_type)}
                   </p>
                 </FieldRow>
@@ -456,7 +456,7 @@ export default async function ActivityDetailPage({
                 <FieldRow label="Activity ID">
                   <Link
                     href={activityPath(activity.id)}
-                    className="font-mono text-xs text-stone-400 underline-offset-4 transition hover:text-white hover:underline"
+                    className="font-mono text-xs text-[var(--muted-foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                   >
                     {activity.id}
                   </Link>
@@ -497,12 +497,12 @@ export default async function ActivityDetailPage({
                     {targetRoute ? (
                       <Link
                         href={targetRoute}
-                        className="font-mono text-xs text-stone-400 underline-offset-4 transition hover:text-white hover:underline"
+                        className="font-mono text-xs text-[var(--muted-foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                       >
                         {activity.record_id}
                       </Link>
                     ) : (
-                      <span className="font-mono text-xs text-stone-500">
+                      <span className="font-mono text-xs text-[var(--muted-foreground)]">
                         {formatValue(activity.record_id)}
                       </span>
                     )}
@@ -514,12 +514,12 @@ export default async function ActivityDetailPage({
                     {targetRoute ? (
                       <Link
                         href={targetRoute}
-                        className="font-mono text-xs text-stone-400 underline-offset-4 transition hover:text-white hover:underline"
+                        className="font-mono text-xs text-[var(--muted-foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                       >
                         {activity.entity_id}
                       </Link>
                     ) : (
-                      <span className="font-mono text-xs text-stone-500">
+                      <span className="font-mono text-xs text-[var(--muted-foreground)]">
                         {formatValue(activity.entity_id)}
                       </span>
                     )}
@@ -531,12 +531,12 @@ export default async function ActivityDetailPage({
                     {targetRoute ? (
                       <Link
                         href={targetRoute}
-                        className="font-mono text-xs text-stone-400 underline-offset-4 transition hover:text-white hover:underline"
+                        className="font-mono text-xs text-[var(--muted-foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                       >
                         {activity.related_record_id}
                       </Link>
                     ) : (
-                      <span className="font-mono text-xs text-stone-500">
+                      <span className="font-mono text-xs text-[var(--muted-foreground)]">
                         {formatValue(activity.related_record_id)}
                       </span>
                     )}
@@ -548,12 +548,12 @@ export default async function ActivityDetailPage({
                     {personRoute ? (
                       <Link
                         href={personRoute}
-                        className="font-mono text-xs text-stone-400 underline-offset-4 transition hover:text-white hover:underline"
+                        className="font-mono text-xs text-[var(--muted-foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                       >
                         {activity.person_id}
                       </Link>
                     ) : (
-                      <span className="font-mono text-xs text-stone-500">
+                      <span className="font-mono text-xs text-[var(--muted-foreground)]">
                         {formatValue(activity.person_id)}
                       </span>
                     )}
@@ -565,12 +565,12 @@ export default async function ActivityDetailPage({
                     {personRoute ? (
                       <Link
                         href={personRoute}
-                        className="font-mono text-xs text-stone-400 underline-offset-4 transition hover:text-white hover:underline"
+                        className="font-mono text-xs text-[var(--muted-foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                       >
                         {activity.related_person_id}
                       </Link>
                     ) : (
-                      <span className="font-mono text-xs text-stone-500">
+                      <span className="font-mono text-xs text-[var(--muted-foreground)]">
                         {formatValue(activity.related_person_id)}
                       </span>
                     )}
@@ -582,12 +582,12 @@ export default async function ActivityDetailPage({
                     {personRoute ? (
                       <Link
                         href={personRoute}
-                        className="font-mono text-xs text-stone-400 underline-offset-4 transition hover:text-white hover:underline"
+                        className="font-mono text-xs text-[var(--muted-foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                       >
                         {activity.actor_person_id}
                       </Link>
                     ) : (
-                      <span className="font-mono text-xs text-stone-500">
+                      <span className="font-mono text-xs text-[var(--muted-foreground)]">
                         {formatValue(activity.actor_person_id)}
                       </span>
                     )}
@@ -599,12 +599,12 @@ export default async function ActivityDetailPage({
                     {personRoute ? (
                       <Link
                         href={personRoute}
-                        className="font-mono text-xs text-stone-400 underline-offset-4 transition hover:text-white hover:underline"
+                        className="font-mono text-xs text-[var(--muted-foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                       >
                         {activity.actor_id}
                       </Link>
                     ) : (
-                      <span className="font-mono text-xs text-stone-500">
+                      <span className="font-mono text-xs text-[var(--muted-foreground)]">
                         {formatValue(activity.actor_id)}
                       </span>
                     )}
@@ -637,7 +637,7 @@ export default async function ActivityDetailPage({
 
                 {activity.metadata !== undefined ? (
                   <FieldRow label="Metadata">
-                    <pre className="whitespace-pre-wrap rounded-xl border border-stone-800 bg-stone-950 p-4 font-mono text-xs leading-6 text-stone-400">
+                    <pre className="whitespace-pre-wrap rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-4 font-mono text-xs leading-6 text-[var(--muted-foreground)]">
                       {formatValue(activity.metadata)}
                     </pre>
                   </FieldRow>
@@ -650,12 +650,12 @@ export default async function ActivityDetailPage({
             </table>
           </div>
         ) : (
-          <div className="mt-6 rounded-xl border border-stone-800 bg-stone-950 p-6">
-            <h3 className="text-base font-semibold text-white">
+          <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-6">
+            <h3 className="text-base font-semibold text-[var(--foreground)]">
               No activity record loaded
             </h3>
 
-            <p className="mt-2 text-sm text-stone-400">
+            <p className="mt-2 text-sm text-[var(--muted-foreground)]">
               The activity record could not be displayed.
             </p>
           </div>
@@ -663,8 +663,8 @@ export default async function ActivityDetailPage({
       </section>
 
       {targetError || personError ? (
-        <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
-          <h2 className="text-lg font-semibold text-white">
+        <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
+          <h2 className="text-lg font-semibold text-[var(--foreground)]">
             Linked Records Error
           </h2>
 
@@ -691,14 +691,14 @@ export default async function ActivityDetailPage({
       ) : null}
 
       {linkedTargetRecord && targetConfig ? (
-        <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-lg font-semibold text-[var(--foreground)]">
                 Linked Target Record
               </h2>
 
-              <p className="mt-1 text-sm text-stone-400">
+              <p className="mt-1 text-sm text-[var(--muted-foreground)]">
                 This record is directly linked through the activity log target
                 record ID.
               </p>
@@ -706,13 +706,13 @@ export default async function ActivityDetailPage({
 
             <Link
               href={getRecordPath(targetConfig, linkedTargetRecord.id)}
-              className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+              className="rounded-xl bg-[var(--foreground)] px-4 py-2 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
             >
               Open Record
             </Link>
           </div>
 
-          <div className="mt-6 overflow-hidden rounded-2xl border border-stone-800">
+          <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--border)]">
             <table className="w-full border-collapse text-left text-sm">
               <tbody>
                 <FieldRow label="Record Type" darker>
@@ -722,7 +722,7 @@ export default async function ActivityDetailPage({
                 <FieldRow label="Title">
                   <Link
                     href={getRecordPath(targetConfig, linkedTargetRecord.id)}
-                    className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                    className="font-medium text-[var(--foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                   >
                     {targetTitle}
                   </Link>
@@ -731,7 +731,7 @@ export default async function ActivityDetailPage({
                 <FieldRow label="Record ID" darker>
                   <Link
                     href={getRecordPath(targetConfig, linkedTargetRecord.id)}
-                    className="font-mono text-xs text-stone-400 underline-offset-4 transition hover:text-white hover:underline"
+                    className="font-mono text-xs text-[var(--muted-foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                   >
                     {linkedTargetRecord.id}
                   </Link>
@@ -743,14 +743,14 @@ export default async function ActivityDetailPage({
       ) : null}
 
       {linkedPersonRecord && showPersonRelatedLink ? (
-        <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-lg font-semibold text-[var(--foreground)]">
                 Linked Person Record
               </h2>
 
-              <p className="mt-1 text-sm text-stone-400">
+              <p className="mt-1 text-sm text-[var(--muted-foreground)]">
                 This person is directly linked through the activity log person
                 field.
               </p>
@@ -758,19 +758,19 @@ export default async function ActivityDetailPage({
 
             <Link
               href={peoplePath(linkedPersonRecord.id)}
-              className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
+              className="rounded-xl bg-[var(--foreground)] px-4 py-2 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
             >
               Open Person
             </Link>
           </div>
 
-          <div className="mt-6 overflow-hidden rounded-2xl border border-stone-800">
+          <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--border)]">
             <table className="w-full border-collapse text-left text-sm">
               <tbody>
                 <FieldRow label="Full Name" darker>
                   <Link
                     href={peoplePath(linkedPersonRecord.id)}
-                    className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
+                    className="font-medium text-[var(--foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                   >
                     {personName}
                   </Link>
@@ -779,7 +779,7 @@ export default async function ActivityDetailPage({
                 <FieldRow label="Person ID">
                   <Link
                     href={peoplePath(linkedPersonRecord.id)}
-                    className="font-mono text-xs text-stone-400 underline-offset-4 transition hover:text-white hover:underline"
+                    className="font-mono text-xs text-[var(--muted-foreground)] underline-offset-4 transition hover:text-[var(--foreground)] hover:underline"
                   >
                     {linkedPersonRecord.id}
                   </Link>
@@ -791,14 +791,14 @@ export default async function ActivityDetailPage({
       ) : null}
 
       {activity && hasActualRelatedLinks ? (
-        <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
+        <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-semibold text-white">
+              <h2 className="text-lg font-semibold text-[var(--foreground)]">
                 Related Links
               </h2>
 
-              <p className="mt-1 text-sm text-stone-400">
+              <p className="mt-1 text-sm text-[var(--muted-foreground)]">
                 Only records directly linked to this activity record are shown
                 here.
               </p>
@@ -809,17 +809,17 @@ export default async function ActivityDetailPage({
             {linkedTargetRecord && targetConfig ? (
               <Link
                 href={getRecordPath(targetConfig, linkedTargetRecord.id)}
-                className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+                className="rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-4 transition hover:border-[var(--accent)] hover:bg-[var(--surface)]"
               >
-                <h3 className="text-sm font-semibold text-white">
+                <h3 className="text-sm font-semibold text-[var(--foreground)]">
                   {targetTitle}
                 </h3>
 
-                <p className="mt-1 text-sm text-stone-400">
+                <p className="mt-1 text-sm text-[var(--muted-foreground)]">
                   Open linked {targetConfig.label.toLowerCase()}.
                 </p>
 
-                <p className="mt-4 font-mono text-xs text-stone-600">
+                <p className="mt-4 font-mono text-xs text-[var(--muted-foreground)]">
                   {linkedTargetRecord.id}
                 </p>
               </Link>
@@ -828,17 +828,17 @@ export default async function ActivityDetailPage({
             {linkedPersonRecord && showPersonRelatedLink ? (
               <Link
                 href={peoplePath(linkedPersonRecord.id)}
-                className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+                className="rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-4 transition hover:border-[var(--accent)] hover:bg-[var(--surface)]"
               >
-                <h3 className="text-sm font-semibold text-white">
+                <h3 className="text-sm font-semibold text-[var(--foreground)]">
                   {personName}
                 </h3>
 
-                <p className="mt-1 text-sm text-stone-400">
+                <p className="mt-1 text-sm text-[var(--muted-foreground)]">
                   Open linked person record.
                 </p>
 
-                <p className="mt-4 font-mono text-xs text-stone-600">
+                <p className="mt-4 font-mono text-xs text-[var(--muted-foreground)]">
                   {linkedPersonRecord.id}
                 </p>
               </Link>
@@ -849,13 +849,13 @@ export default async function ActivityDetailPage({
                 href={externalUrl ?? "#"}
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
+                className="rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-4 transition hover:border-[var(--accent)] hover:bg-[var(--surface)]"
               >
-                <h3 className="text-sm font-semibold text-white">
+                <h3 className="text-sm font-semibold text-[var(--foreground)]">
                   External URL
                 </h3>
 
-                <p className="mt-1 break-words text-sm text-stone-400">
+                <p className="mt-1 break-words text-sm text-[var(--muted-foreground)]">
                   Open linked external reference.
                 </p>
               </a>

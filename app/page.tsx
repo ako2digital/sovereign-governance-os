@@ -219,30 +219,38 @@ export default function HomePage() {
             </h1>
 
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-[var(--foreground)]">
-              A sovereign registry for governance records, documentation,
-              hui, decisions, whenua, marae, pānui, tasks, and activity
-              history.
+              A sovereign governance OS — registry, evidence archive,
+              chain-of-decision reporting, and funding-readiness monitoring
+              for Māori organisations.
             </p>
 
             <p className="mt-4 max-w-xl text-sm leading-6 text-[var(--muted-foreground)]">
-              Later layers extend this foundation with the full whakapapa
-              graph, permissions, verification, activity automation, and
-              role-based access.
+              Governance chains link hui → minutes → decisions → tasks.
+              Every record supports file and evidence references.
+              Reports turn data into accountability evidence ready for
+              funders and auditors.
             </p>
 
             <div className="mt-9 flex flex-wrap items-center gap-3">
               <Link
-                href="/people/new"
+                href="/hui/new"
                 className="rounded-lg bg-[var(--foreground)] px-5 py-2.5 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
               >
-                New Record
+                New Hui
               </Link>
 
               <Link
-                href="/design-test"
+                href="/library"
                 className="rounded-lg border border-[var(--border)] px-5 py-2.5 text-sm font-semibold text-[var(--foreground)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] dark:hover:bg-white/5"
               >
-                Design Preview
+                Library
+              </Link>
+
+              <Link
+                href="/reports"
+                className="rounded-lg border border-[var(--border)] px-5 py-2.5 text-sm font-semibold text-[var(--foreground)] transition hover:border-[var(--accent)] hover:text-[var(--accent)] dark:hover:bg-white/5"
+              >
+                Reports
               </Link>
             </div>
           </div>
@@ -402,14 +410,6 @@ export default function HomePage() {
           ))}
         </div>
       </Panel>
-
-      <p className="mb-20 mt-10 text-center text-xs text-[var(--muted-foreground)]">
-        Testing on a phone? Open the Network URL shown by{" "}
-        <code className="rounded bg-[var(--muted)] px-1.5 py-0.5 font-mono text-[var(--foreground)]">
-          npm run dev
-        </code>{" "}
-        while connected to the same Wi-Fi.
-      </p>
 
       <details className="group fixed bottom-6 right-6 z-30">
         <summary className="flex w-fit list-none items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--foreground)] px-5 py-3 text-sm font-semibold text-[var(--background)] shadow-lg shadow-black/20 transition hover:opacity-90 [&::-webkit-details-marker]:hidden">

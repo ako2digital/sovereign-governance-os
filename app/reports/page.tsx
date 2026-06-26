@@ -28,9 +28,9 @@ const reportCards: ReportCard[] = [
   },
   {
     title: "Decisions and Actions Report",
-    href: "/reports/governance-chain",
+    href: "/decisions",
     description:
-      "Focused view of formal decisions, linked minutes, and resulting tasks — the governance action record.",
+      "Full register of formal decisions — status, source minutes, linked hui, resulting tasks, and document references.",
     proves: "Proves formal decision-making and follow-through accountability.",
     tables: ["decisions", "minutes", "tasks"],
   },

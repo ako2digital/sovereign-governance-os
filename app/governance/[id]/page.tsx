@@ -1,11 +1,10 @@
 import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 import { supabase } from "@/lib/supabaseClient";
+import { formatDate, formatValue } from "@/lib/utils";
 
 type GovernanceDetailPageProps = {
-  params: Promise<{
-    id: string;
-  }>;
+  params: Promise<{ id: string }>;
 };
 
 type GovernanceRecord = {
@@ -26,7 +25,6 @@ type MaraeRecord = {
   title?: string | null;
   location?: string | null;
   description?: string | null;
-  created_at?: string | null;
 };
 
 type WhenuaRecord = {
@@ -36,502 +34,299 @@ type WhenuaRecord = {
   location: string | null;
   status: string | null;
   sensitivity_level: string | null;
-  created_at: string | null;
 };
 
-function formatValue(value?: string | null) {
-  if (!value) {
-    return "—";
-  }
+type FileRow = {
+  id: string;
+  file_name?: string | null;
+  document_type?: string | null;
+  evidence_category?: string | null;
+  source_url?: string | null;
+  public_url?: string | null;
+  sensitivity_level?: string | null;
+  review_date?: string | null;
+  expiry_date?: string | null;
+  created_at?: string | null;
+};
 
-  return value;
+function isValidUrl(v?: string | null): v is string {
+  return typeof v === "string" && /^https?:\/\//.test(v);
 }
 
-function formatDate(date?: string | null) {
-  if (!date) {
-    return "—";
-  }
-
-  return new Date(date).toLocaleDateString("en-NZ", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-}
-
-function governancePath(id: string) {
-  return `/governance/${id}`;
-}
-
-function maraePath(id: string) {
-  return `/marae/${id}`;
-}
-
-function whenuaPath(id: string) {
-  return `/whenua/${id}`;
-}
-
-function FieldRow({
-  label,
-  children,
-  darker = false,
-}: {
-  label: string;
-  children: React.ReactNode;
-  darker?: boolean;
-}) {
-  return (
-    <tr
-      className={`border-t border-stone-800 ${
-        darker ? "bg-stone-950" : "bg-stone-900"
-      }`}
-    >
-      <th className="w-56 px-4 py-4 align-top font-medium text-stone-400">
-        {label}
-      </th>
-
-      <td className="px-4 py-4 text-stone-300">{children}</td>
-    </tr>
-  );
-}
-
-export default async function GovernanceDetailPage({
-  params,
-}: GovernanceDetailPageProps) {
+export default async function GovernanceDetailPage({ params }: GovernanceDetailPageProps) {
   const { id } = await params;
 
   const { data: governanceData, error: governanceError } = await supabase
     .from("governance_records")
-    .select(
-      `
-      id,
-      title,
-      record_type,
-      summary,
-      status,
-      effective_date,
-      related_marae_id,
-      related_whenua_id,
-      created_at
-    `
-    )
+    .select("id, title, record_type, summary, status, effective_date, related_marae_id, related_whenua_id, created_at")
     .eq("id", id)
     .maybeSingle();
 
   const governance = governanceData as GovernanceRecord | null;
-
   const relatedMaraeId = governance?.related_marae_id ?? null;
   const relatedWhenuaId = governance?.related_whenua_id ?? null;
 
-  const { data: maraeData, error: maraeError } = relatedMaraeId
-    ? await supabase
-        .from("marae_records")
-        .select("*")
-        .eq("id", relatedMaraeId)
-        .maybeSingle()
-    : { data: null, error: null };
+  const [maraeResult, whenuaResult, filesResult] = await Promise.all([
+    relatedMaraeId
+      ? supabase.from("marae_records").select("id, name, title, location, description").eq("id", relatedMaraeId).maybeSingle()
+      : Promise.resolve({ data: null, error: null }),
+    relatedWhenuaId
+      ? supabase.from("whenua_records").select("id, title, block_name, location, status, sensitivity_level").eq("id", relatedWhenuaId).maybeSingle()
+      : Promise.resolve({ data: null, error: null }),
+    supabase
+      .from("record_files")
+      .select("id, file_name, document_type, evidence_category, source_url, public_url, sensitivity_level, review_date, expiry_date, created_at")
+      .eq("record_type", "governance")
+      .eq("record_id", id)
+      .order("created_at", { ascending: false }),
+  ]);
 
-  const { data: whenuaData, error: whenuaError } = relatedWhenuaId
-    ? await supabase
-        .from("whenua_records")
-        .select(
-          `
-          id,
-          title,
-          block_name,
-          location,
-          status,
-          sensitivity_level,
-          created_at
-        `
-        )
-        .eq("id", relatedWhenuaId)
-        .maybeSingle()
-    : { data: null, error: null };
+  const linkedMarae = maraeResult.data as MaraeRecord | null;
+  const linkedWhenua = whenuaResult.data as WhenuaRecord | null;
+  const files = (filesResult.data ?? []) as FileRow[];
 
-  const linkedMarae = maraeData as MaraeRecord | null;
-  const linkedWhenua = whenuaData as WhenuaRecord | null;
-
-  const governanceTitle =
-    governance?.title || "Untitled governance record";
-
-  const linkedMaraeName =
-    linkedMarae?.name || linkedMarae?.title || "Untitled marae record";
-
-  const linkedWhenuaTitle =
-    linkedWhenua?.title || "Untitled whenua record";
-
-  const hasActualRelatedLinks = Boolean(linkedMarae || linkedWhenua);
+  const governanceTitle = governance?.title || "Untitled governance record";
+  const linkedMaraeName = linkedMarae?.name || linkedMarae?.title || "Untitled marae record";
+  const linkedWhenuaTitle = linkedWhenua?.title || "Untitled whenua record";
 
   return (
-    <AppShell title="Governance Detail" eyebrow="Core Records">
-      <section className="rounded-3xl border border-stone-800 bg-stone-900/50 p-8">
-        <p className="text-xs uppercase tracking-[0.25em] text-stone-500">
+    <AppShell title="Governance Detail" eyebrow="Governance">
+      {/* ── Header ── */}
+      <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
+        <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
           Governance Record
         </p>
 
         {governanceError ? (
-          <>
-            <h1 className="mt-3 text-3xl font-semibold text-red-300">
-              Database error
-            </h1>
-
-            <pre className="mt-4 max-w-2xl whitespace-pre-wrap text-sm text-red-300">
-              {governanceError.message}
-            </pre>
-          </>
+          <h1 className="mt-2 text-3xl font-semibold text-red-400">Database error</h1>
         ) : !governance ? (
           <>
-            <h1 className="mt-3 text-3xl font-semibold text-white">
-              Governance record not found
-            </h1>
-
-            <p className="mt-4 max-w-2xl text-stone-400">
-              No governance record exists for this ID. Return to the governance
-              register and select an existing record.
+            <h1 className="mt-2 text-3xl font-semibold text-[var(--foreground)]">Record not found</h1>
+            <p className="mt-3 text-sm text-[var(--muted-foreground)]">
+              No governance record exists for this ID.
             </p>
           </>
         ) : (
           <>
-            <h1 className="mt-3 text-3xl font-semibold text-white">
+            <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--foreground)]">
               {governanceTitle}
             </h1>
-
-            <p className="mt-4 max-w-2xl text-stone-400">
-              This page displays the selected governance record and only the
-              records directly linked to it through confirmed database fields.
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+              {formatValue(governance.record_type)}
+              {governance.status ? ` · ${governance.status}` : ""}
+              {governance.effective_date ? ` · Effective ${formatDate(governance.effective_date)}` : ""}
             </p>
           </>
         )}
+
+        {governanceError && (
+          <div className="mt-4 rounded-xl border border-red-900 bg-red-950/30 p-4 text-sm text-red-400">
+            {governanceError.message}
+          </div>
+        )}
+
+        <div className="mt-5 flex flex-wrap gap-3">
+          <Link
+            href="/governance"
+            className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-semibold text-[var(--muted-foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
+          >
+            Back to Governance
+          </Link>
+          <Link
+            href="/governance/new"
+            className="rounded-xl bg-[var(--foreground)] px-4 py-2 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
+          >
+            Add Governance
+          </Link>
+          {governance && (
+            <Link
+              href={`/records/governance/${id}/files/new`}
+              className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-semibold text-[var(--muted-foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
+            >
+              Add File Reference
+            </Link>
+          )}
+          {governance && (
+            <Link
+              href={`/records/governance/${id}/links/new`}
+              className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-semibold text-[var(--muted-foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
+            >
+              Add Linked Record
+            </Link>
+          )}
+        </div>
       </section>
 
-      <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <h2 className="text-lg font-semibold text-white">
-              Governance Details
-            </h2>
-
-            <p className="mt-1 text-sm text-stone-400">
-              Confirmed fields from the Supabase governance_records table.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3">
-            <Link
-              href="/governance"
-              className="rounded-xl border border-stone-700 px-4 py-2 text-sm font-semibold text-stone-300 transition hover:border-stone-500 hover:text-white"
-            >
-              Back to Governance
-            </Link>
-
-            <Link
-              href="/governance/new"
-              className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
-            >
-              Add Governance
-            </Link>
-          </div>
-        </div>
-
-        {governance ? (
-          <div className="mt-6 overflow-hidden rounded-2xl border border-stone-800">
+      {/* ── Governance Details ── */}
+      {governance && (
+        <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
+          <h2 className="text-lg font-semibold text-[var(--foreground)]">Governance Details</h2>
+          <div className="mt-5 overflow-hidden rounded-xl border border-[var(--border)]">
             <table className="w-full border-collapse text-left text-sm">
               <tbody>
-                <FieldRow label="Title" darker>
-                  <p className="font-medium text-stone-100">
-                    {formatValue(governance.title)}
-                  </p>
-                </FieldRow>
-
-                <FieldRow label="Governance ID">
-                  <Link
-                    href={governancePath(governance.id)}
-                    className="font-mono text-xs text-stone-400 underline-offset-4 transition hover:text-white hover:underline"
+                {[
+                  ["Record Type", formatValue(governance.record_type)],
+                  ["Status", formatValue(governance.status)],
+                  ["Effective Date", formatDate(governance.effective_date)],
+                  ["Created", formatDate(governance.created_at)],
+                ].map(([label, value], i) => (
+                  <tr
+                    key={label}
+                    className={`border-t border-[var(--border)] ${i % 2 === 0 ? "bg-[var(--surface-raised)]" : "bg-[var(--surface)]"}`}
                   >
-                    {governance.id}
-                  </Link>
-                </FieldRow>
-
-                <FieldRow label="Record Type" darker>
-                  {formatValue(governance.record_type)}
-                </FieldRow>
-
-                <FieldRow label="Status">
-                  {formatValue(governance.status)}
-                </FieldRow>
-
-                <FieldRow label="Effective Date" darker>
-                  {formatDate(governance.effective_date)}
-                </FieldRow>
-
-                <FieldRow label="Summary">
-                  <p className="whitespace-pre-wrap leading-6">
-                    {formatValue(governance.summary)}
-                  </p>
-                </FieldRow>
-
-                <FieldRow label="Related Marae ID" darker>
-                  {governance.related_marae_id ? (
-                    linkedMarae ? (
-                      <Link
-                        href={maraePath(governance.related_marae_id)}
-                        className="font-mono text-xs text-stone-400 underline-offset-4 transition hover:text-white hover:underline"
-                      >
-                        {governance.related_marae_id}
-                      </Link>
-                    ) : (
-                      <span className="font-mono text-xs text-stone-500">
-                        {governance.related_marae_id}
-                      </span>
-                    )
-                  ) : (
-                    "—"
-                  )}
-                </FieldRow>
-
-                <FieldRow label="Related Whenua ID">
-                  {governance.related_whenua_id ? (
-                    linkedWhenua ? (
-                      <Link
-                        href={whenuaPath(governance.related_whenua_id)}
-                        className="font-mono text-xs text-stone-400 underline-offset-4 transition hover:text-white hover:underline"
-                      >
-                        {governance.related_whenua_id}
-                      </Link>
-                    ) : (
-                      <span className="font-mono text-xs text-stone-500">
-                        {governance.related_whenua_id}
-                      </span>
-                    )
-                  ) : (
-                    "—"
-                  )}
-                </FieldRow>
-
-                <FieldRow label="Created" darker>
-                  {formatDate(governance.created_at)}
-                </FieldRow>
+                    <th className="w-48 px-4 py-3.5 align-top text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+                      {label}
+                    </th>
+                    <td className="px-4 py-3.5 text-sm text-[var(--foreground)]">{value}</td>
+                  </tr>
+                ))}
+                {governance.summary && (
+                  <tr className="border-t border-[var(--border)] bg-[var(--surface-raised)]">
+                    <th className="w-48 px-4 py-3.5 align-top text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+                      Summary
+                    </th>
+                    <td className="px-4 py-3.5 text-sm leading-6 text-[var(--foreground)] whitespace-pre-wrap">
+                      {governance.summary}
+                    </td>
+                  </tr>
+                )}
+                {relatedMaraeId && (
+                  <tr className="border-t border-[var(--border)] bg-[var(--surface)]">
+                    <th className="w-48 px-4 py-3.5 align-top text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+                      Linked Marae
+                    </th>
+                    <td className="px-4 py-3.5 text-sm text-[var(--foreground)]">
+                      {linkedMarae ? (
+                        <Link href={`/marae/${relatedMaraeId}`} className="underline-offset-4 hover:underline">
+                          {linkedMaraeName}
+                        </Link>
+                      ) : (
+                        <span className="font-mono text-xs text-[var(--muted-foreground)]">{relatedMaraeId}</span>
+                      )}
+                    </td>
+                  </tr>
+                )}
+                {relatedWhenuaId && (
+                  <tr className="border-t border-[var(--border)] bg-[var(--surface-raised)]">
+                    <th className="w-48 px-4 py-3.5 align-top text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
+                      Linked Whenua
+                    </th>
+                    <td className="px-4 py-3.5 text-sm text-[var(--foreground)]">
+                      {linkedWhenua ? (
+                        <Link href={`/whenua/${relatedWhenuaId}`} className="underline-offset-4 hover:underline">
+                          {linkedWhenuaTitle}
+                          {linkedWhenua.block_name ? ` — ${linkedWhenua.block_name}` : ""}
+                        </Link>
+                      ) : (
+                        <span className="font-mono text-xs text-[var(--muted-foreground)]">{relatedWhenuaId}</span>
+                      )}
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
-        ) : (
-          <div className="mt-6 rounded-xl border border-stone-800 bg-stone-950 p-6">
-            <h3 className="text-base font-semibold text-white">
-              No governance record loaded
-            </h3>
+        </section>
+      )}
 
-            <p className="mt-2 text-sm text-stone-400">
-              The governance record could not be displayed.
+      {/* ── Linked Records ── */}
+      {(linkedMarae || linkedWhenua) && (
+        <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
+          <h2 className="text-lg font-semibold text-[var(--foreground)]">Linked Records</h2>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            {linkedMarae && (
+              <Link
+                href={`/marae/${linkedMarae.id}`}
+                className="rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-4 transition hover:border-[var(--accent)]"
+              >
+                <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">Marae</p>
+                <p className="mt-1 text-sm font-semibold text-[var(--foreground)]">{linkedMaraeName}</p>
+                {linkedMarae.location && (
+                  <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">{linkedMarae.location}</p>
+                )}
+              </Link>
+            )}
+            {linkedWhenua && (
+              <Link
+                href={`/whenua/${linkedWhenua.id}`}
+                className="rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-4 transition hover:border-[var(--accent)]"
+              >
+                <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">Whenua</p>
+                <p className="mt-1 text-sm font-semibold text-[var(--foreground)]">{linkedWhenuaTitle}</p>
+                {linkedWhenua.location && (
+                  <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">{linkedWhenua.location}</p>
+                )}
+              </Link>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* ── File References ── */}
+      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-semibold text-[var(--foreground)]">File References</h2>
+            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+              {files.length} {files.length === 1 ? "file" : "files"} attached to this governance record
             </p>
+          </div>
+          {governance && (
+            <Link
+              href={`/records/governance/${id}/files/new`}
+              className="rounded-xl bg-[var(--foreground)] px-4 py-2 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
+            >
+              Add File Reference
+            </Link>
+          )}
+        </div>
+
+        {filesResult.error && (
+          <p className="mt-4 text-sm text-red-400">{filesResult.error.message}</p>
+        )}
+
+        {files.length === 0 && !filesResult.error ? (
+          <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+            No file references attached yet. Add mandates, authority documents, or supporting evidence.
+          </p>
+        ) : (
+          <div className="mt-5 space-y-2">
+            {files.map((f) => (
+              <div
+                key={f.id}
+                className="flex items-start justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-4 py-3"
+              >
+                <div>
+                  <p className="text-sm font-medium text-[var(--foreground)]">
+                    {f.file_name || "Unnamed file"}
+                  </p>
+                  <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">
+                    {formatValue(f.document_type)}
+                    {f.evidence_category ? ` · ${f.evidence_category}` : ""}
+                    {f.sensitivity_level ? ` · ${f.sensitivity_level}` : ""}
+                  </p>
+                  {f.review_date && (
+                    <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">
+                      Review: {formatDate(f.review_date)}
+                      {f.expiry_date ? ` · Expires: ${formatDate(f.expiry_date)}` : ""}
+                    </p>
+                  )}
+                </div>
+                {isValidUrl(f.source_url ?? f.public_url) && (
+                  <a
+                    href={(f.source_url ?? f.public_url) as string}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="shrink-0 text-xs font-medium text-[var(--foreground)] underline-offset-4 hover:underline"
+                  >
+                    Open →
+                  </a>
+                )}
+              </div>
+            ))}
           </div>
         )}
       </section>
-
-      {maraeError || whenuaError ? (
-        <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
-          <h2 className="text-lg font-semibold text-white">
-            Linked Records Error
-          </h2>
-
-          <div className="mt-6 grid gap-4">
-            {maraeError ? (
-              <div className="rounded-xl border border-red-900 bg-red-950/40 p-4 text-sm text-red-300">
-                <p className="font-semibold">Marae link error</p>
-                <pre className="mt-3 whitespace-pre-wrap">
-                  {maraeError.message}
-                </pre>
-              </div>
-            ) : null}
-
-            {whenuaError ? (
-              <div className="rounded-xl border border-red-900 bg-red-950/40 p-4 text-sm text-red-300">
-                <p className="font-semibold">Whenua link error</p>
-                <pre className="mt-3 whitespace-pre-wrap">
-                  {whenuaError.message}
-                </pre>
-              </div>
-            ) : null}
-          </div>
-        </section>
-      ) : null}
-
-      {linkedMarae ? (
-        <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <h2 className="text-lg font-semibold text-white">
-                Linked Marae Record
-              </h2>
-
-              <p className="mt-1 text-sm text-stone-400">
-                This marae is directly linked through related_marae_id.
-              </p>
-            </div>
-
-            <Link
-              href={maraePath(linkedMarae.id)}
-              className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
-            >
-              Open Marae
-            </Link>
-          </div>
-
-          <div className="mt-6 overflow-hidden rounded-2xl border border-stone-800">
-            <table className="w-full border-collapse text-left text-sm">
-              <tbody>
-                <FieldRow label="Name" darker>
-                  <Link
-                    href={maraePath(linkedMarae.id)}
-                    className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
-                  >
-                    {linkedMaraeName}
-                  </Link>
-                </FieldRow>
-
-                <FieldRow label="Marae ID">
-                  <Link
-                    href={maraePath(linkedMarae.id)}
-                    className="font-mono text-xs text-stone-400 underline-offset-4 transition hover:text-white hover:underline"
-                  >
-                    {linkedMarae.id}
-                  </Link>
-                </FieldRow>
-
-                <FieldRow label="Location" darker>
-                  {formatValue(linkedMarae.location)}
-                </FieldRow>
-
-                <FieldRow label="Description">
-                  <p className="whitespace-pre-wrap leading-6">
-                    {formatValue(linkedMarae.description)}
-                  </p>
-                </FieldRow>
-              </tbody>
-            </table>
-          </div>
-        </section>
-      ) : null}
-
-      {linkedWhenua ? (
-        <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <h2 className="text-lg font-semibold text-white">
-                Linked Whenua Record
-              </h2>
-
-              <p className="mt-1 text-sm text-stone-400">
-                This whenua is directly linked through related_whenua_id.
-              </p>
-            </div>
-
-            <Link
-              href={whenuaPath(linkedWhenua.id)}
-              className="rounded-xl bg-stone-100 px-4 py-2 text-sm font-semibold text-stone-950 transition hover:bg-white"
-            >
-              Open Whenua
-            </Link>
-          </div>
-
-          <div className="mt-6 overflow-hidden rounded-2xl border border-stone-800">
-            <table className="w-full border-collapse text-left text-sm">
-              <tbody>
-                <FieldRow label="Title" darker>
-                  <Link
-                    href={whenuaPath(linkedWhenua.id)}
-                    className="font-medium text-stone-100 underline-offset-4 transition hover:text-white hover:underline"
-                  >
-                    {linkedWhenuaTitle}
-                  </Link>
-                </FieldRow>
-
-                <FieldRow label="Whenua ID">
-                  <Link
-                    href={whenuaPath(linkedWhenua.id)}
-                    className="font-mono text-xs text-stone-400 underline-offset-4 transition hover:text-white hover:underline"
-                  >
-                    {linkedWhenua.id}
-                  </Link>
-                </FieldRow>
-
-                <FieldRow label="Block Name" darker>
-                  {formatValue(linkedWhenua.block_name)}
-                </FieldRow>
-
-                <FieldRow label="Location">
-                  {formatValue(linkedWhenua.location)}
-                </FieldRow>
-
-                <FieldRow label="Status" darker>
-                  {formatValue(linkedWhenua.status)}
-                </FieldRow>
-
-                <FieldRow label="Sensitivity Level">
-                  {formatValue(linkedWhenua.sensitivity_level)}
-                </FieldRow>
-              </tbody>
-            </table>
-          </div>
-        </section>
-      ) : null}
-
-      {governance && hasActualRelatedLinks ? (
-        <section className="mt-8 rounded-2xl border border-stone-800 bg-stone-900 p-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <h2 className="text-lg font-semibold text-white">
-                Related Links
-              </h2>
-
-              <p className="mt-1 text-sm text-stone-400">
-                Only records directly linked to this governance record are shown
-                here.
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-            {linkedMarae ? (
-              <Link
-                href={maraePath(linkedMarae.id)}
-                className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
-              >
-                <h3 className="text-sm font-semibold text-white">
-                  {linkedMaraeName}
-                </h3>
-
-                <p className="mt-1 text-sm text-stone-400">
-                  Open linked marae record.
-                </p>
-
-                <p className="mt-4 font-mono text-xs text-stone-600">
-                  {linkedMarae.id}
-                </p>
-              </Link>
-            ) : null}
-
-            {linkedWhenua ? (
-              <Link
-                href={whenuaPath(linkedWhenua.id)}
-                className="rounded-xl border border-stone-800 bg-stone-950 p-4 transition hover:border-stone-600 hover:bg-stone-900"
-              >
-                <h3 className="text-sm font-semibold text-white">
-                  {linkedWhenuaTitle}
-                </h3>
-
-                <p className="mt-1 text-sm text-stone-400">
-                  Open linked whenua record.
-                </p>
-
-                <p className="mt-4 font-mono text-xs text-stone-600">
-                  {linkedWhenua.id}
-                </p>
-              </Link>
-            ) : null}
-          </div>
-        </section>
-      ) : null}
     </AppShell>
   );
 }
