@@ -21,6 +21,8 @@ type OrgProfile = {
   mission_statement: string | null;
   operating_summary: string | null;
   governance_summary: string | null;
+  mandate_process_summary: string | null;
+  external_relationships: string | null;
   primary_contact_name: string | null;
   primary_contact_email: string | null;
   primary_contact_phone: string | null;
@@ -31,6 +33,7 @@ type OrgProfile = {
   funding_priorities: string | null;
   reporting_priorities: string | null;
   outcome_priorities: string | null;
+  reporting_back_process: string | null;
   notes: string | null;
 };
 
@@ -59,6 +62,9 @@ async function updateOrganisationProfile(id: string, formData: FormData) {
       mission_statement: String(formData.get("mission_statement") || "").trim() || null,
       operating_summary: String(formData.get("operating_summary") || "").trim() || null,
       governance_summary: String(formData.get("governance_summary") || "").trim() || null,
+      mandate_process_summary: String(formData.get("mandate_process_summary") || "").trim() || null,
+      external_relationships: String(formData.get("external_relationships") || "").trim() || null,
+      reporting_back_process: String(formData.get("reporting_back_process") || "").trim() || null,
       primary_contact_name: String(formData.get("primary_contact_name") || "").trim() || null,
       primary_contact_email: String(formData.get("primary_contact_email") || "").trim() || null,
       primary_contact_phone: String(formData.get("primary_contact_phone") || "").trim() || null,
@@ -90,6 +96,8 @@ const labelClass = "block text-sm font-medium text-[var(--foreground)]";
 
 const groupHeadingClass =
   "text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]";
+
+const hintClass = "mt-1 text-xs text-[var(--muted-foreground)]";
 
 export default async function EditOrganisationPage() {
   const { data, error } = await supabase
@@ -128,7 +136,7 @@ export default async function EditOrganisationPage() {
           Edit Organisation Profile
         </h1>
         <p className="mt-3 text-sm text-[var(--muted-foreground)]">
-          Update the details for {profile.organisation_name}. All changes are saved immediately on submit.
+          Update the details for {profile.organisation_name}. All changes are saved on submit.
         </p>
       </section>
 
@@ -165,39 +173,22 @@ export default async function EditOrganisationPage() {
               </div>
               <div>
                 <label htmlFor="legal_name" className={labelClass}>Legal Name</label>
-                <input
-                  id="legal_name"
-                  name="legal_name"
-                  type="text"
-                  defaultValue={profile.legal_name ?? ""}
-                  className={inputClass}
-                />
+                <input id="legal_name" name="legal_name" type="text" defaultValue={profile.legal_name ?? ""} className={inputClass} />
               </div>
               <div>
                 <label htmlFor="trading_name" className={labelClass}>Trading Name</label>
-                <input
-                  id="trading_name"
-                  name="trading_name"
-                  type="text"
-                  defaultValue={profile.trading_name ?? ""}
-                  className={inputClass}
-                />
+                <input id="trading_name" name="trading_name" type="text" defaultValue={profile.trading_name ?? ""} className={inputClass} />
               </div>
             </div>
           </div>
 
-          {/* 2. Type / legal */}
+          {/* 2. Type / legal structure */}
           <div>
             <h3 className={groupHeadingClass}>Organisation Type & Legal Structure</h3>
             <div className="mt-4 grid gap-5 md:grid-cols-2">
               <div>
                 <label htmlFor="organisation_type" className={labelClass}>Organisation Type</label>
-                <select
-                  id="organisation_type"
-                  name="organisation_type"
-                  defaultValue={profile.organisation_type ?? ""}
-                  className={selectClass}
-                >
+                <select id="organisation_type" name="organisation_type" defaultValue={profile.organisation_type ?? ""} className={selectClass}>
                   <option value="">Select type</option>
                   <option value="hapu">Hapū</option>
                   <option value="marae_trust">Marae Trust</option>
@@ -212,42 +203,19 @@ export default async function EditOrganisationPage() {
               </div>
               <div>
                 <label htmlFor="legal_structure" className={labelClass}>Legal Structure</label>
-                <input
-                  id="legal_structure"
-                  name="legal_structure"
-                  type="text"
-                  defaultValue={profile.legal_structure ?? ""}
-                  className={inputClass}
-                />
+                <input id="legal_structure" name="legal_structure" type="text" defaultValue={profile.legal_structure ?? ""} className={inputClass} />
               </div>
               <div>
                 <label htmlFor="registration_number" className={labelClass}>Registration Number</label>
-                <input
-                  id="registration_number"
-                  name="registration_number"
-                  type="text"
-                  defaultValue={profile.registration_number ?? ""}
-                  className={inputClass}
-                />
+                <input id="registration_number" name="registration_number" type="text" defaultValue={profile.registration_number ?? ""} className={inputClass} />
               </div>
               <div>
                 <label htmlFor="charity_number" className={labelClass}>Charity Number</label>
-                <input
-                  id="charity_number"
-                  name="charity_number"
-                  type="text"
-                  defaultValue={profile.charity_number ?? ""}
-                  className={inputClass}
-                />
+                <input id="charity_number" name="charity_number" type="text" defaultValue={profile.charity_number ?? ""} className={inputClass} />
               </div>
               <div>
                 <label htmlFor="status" className={labelClass}>Status</label>
-                <select
-                  id="status"
-                  name="status"
-                  defaultValue={profile.status ?? "active"}
-                  className={selectClass}
-                >
+                <select id="status" name="status" defaultValue={profile.status ?? "active"} className={selectClass}>
                   <option value="active">Active</option>
                   <option value="draft">Draft</option>
                   <option value="inactive">Inactive</option>
@@ -295,20 +263,49 @@ export default async function EditOrganisationPage() {
                 <label htmlFor="mission_statement" className={labelClass}>Mission Statement</label>
                 <textarea id="mission_statement" name="mission_statement" rows={2} defaultValue={profile.mission_statement ?? ""} className={inputClass} />
               </div>
-              <div className="grid gap-5 md:grid-cols-2">
-                <div>
-                  <label htmlFor="operating_summary" className={labelClass}>Operating Summary</label>
-                  <textarea id="operating_summary" name="operating_summary" rows={3} defaultValue={profile.operating_summary ?? ""} className={inputClass} />
-                </div>
-                <div>
-                  <label htmlFor="governance_summary" className={labelClass}>Governance Summary</label>
-                  <textarea id="governance_summary" name="governance_summary" rows={3} defaultValue={profile.governance_summary ?? ""} className={inputClass} />
-                </div>
+              <div>
+                <label htmlFor="operating_summary" className={labelClass}>Operating Summary</label>
+                <textarea id="operating_summary" name="operating_summary" rows={3} defaultValue={profile.operating_summary ?? ""} placeholder="What this organisation does day-to-day — services, activities, programmes" className={inputClass} />
               </div>
             </div>
           </div>
 
-          {/* 5. Priorities */}
+          {/* 5. Governance context */}
+          <div>
+            <h3 className={groupHeadingClass}>Governance Context</h3>
+            <div className="mt-4">
+              <label htmlFor="governance_summary" className={labelClass}>Governance Summary</label>
+              <p className={hintClass}>How this organisation is governed — trustees, committees, AGM structure, appointment processes.</p>
+              <textarea id="governance_summary" name="governance_summary" rows={4} defaultValue={profile.governance_summary ?? ""} placeholder="Describe governance structure, leadership roles, and how decisions are made" className={inputClass} />
+            </div>
+          </div>
+
+          {/* 6. Mandate and reporting process */}
+          <div>
+            <h3 className={groupHeadingClass}>Mandate & Reporting Process</h3>
+            <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+              Prove the process. Show the mandate. Report back to the people.
+            </p>
+            <div className="mt-4 grid gap-5">
+              <div>
+                <label htmlFor="mandate_process_summary" className={labelClass}>Mandate & Process Summary</label>
+                <p className={hintClass}>How mandate is established and authorised in this organisation — the process that shows decisions have legitimacy and can be proved to funders, councils, and partners.</p>
+                <textarea id="mandate_process_summary" name="mandate_process_summary" rows={4} defaultValue={profile.mandate_process_summary ?? ""} placeholder="e.g. Mandate is established through AGM resolutions, hui consensus, and trustee approval. All decisions require quorum..." className={inputClass} />
+              </div>
+              <div>
+                <label htmlFor="external_relationships" className={labelClass}>External Relationships</label>
+                <p className={hintClass}>Councils, funders, iwi organisations, rūnanga, service providers, statutory agencies, and other parties this organisation relates to. These are the parties who may eventually access data through controlled, purpose-based sharing.</p>
+                <textarea id="external_relationships" name="external_relationships" rows={3} defaultValue={profile.external_relationships ?? ""} placeholder="e.g. Northland Regional Council (resource consent), Ministry of Social Development (funding)..." className={inputClass} />
+              </div>
+              <div>
+                <label htmlFor="reporting_back_process" className={labelClass}>Reporting Back Process</label>
+                <p className={hintClass}>How outcomes, decisions, and evidence are reported back to the people and communities the data belongs to.</p>
+                <textarea id="reporting_back_process" name="reporting_back_process" rows={3} defaultValue={profile.reporting_back_process ?? ""} placeholder="e.g. Annual hui report presented at AGM, quarterly updates to hapū via pānui..." className={inputClass} />
+              </div>
+            </div>
+          </div>
+
+          {/* 7. Priorities */}
           <div>
             <h3 className={groupHeadingClass}>Funding, Reporting & Outcome Priorities</h3>
             <div className="mt-4 grid gap-5 md:grid-cols-3">
@@ -327,7 +324,7 @@ export default async function EditOrganisationPage() {
             </div>
           </div>
 
-          {/* 6. Contact */}
+          {/* 8. Contact */}
           <div>
             <h3 className={groupHeadingClass}>Contact Details</h3>
             <div className="mt-4 grid gap-5 md:grid-cols-2">
@@ -354,18 +351,14 @@ export default async function EditOrganisationPage() {
             </div>
           </div>
 
-          {/* 7. Data settings / notes */}
+          {/* 9. Data settings / notes */}
           <div>
             <h3 className={groupHeadingClass}>Data Settings & Notes</h3>
             <div className="mt-4 grid gap-5 md:grid-cols-2">
               <div>
                 <label htmlFor="data_sensitivity_default" className={labelClass}>Default Data Sensitivity</label>
-                <select
-                  id="data_sensitivity_default"
-                  name="data_sensitivity_default"
-                  defaultValue={profile.data_sensitivity_default ?? "standard"}
-                  className={selectClass}
-                >
+                <p className={hintClass}>Default sensitivity level applied to records created by this organisation.</p>
+                <select id="data_sensitivity_default" name="data_sensitivity_default" defaultValue={profile.data_sensitivity_default ?? "standard"} className={selectClass}>
                   <option value="public">Public</option>
                   <option value="standard">Standard</option>
                   <option value="sensitive">Sensitive</option>
@@ -374,7 +367,7 @@ export default async function EditOrganisationPage() {
               </div>
               <div>
                 <label htmlFor="notes" className={labelClass}>Notes</label>
-                <textarea id="notes" name="notes" rows={3} defaultValue={profile.notes ?? ""} className={inputClass} />
+                <textarea id="notes" name="notes" rows={4} defaultValue={profile.notes ?? ""} className={inputClass} />
               </div>
             </div>
           </div>
