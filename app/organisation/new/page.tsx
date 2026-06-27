@@ -79,8 +79,10 @@ export default async function NewOrganisationPage() {
           Set Up Organisation Profile
         </h1>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--muted-foreground)]">
-          The organisation profile is the anchor for everything in Tangata — governance, people,
-          evidence, reports, and outcomes all belong to this organisation.
+          The organisation profile is the hapū-held source of truth that anchors everything in Tangata.
+          It defines who owns this data, what type of organisation holds it, what kaupapa it serves,
+          and what mandate, relationships, and outcomes matter.
+          Governance, people, evidence, reports, and outcomes all belong to this organisation.
           Only organisation name is required. All other fields can be filled in later.
         </p>
       </section>
