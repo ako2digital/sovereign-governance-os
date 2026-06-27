@@ -39,40 +39,29 @@ export default async function PeoplePage() {
   const { data, error } = await supabase
     .from("people")
     .select(
-      `
-      id,
-      full_name,
-      preferred_name,
-      role_title,
-      affiliation,
-      marae,
-      hapu,
-      iwi,
-      status,
-      sensitivity_level,
-      created_at
-    `
+      `id, full_name, preferred_name, role_title, affiliation,
+       marae, hapu, iwi, status, sensitivity_level, created_at`
     )
     .order("created_at", { ascending: false });
 
   const peopleRecords = (data ?? []) as PersonRecord[];
 
   return (
-    <AppShell title="People" eyebrow="People & Relationships">
+    <AppShell title="People & Roles" eyebrow="People & Roles">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          People & Relationships
+          People & Roles
         </p>
 
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--foreground)]">
-          People
+          People & Roles
         </h1>
 
         <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--muted-foreground)]">
-          Identity profiles for every person connected to this organisation —
-          kaumātua, trustees, members, staff, advisors, and whānau. People records
-          support identity, participation tracking, representation, role clarity,
-          capability mapping, and future mandate and consent tracking.
+          People & Roles is where the organisation manages who is involved, what roles they hold,
+          what capability exists, what mandate or responsibility they carry, and how they connect
+          to hui, decisions, tasks, evidence, and outcomes.
+          This register supports identity, participation, role clarity, accountability, and reporting.
         </p>
 
         <div className="mt-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
@@ -80,10 +69,12 @@ export default async function PeoplePage() {
             What belongs here
           </p>
           <p className="mt-1 text-xs text-[var(--muted-foreground)]">
-            People and their roles, hapū/marae/iwi affiliations, knowledge areas, participation history,
-            and relationships. Each person record can be linked to hui attendances, whakapapa relationships,
-            assigned tasks, and governance roles. This register supports both daily administration and
-            long-term mandate evidence.
+            Trustees, chairperson, secretary, treasurer, staff, advisors, members, kaumātua,
+            knowledge holders, service providers, contributors, and whānau.
+            Each person record connects to governance role terms, hui attendance records, knowledge archives,
+            and the accountability chain — from participation through to decisions, tasks, evidence, and outcomes.
+            Role and participation records help prove process, mandate, and accountability when dealing with
+            councils, funders, government, and external parties.
           </p>
         </div>
       </section>
@@ -121,7 +112,9 @@ export default async function PeoplePage() {
             </h3>
 
             <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-              Add the first person record to begin building the registry.
+              Add the first person to begin building the people and roles register.
+              Once added, people can be connected to governance roles, hui attendance,
+              knowledge records, and the accountability chain.
             </p>
 
             <div className="mt-5">
@@ -144,8 +137,8 @@ export default async function PeoplePage() {
                   <th className="px-4 py-3 font-medium">Hapū / Marae / Iwi</th>
                   <th className="px-4 py-3 font-medium">Status</th>
                   <th className="px-4 py-3 font-medium">Sensitivity</th>
-                  <th className="px-4 py-3 font-medium">Created</th>
-                  <th className="px-4 py-3 font-medium">Open</th>
+                  <th className="px-4 py-3 font-medium">Added</th>
+                  <th className="px-4 py-3 font-medium">View</th>
                 </tr>
               </thead>
 
@@ -199,7 +192,7 @@ export default async function PeoplePage() {
                         href={`/people/${person.id}`}
                         className="text-sm font-medium text-[var(--foreground)] underline-offset-4 transition hover:text-[var(--accent)] hover:underline"
                       >
-                        View record
+                        View
                       </Link>
                     </td>
                   </tr>
@@ -208,6 +201,37 @@ export default async function PeoplePage() {
             </table>
           </div>
         )}
+      </section>
+
+      <section className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
+          Accountability ladder
+        </p>
+        <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+          Every person in this register can be connected to the governance accountability chain:
+          Person → Role → Participation → Decision → Task → Evidence → Outcome → Report Back.
+          This is how the organisation proves process, shows mandate, and supports its readiness
+          when dealing with councils, funders, government, and external parties.
+        </p>
+        <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+          Capability mapping helps the organisation understand what skills and knowledge already exist.
+          Consent and sensitivity settings help control what information can be shared externally.
+          This information can support reporting, funding readiness, consultation, project delivery, and negotiations.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Link
+            href="/organisation"
+            className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-medium text-[var(--muted-foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
+          >
+            Organisation Profile
+          </Link>
+          <Link
+            href="/hui"
+            className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-medium text-[var(--muted-foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
+          >
+            Governance Chain
+          </Link>
+        </div>
       </section>
     </AppShell>
   );
