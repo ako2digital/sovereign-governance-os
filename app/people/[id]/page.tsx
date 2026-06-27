@@ -56,6 +56,40 @@ type WhakapapaRelationship = {
   person_b: LinkedPerson | null;
 };
 
+type GovernanceRoleTerm = {
+  id: string;
+  role_title: string | null;
+  role_type: string | null;
+  appointment_method: string | null;
+  appointed_at: string | null;
+  elected_at: string | null;
+  agm_date: string | null;
+  term_start_date: string | null;
+  term_end_date: string | null;
+  status: string | null;
+  verification_status: string | null;
+  notes: string | null;
+  sensitivity_level: string | null;
+  created_at: string | null;
+};
+
+type HuiRef = {
+  id: string;
+  title: string | null;
+  hui_date: string | null;
+};
+
+type HuiAttendance = {
+  id: string;
+  attendance_status: string | null;
+  attendee_role: string | null;
+  organisation_name: string | null;
+  contribution_notes: string | null;
+  verification_status: string | null;
+  created_at: string | null;
+  hui: HuiRef | null;
+};
+
 function formatDate(date?: string | null) {
   if (!date) return "—";
   return new Date(date).toLocaleDateString("en-NZ", {
@@ -136,69 +170,59 @@ export default async function PeopleDetailPage({
 }: PeopleDetailPageProps) {
   const { id } = await params;
 
-  const [personResult, relationshipResult, knowledgeResult] = await Promise.all(
-    [
-      supabase
-        .from("people")
-        .select(
-          `
-          id,
-          full_name,
-          preferred_name,
-          other_names,
-          email,
-          phone,
-          role_title,
-          affiliation,
-          marae,
-          hapu,
-          iwi,
-          status,
-          sensitivity_level,
-          profile_summary,
-          notes,
-          consent_status,
-          created_at,
-          updated_at
-        `
-        )
-        .eq("id", id)
-        .maybeSingle(),
-      supabase
-        .from("whakapapa_relationships")
-        .select(
-          `
-          id,
-          person_a_id,
-          person_b_id,
-          relationship_type,
-          created_at,
-          person_a:person_a_id ( full_name ),
-          person_b:person_b_id ( full_name )
-        `
-        )
-        .or(`person_a_id.eq.${id},person_b_id.eq.${id}`)
-        .order("created_at", { ascending: false }),
-      supabase
-        .from("person_knowledge_records")
-        .select(
-          `
-          id,
-          record_type,
-          title,
-          summary,
-          date_label,
-          source_name,
-          source_url,
-          sensitivity_level,
-          verification_status,
-          created_at
-        `
-        )
-        .eq("person_id", id)
-        .order("created_at", { ascending: false }),
-    ]
-  );
+  const [
+    personResult,
+    relationshipResult,
+    knowledgeResult,
+    roleTermsResult,
+    huiAttendanceResult,
+  ] = await Promise.all([
+    supabase
+      .from("people")
+      .select(
+        `id, full_name, preferred_name, other_names, email, phone,
+         role_title, affiliation, marae, hapu, iwi, status,
+         sensitivity_level, profile_summary, notes, consent_status,
+         created_at, updated_at`
+      )
+      .eq("id", id)
+      .maybeSingle(),
+    supabase
+      .from("whakapapa_relationships")
+      .select(
+        `id, person_a_id, person_b_id, relationship_type, created_at,
+         person_a:person_a_id ( full_name ),
+         person_b:person_b_id ( full_name )`
+      )
+      .or(`person_a_id.eq.${id},person_b_id.eq.${id}`)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("person_knowledge_records")
+      .select(
+        `id, record_type, title, summary, date_label, source_name,
+         source_url, sensitivity_level, verification_status, created_at`
+      )
+      .eq("person_id", id)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("governance_role_terms")
+      .select(
+        `id, role_title, role_type, appointment_method, appointed_at,
+         elected_at, agm_date, term_start_date, term_end_date,
+         status, verification_status, notes, sensitivity_level, created_at`
+      )
+      .eq("person_id", id)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("hui_attendees")
+      .select(
+        `id, attendance_status, attendee_role, organisation_name,
+         contribution_notes, verification_status, created_at,
+         hui:hui_id ( id, title, hui_date )`
+      )
+      .eq("person_id", id)
+      .order("created_at", { ascending: false }),
+  ]);
 
   const person = personResult.data as PersonRecord | null;
   const personError = personResult.error;
@@ -207,15 +231,20 @@ export default async function PeopleDetailPage({
   const relationshipError = relationshipResult.error;
   const knowledgeRecords = (knowledgeResult.data ?? []) as KnowledgeRecord[];
   const knowledgeError = knowledgeResult.error;
+  const roleTerms = (roleTermsResult.data ?? []) as GovernanceRoleTerm[];
+  const roleTermsError = roleTermsResult.error;
+  const huiAttendances =
+    (huiAttendanceResult.data ?? []) as unknown as HuiAttendance[];
+  const huiAttendanceError = huiAttendanceResult.error;
 
   const personName = person?.full_name || "Unknown person";
 
   return (
-    <AppShell title="Person Detail" eyebrow="Whakapapa & People">
+    <AppShell title="Person Record" eyebrow="People & Roles">
       {/* Hero */}
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Person Record
+          People & Roles · Person Record
         </p>
 
         {personError ? (
@@ -273,10 +302,10 @@ export default async function PeopleDetailPage({
 
       {person ? (
         <>
-          {/* Identity */}
+          {/* 1. Identity */}
           <SectionPanel
-            title="Identity Details"
-            description="Core name and registry information."
+            title="Identity"
+            description="Name and core registry information."
             action={
               <div className="flex flex-wrap items-center gap-2">
                 <Link
@@ -328,8 +357,11 @@ export default async function PeopleDetailPage({
             </div>
           </SectionPanel>
 
-          {/* Contact */}
-          <SectionPanel title="Contact Details">
+          {/* 2. Contact */}
+          <SectionPanel
+            title="Contact Details"
+            description="Contact information held for this person."
+          >
             <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--border)]">
               <table className="w-full border-collapse text-left text-sm">
                 <tbody>
@@ -343,10 +375,10 @@ export default async function PeopleDetailPage({
             </div>
           </SectionPanel>
 
-          {/* Governance */}
+          {/* 3. Organisation role */}
           <SectionPanel
-            title="Governance Context"
-            description="Role and organisational context."
+            title="Organisation Role"
+            description="Primary role and organisational context for this person."
           >
             <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--border)]">
               <table className="w-full border-collapse text-left text-sm">
@@ -363,7 +395,7 @@ export default async function PeopleDetailPage({
             </div>
           </SectionPanel>
 
-          {/* Hapū / marae / iwi */}
+          {/* 4. Affiliations */}
           <SectionPanel title="Hapū / Marae / Iwi Affiliation">
             <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--border)]">
               <table className="w-full border-collapse text-left text-sm">
@@ -376,8 +408,11 @@ export default async function PeopleDetailPage({
             </div>
           </SectionPanel>
 
-          {/* Sensitivity & consent */}
-          <SectionPanel title="Sensitivity and Consent">
+          {/* 5. Sensitivity & consent */}
+          <SectionPanel
+            title="Sensitivity and Consent"
+            description="Data sensitivity and consent settings for this person's information."
+          >
             <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--border)]">
               <table className="w-full border-collapse text-left text-sm">
                 <tbody>
@@ -395,9 +430,9 @@ export default async function PeopleDetailPage({
             </div>
           </SectionPanel>
 
-          {/* Notes */}
+          {/* 6. Notes / profile summary */}
           {person.profile_summary || person.notes ? (
-            <SectionPanel title="Notes and Summary">
+            <SectionPanel title="Notes & Profile Summary">
               <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--border)]">
                 <table className="w-full border-collapse text-left text-sm">
                   <tbody>
@@ -421,10 +456,189 @@ export default async function PeopleDetailPage({
               </div>
             </SectionPanel>
           ) : null}
+
+          {/* 7. Governance Role Terms */}
+          <SectionPanel
+            title="Governance Role Terms"
+            description="Formal governance roles, trustee positions, and appointments recorded for this person."
+          >
+            {roleTermsError ? (
+              <div className="mt-6 rounded-xl border border-red-900 bg-red-950/40 p-4 text-sm text-red-400">
+                <p className="font-semibold">Database error</p>
+                <pre className="mt-3 whitespace-pre-wrap">
+                  {roleTermsError.message}
+                </pre>
+              </div>
+            ) : roleTerms.length === 0 ? (
+              <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-5">
+                <p className="text-sm font-medium text-[var(--foreground)]">
+                  No governance role terms recorded
+                </p>
+                <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+                  Governance role terms — trustee appointments, chair roles, secretarial roles —
+                  can be added from a marae or organisation record.
+                  Role terms help prove who held authority, when, how they were appointed,
+                  and what governance record authorised it.
+                </p>
+              </div>
+            ) : (
+              <div className="mt-6 overflow-x-auto rounded-2xl border border-[var(--border)]">
+                <table className="w-full min-w-[860px] border-collapse text-left text-sm">
+                  <thead className="border-b border-[var(--border)] bg-[var(--surface-raised)] text-[var(--muted-foreground)]">
+                    <tr>
+                      <th className="px-4 py-3 font-medium">Role</th>
+                      <th className="px-4 py-3 font-medium">Type</th>
+                      <th className="px-4 py-3 font-medium">Appointment Method</th>
+                      <th className="px-4 py-3 font-medium">Term</th>
+                      <th className="px-4 py-3 font-medium">Status</th>
+                      <th className="px-4 py-3 font-medium">Verification</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {roleTerms.map((term) => (
+                      <tr
+                        key={term.id}
+                        className="border-t border-[var(--border)] transition hover:bg-[var(--surface-raised)]"
+                      >
+                        <td className="px-4 py-4 font-medium text-[var(--foreground)]">
+                          {val(term.role_title)}
+                        </td>
+
+                        <td className="px-4 py-4 text-[var(--muted-foreground)]">
+                          {val(term.role_type)}
+                        </td>
+
+                        <td className="px-4 py-4 text-[var(--muted-foreground)]">
+                          {val(term.appointment_method)}
+                        </td>
+
+                        <td className="px-4 py-4 text-[var(--muted-foreground)]">
+                          {term.term_start_date
+                            ? formatDate(term.term_start_date)
+                            : "—"}
+                          {term.term_end_date
+                            ? ` → ${formatDate(term.term_end_date)}`
+                            : ""}
+                        </td>
+
+                        <td className="px-4 py-4 text-[var(--muted-foreground)]">
+                          {val(term.status)}
+                        </td>
+
+                        <td className="px-4 py-4 text-[var(--muted-foreground)]">
+                          {val(term.verification_status)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </SectionPanel>
+
+          {/* 8. Hui Participation */}
+          <SectionPanel
+            title="Hui Participation & Mandate Contribution"
+            description="Hui attended, roles held at hui, and contributions recorded. Participation records help prove process and mandate."
+          >
+            {huiAttendanceError ? (
+              <div className="mt-6 rounded-xl border border-red-900 bg-red-950/40 p-4 text-sm text-red-400">
+                <p className="font-semibold">Database error</p>
+                <pre className="mt-3 whitespace-pre-wrap">
+                  {huiAttendanceError.message}
+                </pre>
+              </div>
+            ) : huiAttendances.length === 0 ? (
+              <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-5">
+                <p className="text-sm font-medium text-[var(--foreground)]">
+                  No hui participation records
+                </p>
+                <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+                  Hui attendance records link this person to specific governance meetings.
+                  They can be added from within a hui record and form part of the participation
+                  evidence that supports mandate, accountability, and process claims.
+                </p>
+              </div>
+            ) : (
+              <div className="mt-6 overflow-x-auto rounded-2xl border border-[var(--border)]">
+                <table className="w-full min-w-[860px] border-collapse text-left text-sm">
+                  <thead className="border-b border-[var(--border)] bg-[var(--surface-raised)] text-[var(--muted-foreground)]">
+                    <tr>
+                      <th className="px-4 py-3 font-medium">Hui</th>
+                      <th className="px-4 py-3 font-medium">Attendance</th>
+                      <th className="px-4 py-3 font-medium">Role at Hui</th>
+                      <th className="px-4 py-3 font-medium">Organisation</th>
+                      <th className="px-4 py-3 font-medium">Contribution</th>
+                      <th className="px-4 py-3 font-medium">Verification</th>
+                      <th className="px-4 py-3 font-medium">Recorded</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {huiAttendances.map((attendance) => (
+                      <tr
+                        key={attendance.id}
+                        className="border-t border-[var(--border)] transition hover:bg-[var(--surface-raised)]"
+                      >
+                        <td className="px-4 py-4 font-medium text-[var(--foreground)]">
+                          {attendance.hui ? (
+                            <Link
+                              href={`/hui/${attendance.hui.id}`}
+                              className="underline-offset-4 hover:text-[var(--accent)] hover:underline"
+                            >
+                              {attendance.hui.title || "Untitled hui"}
+                            </Link>
+                          ) : (
+                            "—"
+                          )}
+                          {attendance.hui?.hui_date ? (
+                            <p className="mt-0.5 text-xs font-normal text-[var(--muted-foreground)]">
+                              {formatDate(attendance.hui.hui_date)}
+                            </p>
+                          ) : null}
+                        </td>
+
+                        <td className="px-4 py-4 text-[var(--muted-foreground)]">
+                          {val(attendance.attendance_status)}
+                        </td>
+
+                        <td className="px-4 py-4 text-[var(--muted-foreground)]">
+                          {val(attendance.attendee_role)}
+                        </td>
+
+                        <td className="px-4 py-4 text-[var(--muted-foreground)]">
+                          {val(attendance.organisation_name)}
+                        </td>
+
+                        <td className="max-w-xs px-4 py-4 text-[var(--muted-foreground)]">
+                          {attendance.contribution_notes ? (
+                            <p className="line-clamp-2 text-xs">
+                              {attendance.contribution_notes}
+                            </p>
+                          ) : (
+                            "—"
+                          )}
+                        </td>
+
+                        <td className="px-4 py-4 text-[var(--muted-foreground)]">
+                          {val(attendance.verification_status)}
+                        </td>
+
+                        <td className="px-4 py-4 text-[var(--muted-foreground)]">
+                          {formatDate(attendance.created_at)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </SectionPanel>
         </>
       ) : null}
 
-      {/* Knowledge archive */}
+      {/* 9. Knowledge archive */}
       <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -433,8 +647,8 @@ export default async function PeopleDetailPage({
             </h2>
 
             <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-              Stories, kōrero, whakataukī, hui references, and cultural records
-              linked to this person.
+              Stories, kōrero, whakataukī, hui references, cultural records, and archival material
+              linked to this person. Knowledge records support mandate, cultural evidence, and organisational history.
             </p>
           </div>
 
@@ -462,8 +676,8 @@ export default async function PeopleDetailPage({
             </p>
 
             <p className="mt-1 text-sm text-[var(--muted-foreground)]">
-              Stories, kōrero, whakataukī, and other cultural records can be
-              added here.
+              Stories, kōrero, whakataukī, and other cultural or archival records can be
+              added here and linked to this person.
             </p>
           </div>
         ) : (
@@ -543,7 +757,7 @@ export default async function PeopleDetailPage({
         )}
       </section>
 
-      {/* Whakapapa relationships */}
+      {/* 10. Whakapapa relationships */}
       {relationshipError ? (
         <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
           <h2 className="text-lg font-semibold text-[var(--foreground)]">
@@ -639,6 +853,45 @@ export default async function PeopleDetailPage({
           </div>
         </section>
       ) : null}
+
+      {/* 11. Reporting value / accountability */}
+      <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
+          Accountability ladder
+        </p>
+        <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+          This person record is a node in the governance accountability chain:
+          Person → Role → Participation → Decision → Task → Evidence → Outcome → Report Back.
+          Role terms and hui participation records attached to this person contribute to the
+          organisation&apos;s ability to prove process, show mandate, and increase its readiness
+          when dealing with councils, funders, government, and external parties.
+        </p>
+        <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+          Consent and sensitivity settings on this record control what information about this person
+          can be shared externally. The organisation decides what is shared, why it is shared,
+          and what process authorised it.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Link
+            href="/people"
+            className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-medium text-[var(--muted-foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
+          >
+            Back to People
+          </Link>
+          <Link
+            href="/hui"
+            className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-medium text-[var(--muted-foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
+          >
+            Governance Chain
+          </Link>
+          <Link
+            href="/organisation"
+            className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-medium text-[var(--muted-foreground)] transition hover:border-[var(--accent)] hover:text-[var(--foreground)]"
+          >
+            Organisation Profile
+          </Link>
+        </div>
+      </section>
     </AppShell>
   );
 }

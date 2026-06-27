@@ -76,6 +76,8 @@ const labelClass = "block text-sm font-medium text-[var(--foreground)]";
 const groupHeadingClass =
   "text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]";
 
+const hintClass = "mt-1 text-xs text-[var(--muted-foreground)]";
+
 export default async function EditPersonPage({ params }: EditPersonPageProps) {
   const { id } = await params;
 
@@ -145,10 +147,10 @@ export default async function EditPersonPage({ params }: EditPersonPageProps) {
   const boundUpdatePerson = updatePerson.bind(null, person.id);
 
   return (
-    <AppShell title="Edit Person" eyebrow="People Module">
+    <AppShell title="Edit Person" eyebrow="People & Roles">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Edit Person Record
+          People & Roles · Edit Person
         </p>
 
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--foreground)]">
@@ -156,8 +158,9 @@ export default async function EditPersonPage({ params }: EditPersonPageProps) {
         </h1>
 
         <p className="mt-3 text-sm text-[var(--muted-foreground)]">
-          Update the details for this person record. All changes are saved
-          immediately on submit.
+          Update the details for this person record. Changes are saved on submit.
+          This record can be connected to governance roles, hui attendance, knowledge archives,
+          and the accountability chain.
         </p>
       </section>
 
@@ -178,7 +181,8 @@ export default async function EditPersonPage({ params }: EditPersonPageProps) {
         <form action={boundUpdatePerson} className="mt-6 space-y-8">
           {/* Core identity */}
           <div>
-            <h3 className={groupHeadingClass}>Core Identity</h3>
+            <h3 className={groupHeadingClass}>Identity</h3>
+            <p className={hintClass}>Legal name, preferred name, and other known names for this person.</p>
 
             <div className="mt-4 grid gap-5 md:grid-cols-2">
               <div className="md:col-span-2">
@@ -234,7 +238,8 @@ export default async function EditPersonPage({ params }: EditPersonPageProps) {
 
           {/* Contact */}
           <div>
-            <h3 className={groupHeadingClass}>Contact</h3>
+            <h3 className={groupHeadingClass}>Contact Details</h3>
+            <p className={hintClass}>Contact information held by the organisation for this person.</p>
 
             <div className="mt-4 grid gap-5 md:grid-cols-2">
               <div>
@@ -269,9 +274,10 @@ export default async function EditPersonPage({ params }: EditPersonPageProps) {
             </div>
           </div>
 
-          {/* Governance context */}
+          {/* Organisation role */}
           <div>
-            <h3 className={groupHeadingClass}>Governance Context</h3>
+            <h3 className={groupHeadingClass}>Organisation Role</h3>
+            <p className={hintClass}>The primary role or title this person holds within or in relation to the organisation.</p>
 
             <div className="mt-4 grid gap-5 md:grid-cols-2">
               <div>
@@ -306,11 +312,10 @@ export default async function EditPersonPage({ params }: EditPersonPageProps) {
             </div>
           </div>
 
-          {/* Hapū / marae / iwi */}
+          {/* Affiliations */}
           <div>
-            <h3 className={groupHeadingClass}>
-              Hapū / Marae / Iwi Affiliation
-            </h3>
+            <h3 className={groupHeadingClass}>Affiliations</h3>
+            <p className={hintClass}>Hapū, marae, and iwi connections for this person.</p>
 
             <div className="mt-4 grid gap-5 md:grid-cols-3">
               <div>
@@ -362,7 +367,11 @@ export default async function EditPersonPage({ params }: EditPersonPageProps) {
 
           {/* Sensitivity / consent */}
           <div>
-            <h3 className={groupHeadingClass}>Sensitivity and Consent</h3>
+            <h3 className={groupHeadingClass}>Consent and Sensitivity</h3>
+            <p className={hintClass}>
+              Controls what information about this person may be shared externally.
+              The organisation decides what is shared, why it is shared, and what process authorised it.
+            </p>
 
             <div className="mt-4 grid gap-5 md:grid-cols-3">
               <div>
@@ -424,7 +433,8 @@ export default async function EditPersonPage({ params }: EditPersonPageProps) {
 
           {/* Notes */}
           <div>
-            <h3 className={groupHeadingClass}>Notes</h3>
+            <h3 className={groupHeadingClass}>Notes & Profile Summary</h3>
+            <p className={hintClass}>A brief summary of this person&apos;s role, contribution, or significance to the organisation.</p>
 
             <div className="mt-4 grid gap-5">
               <div>
