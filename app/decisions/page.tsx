@@ -79,10 +79,10 @@ export default async function DecisionsPage() {
   const decisionRecords = (data ?? []) as DecisionRecord[];
 
   return (
-    <AppShell title="Decisions" eyebrow="Governance">
+    <AppShell title="Decisions" eyebrow="Governance Chain">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Governance
+          Governance Chain
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">
@@ -90,12 +90,22 @@ export default async function DecisionsPage() {
         </h1>
 
         <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
-          The formal decision register — every resolution passed by governance,
-          with status, effective date, source hui, confirming minutes, and
-          resulting tasks tracked in a single chain. This register is the
-          primary evidence layer for accountability reporting and funder
-          compliance.
+          Decisions formalise direction and create accountability. Every resolution is linked
+          to the hui and minutes it came from, and to the tasks it generated. This register
+          is the primary evidence layer for proving that positions are backed by a clear
+          governance process — not just two people claiming to speak for a hapū.
         </p>
+
+        <div className="mt-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
+            What belongs here
+          </p>
+          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+            Formal resolutions passed at hui, with source hui and minutes linked where available.
+            Each decision should show who authorised it, when it was made, and what tasks or
+            actions it created. Linked decisions give tasks their authority and reports their mandate.
+          </p>
+        </div>
       </section>
 
       <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">

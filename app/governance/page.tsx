@@ -59,10 +59,10 @@ export default async function GovernancePage() {
   const governanceRecords = (data ?? []) as GovernanceRecord[];
 
   return (
-    <AppShell title="Governance Records" eyebrow="Governance">
+    <AppShell title="Governance Records" eyebrow="Governance Chain">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Governance
+          Governance Chain
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">
@@ -70,12 +70,23 @@ export default async function GovernancePage() {
         </h1>
 
         <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
-          The formal authority layer — mandates, trust deeds, incorporation
-          documents, bylaws, and other governance instruments that define the
-          legal and tikanga basis for this organisation's decisions. Link
-          governance records to the specific whenua or marae they govern and to
-          the hui that gave them authority.
+          The formal authority layer — trust deeds, incorporation documents, bylaws, charters,
+          policies, legal instruments, and agreements that define the legal and tikanga basis
+          for this organisation's decisions. These records prove that governance authority exists
+          and is properly constituted.
         </p>
+
+        <div className="mt-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
+            What belongs here
+          </p>
+          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+            Trust deeds, incorporation certificates, constitutions, bylaws, policies, governance
+            agreements, MoUs, service agreements, and formal authority instruments. Link records
+            to the specific marae or whenua they govern. These are the instruments funders,
+            lawyers, and auditors need to verify governance legitimacy.
+          </p>
+        </div>
       </section>
 
       <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">

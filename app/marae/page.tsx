@@ -50,21 +50,32 @@ export default async function MaraePage() {
   const maraeRecords = (data ?? []) as MaraeRecord[];
 
   return (
-    <AppShell title="Marae" eyebrow="Marae">
+    <AppShell title="Marae" eyebrow="Hapū, Marae & Whenua">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Marae
+          Hapū, Marae & Whenua
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">Marae</h1>
 
         <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
           Institutional profiles for each marae — the living centre of hapū
-          identity, tikanga, and governance. Marae records link to linked
-          whenua, governance instruments, hui held on-site, and supporting
-          documents. Each profile anchors the governance chain to its physical
-          and cultural place.
+          identity, tikanga, and governance. Marae records anchor the governance chain to
+          its physical and cultural place, linking to whenua, trustees, hui, facilities,
+          development needs, and supporting documents.
         </p>
+
+        <div className="mt-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
+            What belongs here
+          </p>
+          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+            Marae profile, hapū and iwi connections, trustees and governance roles, facilities and
+            infrastructure, hui held there, development needs, related documents and evidence.
+            Note: Marae is a place and institution. Hapū is a collective identity and governance body —
+            a dedicated Hapū register is planned as a future core register.
+          </p>
+        </div>
       </section>
 
       <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">

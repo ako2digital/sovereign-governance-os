@@ -91,21 +91,32 @@ export default async function LibraryPage() {
     (people.count ?? 0);
 
   return (
-    <AppShell title="Library" eyebrow="Library & Archive">
+    <AppShell title="Library" eyebrow="Library & Evidence">
       {/* ── Header ── */}
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Library & Archive
+          Library & Evidence
         </p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--foreground)]">
           Library
         </h1>
         <p className="mt-3 max-w-2xl text-sm text-[var(--muted-foreground)]">
-          The Library is the central archive of the organisation — all
-          documents, evidence references, minutes, decisions, hui, governance
-          records, and linked files in one place. Use it to navigate records,
-          generate reports, and build funding-ready evidence packs.
+          The central archive and evidence layer — documents, file references, and records
+          that prove the governance chain. Use the Library to navigate the archive,
+          build funding-ready evidence packs, prepare negotiation materials, and retrieve
+          records for audit or reporting. Evidence here supports every claim made in reports.
         </p>
+        <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
+            What belongs here
+          </p>
+          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+            Documents, file references, signed minutes, evidence references, legal documents,
+            funding documents, reports, maps, photos, and archival material. The Library
+            supports proof, retrieval, reporting, funding readiness, negotiation packs,
+            governance packs, and audit trails.
+          </p>
+        </div>
         <div className="mt-5 flex flex-wrap gap-3">
           <Link
             href="/library/files"

@@ -57,21 +57,33 @@ export default async function HuiPage() {
   const huiRecords = (data ?? []) as HuiRecord[];
 
   return (
-    <AppShell title="Hui" eyebrow="Marae">
+    <AppShell title="Hui" eyebrow="Governance Chain">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Marae
+          Governance Chain
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">Hui</h1>
 
         <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
-          The formal meeting register — the starting point of the governance
-          chain. Every hui can generate minutes, produce formal decisions, and
-          create assigned tasks. Hui records track date, location, kaupapa,
-          and attendance, providing the authoritative source for all downstream
-          governance evidence.
+          The formal meeting register — the starting point of the governance chain.
+          Hui records prove that a process happened: who gathered, what was discussed,
+          who participated, and what was decided. Without hui records, decisions lack
+          context and mandate cannot be demonstrated.
         </p>
+
+        <div className="mt-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
+            Pathway to outcome
+          </p>
+          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+            Hui → <span className="text-[var(--foreground)]">Minutes</span> → Decisions → Tasks → Evidence → Reports → Mandate / Outcome
+          </p>
+          <p className="mt-2 text-xs text-[var(--muted-foreground)]">
+            Each hui you record proves participation and process. Add minutes to capture what was discussed.
+            Link decisions to record what was resolved. Attach evidence to prove the chain.
+          </p>
+        </div>
       </section>
 
       <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">

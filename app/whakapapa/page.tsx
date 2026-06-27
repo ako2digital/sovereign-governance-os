@@ -60,10 +60,10 @@ export default async function WhakapapaPage() {
     (data ?? []) as unknown as WhakapapaRelationship[];
 
   return (
-    <AppShell title="Whakapapa" eyebrow="Whakapapa & People">
+    <AppShell title="Whakapapa" eyebrow="People & Relationships">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Whakapapa & People
+          People & Relationships
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">
@@ -76,6 +76,18 @@ export default async function WhakapapaPage() {
           a named relationship type, forming the foundation for governance
           succession, trusteeship verification, and beneficiary tracing.
         </p>
+
+        <div className="mt-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
+            Sensitivity & future scope
+          </p>
+          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+            Whakapapa information is sensitive and culturally significant. Handle with care and appropriate
+            consultation. The current register captures direct relationships between people. Full whakapapa
+            infrastructure — including lineage trees, multi-generational mapping, and iwi-wide networks —
+            is planned for a future pass once data governance protocols are established.
+          </p>
+        </div>
       </section>
 
       <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">

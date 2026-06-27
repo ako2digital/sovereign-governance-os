@@ -58,10 +58,10 @@ export default async function PeoplePage() {
   const peopleRecords = (data ?? []) as PersonRecord[];
 
   return (
-    <AppShell title="People" eyebrow="Whakapapa & People">
+    <AppShell title="People" eyebrow="People & Relationships">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Whakapapa & People
+          People & Relationships
         </p>
 
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--foreground)]">
@@ -70,10 +70,22 @@ export default async function PeoplePage() {
 
         <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--muted-foreground)]">
           Identity profiles for every person connected to this organisation —
-          kaumātua, trustees, members, staff, advisors, and whānau. Each record
-          links to whakapapa relationships, hui attendances, assigned tasks,
-          governance roles, and evidence archives.
+          kaumātua, trustees, members, staff, advisors, and whānau. People records
+          support identity, participation tracking, representation, role clarity,
+          capability mapping, and future mandate and consent tracking.
         </p>
+
+        <div className="mt-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
+            What belongs here
+          </p>
+          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+            People and their roles, hapū/marae/iwi affiliations, knowledge areas, participation history,
+            and relationships. Each person record can be linked to hui attendances, whakapapa relationships,
+            assigned tasks, and governance roles. This register supports both daily administration and
+            long-term mandate evidence.
+          </p>
+        </div>
       </section>
 
       <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">

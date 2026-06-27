@@ -65,21 +65,32 @@ export default async function FinancePage() {
   ];
 
   return (
-    <AppShell title="Finance & Assets" eyebrow="Finance & Assets">
+    <AppShell title="Finance & Funding" eyebrow="Intelligence & Outcomes">
       {/* ── Header ── */}
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
-          Finance & Assets
+          Intelligence & Outcomes
         </p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--foreground)]">
-          Finance & Assets
+          Finance & Funding Foundation
         </h1>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--muted-foreground)]">
-          The financial intelligence hub for this organisation — funding
-          readiness, asset evidence, governance instruments, and the evidence
-          base funders and auditors require. Full budget and income tracking
-          will be available once the finance schema is approved.
+          Funding readiness intelligence built from existing governance, land, people, and evidence
+          records. This is the foundation layer — showing what evidence currently exists and what
+          gaps remain before a funding application or financial audit.
+          Full budget and income tracking will be available once a finance schema is approved.
         </p>
+        <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
+            Current scope
+          </p>
+          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+            This page uses existing records — whenua, marae, governance, decisions, documents,
+            and evidence — to calculate funding readiness. It does not yet have its own finance
+            tables for budgets, income, expenses, or grants. That schema pass is planned for a
+            future release once the governance and evidence base is established.
+          </p>
+        </div>
         <div className="mt-5 flex flex-wrap gap-3">
           <Link
             href="/reports/funding-readiness"

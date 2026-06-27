@@ -58,8 +58,6 @@ export default async function HomePage() {
     id: string; title: string | null; status: string | null; decision_date: string | null;
   }>;
 
-  const totalRecords = Object.values(counts).reduce((s, n) => s + n, 0);
-
   const readinessChecks = [
     { label: "People", done: counts.people > 0 },
     { label: "Whenua", done: counts.whenua > 0 },
@@ -120,14 +118,13 @@ export default async function HomePage() {
               Tangata
             </h1>
             <p className="mt-4 max-w-xl text-base leading-7 text-[var(--foreground)]">
-              Linked Māori governance, whakapapa, whenua, marae, finance,
-              evidence, reporting, and economic development — in one operating
-              system.
+              An outcome-driven governance, administration, evidence, and reporting
+              system for Māori organisations, hapū, iwi, marae, trusts, and Māori businesses.
             </p>
             <p className="mt-3 max-w-xl text-sm leading-6 text-[var(--muted-foreground)]">
-              Governance chains link hui → minutes → decisions → tasks. Every
-              record carries evidence references. Reports turn data into
-              accountability evidence ready for funders and auditors.
+              Tangata helps an organisation collect, organise, prove, and report
+              its own information — so it can make better decisions, negotiate
+              from evidence, apply for funding, and show outcomes.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Link
@@ -140,13 +137,7 @@ export default async function HomePage() {
                 href="/search"
                 className="rounded-xl border border-[var(--border)] px-5 py-2.5 text-sm font-semibold text-[var(--foreground)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
               >
-                Search Registers
-              </Link>
-              <Link
-                href="/finance"
-                className="rounded-xl border border-[var(--border)] px-5 py-2.5 text-sm font-semibold text-[var(--foreground)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
-              >
-                Finance & Assets
+                Search Records
               </Link>
               <Link
                 href="/reports"
@@ -157,30 +148,93 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Registry summary box */}
+          {/* Funding readiness */}
           <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-6">
             <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
-              Registry Summary
+              Funding Readiness
             </p>
-            <dl className="mt-4 divide-y divide-[var(--border)]">
-              {[
-                { label: "Total records", value: totalRecords.toLocaleString() },
-                { label: "Governance registers", value: "12 live" },
-                { label: "Funding readiness", value: `${readinessPct}%` },
-                { label: "Evidence files", value: String(counts.files) },
-                { label: "Open tasks", value: String(openTasks.length) },
-              ].map((row) => (
-                <div key={row.label} className="flex items-center justify-between py-2.5 first:pt-0 last:pb-0">
-                  <dt className="text-sm text-[var(--muted-foreground)]">{row.label}</dt>
-                  <dd className="text-sm font-semibold text-[var(--foreground)]">{row.value}</dd>
-                </div>
+            <p className="mt-2 text-3xl font-semibold text-[var(--foreground)]">
+              {readinessPct}
+              <span className="ml-1 text-base font-normal text-[var(--muted-foreground)]">%</span>
+            </p>
+            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[var(--border)]">
+              <div
+                className="h-full rounded-full bg-[var(--accent)] transition-all"
+                style={{ width: `${readinessPct}%` }}
+              />
+            </div>
+            <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1.5">
+              {readinessChecks.map((check) => (
+                <span
+                  key={check.label}
+                  className={`flex items-center gap-1.5 text-xs ${
+                    check.done ? "text-[var(--foreground)]" : "text-[var(--muted-foreground)] line-through"
+                  }`}
+                >
+                  <span
+                    className={`h-1.5 w-1.5 rounded-full ${
+                      check.done ? "bg-[var(--accent)]" : "bg-[var(--border)]"
+                    }`}
+                  />
+                  {check.label}
+                </span>
               ))}
-            </dl>
+            </div>
+            <div className="mt-5">
+              <Link
+                href="/reports/funding-readiness"
+                className="text-xs font-medium text-[var(--accent)] transition hover:opacity-75"
+              >
+                Full funding readiness report →
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ── Command Stats Grid ── */}
+      {/* ── The Chain ── */}
+      <section className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
+          How Tangata Works
+        </p>
+        <h2 className="mt-1 text-base font-semibold text-[var(--foreground)]">
+          From data to provable outcomes
+        </h2>
+        <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+          Every step in this chain is recorded, linked, and reportable. Together they prove the process, show the mandate, and turn records into evidence.
+        </p>
+        <div className="mt-5 flex flex-wrap items-center gap-2 text-sm">
+          {[
+            { label: "Collect", sub: "information", href: "/people" },
+            { label: "Hui", sub: "process", href: "/hui" },
+            { label: "Minutes", sub: "record", href: "/minutes" },
+            { label: "Decisions", sub: "formalise", href: "/decisions" },
+            { label: "Tasks", sub: "action", href: "/tasks" },
+            { label: "Evidence", sub: "prove", href: "/library/evidence" },
+            { label: "Reports", sub: "mandate", href: "/reports" },
+            { label: "Outcomes", sub: "show change", href: "/reports/governance-chain" },
+          ].map((step, i, arr) => (
+            <div key={step.label} className="flex items-center gap-2">
+              <Link
+                href={step.href}
+                className="group flex flex-col items-center rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] px-3 py-2.5 text-center transition hover:border-[var(--accent)]"
+              >
+                <span className="text-xs font-semibold text-[var(--foreground)] transition group-hover:text-[var(--accent)]">
+                  {step.label}
+                </span>
+                <span className="mt-0.5 text-[10px] text-[var(--muted-foreground)]">
+                  {step.sub}
+                </span>
+              </Link>
+              {i < arr.length - 1 && (
+                <span className="text-xs text-[var(--muted-foreground)]">→</span>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Registry Stats ── */}
       <section className="mt-6">
         <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
           Registry Overview
@@ -188,8 +242,8 @@ export default async function HomePage() {
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           <Stat label="People" value={counts.people} href="/people" />
           <Stat label="Whakapapa" value={counts.whakapapa} href="/whakapapa" />
-          <Stat label="Whenua" value={counts.whenua} href="/whenua" />
           <Stat label="Marae" value={counts.marae} href="/marae" />
+          <Stat label="Whenua" value={counts.whenua} href="/whenua" />
           <Stat label="Hui" value={counts.hui} href="/hui" />
           <Stat label="Minutes" value={counts.minutes} href="/minutes" />
           <Stat label="Decisions" value={counts.decisions} href="/decisions" />
@@ -209,8 +263,10 @@ export default async function HomePage() {
           <h2 className="mt-1 text-base font-semibold text-[var(--foreground)]">
             Hui → Minutes → Decisions → Tasks
           </h2>
+          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+            Each link in the chain proves the process. Together they show mandate.
+          </p>
 
-          {/* Chain flow */}
           <div className="mt-5 flex items-stretch gap-1">
             {[
               { label: "Hui", count: counts.hui, href: "/hui" },
@@ -237,7 +293,6 @@ export default async function HomePage() {
             ))}
           </div>
 
-          {/* Recent decisions */}
           {recentDecisions.length > 0 && (
             <div className="mt-5">
               <p className="mb-2 text-xs font-medium text-[var(--muted-foreground)]">
@@ -272,103 +327,54 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Open Tasks + Funding Readiness */}
-        <div className="flex flex-col gap-5">
-          {/* Funding Readiness */}
-          <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
-                  Funding Readiness
-                </p>
-                <p className="mt-0.5 text-base font-semibold text-[var(--foreground)]">
-                  {readinessPct}% complete
-                </p>
-              </div>
-              <span className="text-2xl font-semibold text-[var(--foreground)]">
-                {readinessDone}
-                <span className="text-sm font-normal text-[var(--muted-foreground)]">
-                  /{readinessChecks.length}
-                </span>
-              </span>
-            </div>
-            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[var(--border)]">
-              <div
-                className="h-full rounded-full bg-[var(--accent)] transition-all"
-                style={{ width: `${readinessPct}%` }}
-              />
-            </div>
-            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5">
-              {readinessChecks.map((check) => (
-                <span
-                  key={check.label}
-                  className={`flex items-center gap-1.5 text-xs ${
-                    check.done ? "text-[var(--foreground)]" : "text-[var(--muted-foreground)] line-through"
-                  }`}
-                >
-                  <span
-                    className={`h-1.5 w-1.5 rounded-full ${
-                      check.done ? "bg-[var(--accent)]" : "bg-[var(--border)]"
-                    }`}
-                  />
-                  {check.label}
-                </span>
-              ))}
-            </div>
-            <div className="mt-4">
-              <Link
-                href="/finance"
-                className="text-xs font-medium text-[var(--accent)] transition hover:opacity-75"
-              >
-                Finance & Assets hub →
-              </Link>
-            </div>
-          </section>
-
-          {/* Open Tasks */}
-          <section className="flex-1 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
-            <div className="flex items-center justify-between gap-3">
+        {/* Open Tasks */}
+        <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
+          <div className="flex items-center justify-between gap-3">
+            <div>
               <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
                 Open Tasks
               </p>
+              <p className="mt-0.5 text-sm text-[var(--muted-foreground)]">
+                Actions assigned from decisions
+              </p>
+            </div>
+            <Link
+              href="/tasks"
+              className="text-xs font-medium text-[var(--muted-foreground)] transition hover:text-[var(--accent)]"
+            >
+              All tasks →
+            </Link>
+          </div>
+
+          {openTasks.length === 0 ? (
+            <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-4 text-center">
+              <p className="text-sm text-[var(--muted-foreground)]">No open tasks</p>
               <Link
-                href="/tasks"
-                className="text-xs font-medium text-[var(--muted-foreground)] transition hover:text-[var(--accent)]"
+                href="/tasks/new"
+                className="mt-3 inline-block text-xs font-medium text-[var(--accent)] transition hover:opacity-75"
               >
-                All tasks →
+                Add task →
               </Link>
             </div>
-
-            {openTasks.length === 0 ? (
-              <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface-raised)] p-4 text-center">
-                <p className="text-sm text-[var(--muted-foreground)]">No open tasks</p>
+          ) : (
+            <div className="mt-3 divide-y divide-[var(--border)]">
+              {openTasks.map((task) => (
                 <Link
-                  href="/tasks/new"
-                  className="mt-3 inline-block text-xs font-medium text-[var(--accent)] transition hover:opacity-75"
+                  key={task.id}
+                  href={`/tasks/${task.id}`}
+                  className="flex items-center justify-between gap-3 py-2.5 text-sm transition first:pt-0 last:pb-0 hover:opacity-75"
                 >
-                  Add task →
+                  <span className="truncate font-medium text-[var(--foreground)]">
+                    {task.title || "Untitled task"}
+                  </span>
+                  <span className="shrink-0 rounded-full border border-[var(--border)] px-2 py-0.5 text-[10px] text-[var(--muted-foreground)]">
+                    {task.priority || task.status || "open"}
+                  </span>
                 </Link>
-              </div>
-            ) : (
-              <div className="mt-3 divide-y divide-[var(--border)]">
-                {openTasks.map((task) => (
-                  <Link
-                    key={task.id}
-                    href={`/tasks/${task.id}`}
-                    className="flex items-center justify-between gap-3 py-2.5 text-sm transition first:pt-0 last:pb-0 hover:opacity-75"
-                  >
-                    <span className="truncate font-medium text-[var(--foreground)]">
-                      {task.title || "Untitled task"}
-                    </span>
-                    <span className="shrink-0 rounded-full border border-[var(--border)] px-2 py-0.5 text-[10px] text-[var(--muted-foreground)]">
-                      {task.priority || task.status || "open"}
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </section>
-        </div>
+              ))}
+            </div>
+          )}
+        </section>
       </div>
 
       {/* ── Quick Actions ── */}
@@ -398,65 +404,44 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Register Categories ── */}
+      {/* ── Five Product Areas ── */}
       <section className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
         <p className="mb-5 text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
-          Governance Registers
+          Product Areas
         </p>
 
         <div className="space-y-8">
           {[
             {
-              group: "Whakapapa & People",
-              desc: "Identity, whakapapa, kinship, and capability records.",
+              group: "People & Relationships",
+              desc: "Identity, whakapapa, kinship, roles, knowledge, and participation records. Who are the people, what are their relationships, and what capability exists?",
               items: [
                 { label: "People", href: "/people", count: counts.people },
                 { label: "Whakapapa", href: "/whakapapa", count: counts.whakapapa },
               ],
             },
             {
-              group: "Whenua",
-              desc: "Land blocks, legal descriptions, and land evidence.",
+              group: "Hapū, Marae & Whenua",
+              desc: "The collectives, places, and lands being governed. Marae profiles, whenua blocks, and the cultural base for governance and mandate.",
               items: [
+                { label: "Marae", href: "/marae", count: counts.marae },
                 { label: "Whenua", href: "/whenua", count: counts.whenua },
               ],
             },
             {
-              group: "Marae",
-              desc: "Marae profiles, hui, and community notices.",
+              group: "Governance Chain",
+              desc: "Hui → Minutes → Decisions → Tasks → Outcomes. This is the workflow that proves process, records participation, and creates a mandate for action.",
               items: [
-                { label: "Marae", href: "/marae", count: counts.marae },
                 { label: "Hui", href: "/hui", count: counts.hui },
-                { label: "Pānui", href: "/panui", count: counts.panui },
-              ],
-            },
-            {
-              group: "Governance",
-              desc: "Authority, minutes, decisions, and governance chain.",
-              items: [
-                { label: "Governance Records", href: "/governance", count: counts.governance },
                 { label: "Minutes", href: "/minutes", count: counts.minutes },
                 { label: "Decisions", href: "/decisions", count: counts.decisions },
-              ],
-            },
-            {
-              group: "Finance & Assets",
-              desc: "Funding readiness, evidence, and asset intelligence.",
-              items: [
-                { label: "Finance & Assets Hub", href: "/finance", count: null },
-                { label: "Funding Readiness", href: "/reports/funding-readiness", count: null },
-              ],
-            },
-            {
-              group: "Work & Delivery",
-              desc: "Tasks assigned from decisions.",
-              items: [
                 { label: "Tasks", href: "/tasks", count: counts.tasks },
+                { label: "Governance Records", href: "/governance", count: counts.governance },
               ],
             },
             {
-              group: "Library & Archive",
-              desc: "Documents, evidence, and the full archive.",
+              group: "Library & Evidence",
+              desc: "Documents, file references, and evidence — the archive that gives governance decisions their legal, historical, and funding weight.",
               items: [
                 { label: "Library", href: "/library", count: null },
                 { label: "Documents", href: "/documents", count: counts.documents },
@@ -464,11 +449,12 @@ export default async function HomePage() {
               ],
             },
             {
-              group: "Intelligence",
-              desc: "Reports, chains, and readiness indicators.",
+              group: "Intelligence & Outcomes",
+              desc: "Turn records into insight, mandate, funding readiness, and measurable outcomes. Reports help prove what happened, who was involved, and what it means.",
               items: [
                 { label: "Reports", href: "/reports", count: null },
                 { label: "Governance Chain", href: "/reports/governance-chain", count: null },
+                { label: "Funding Readiness", href: "/reports/funding-readiness", count: null },
                 { label: "Marae Governance", href: "/reports/marae-governance", count: null },
               ],
             },
