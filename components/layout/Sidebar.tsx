@@ -7,6 +7,7 @@ import { Dot, StatusBadge } from "@/components/ui-system/primitives";
 
 const navigation = [
   { name: "Dashboard", href: "/", group: "Overview" },
+  { name: "Organisation Profile", href: "/organisation", group: "Overview" },
 
   { name: "People", href: "/people", group: "People & Relationships" },
   { name: "Whakapapa", href: "/whakapapa", group: "People & Relationships" },
@@ -52,6 +53,7 @@ function isActivePath(pathname: string, href: string) {
   if (href === "/reports") return pathname === "/reports";
   if (href === "/library") return pathname === "/library";
   if (href === "/activity") return pathname === "/activity" || pathname.startsWith("/activity/");
+  if (href === "/organisation") return pathname === "/organisation" || pathname.startsWith("/organisation/");
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 

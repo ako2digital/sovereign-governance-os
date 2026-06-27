@@ -2,13 +2,27 @@ import Link from "next/link";
 import AppShell from "@/components/layout/AppShell";
 import { supabase } from "@/lib/supabaseClient";
 
+const orgTypeLabels: Record<string, string> = {
+  hapu: "Hapū",
+  marae_trust: "Marae Trust",
+  maori_trust: "Māori Trust",
+  charitable_trust: "Charitable Trust",
+  iwi_organisation: "Iwi Organisation",
+  maori_business: "Māori Business",
+  community_organisation: "Community Organisation",
+  service_provider: "Service Provider",
+  other: "Other",
+};
+
 export default async function HomePage() {
   const [
+    orgRes,
     peopleRes, whenuaRes, maraeRes, huiRes, minutesRes, decisionsRes,
     tasksRes, documentsRes, filesRes, governanceRes, whakapapaRes,
     panuiRes, activityRes,
     openTasksRes, recentDecisionsRes,
   ] = await Promise.all([
+    supabase.from("organisation_profiles").select("organisation_name, organisation_type, kaupapa, status").order("created_at", { ascending: true }).limit(1).maybeSingle(),
     supabase.from("people").select("*", { count: "exact", head: true }),
     supabase.from("whenua_records").select("*", { count: "exact", head: true }),
     supabase.from("marae_records").select("*", { count: "exact", head: true }),
@@ -34,6 +48,13 @@ export default async function HomePage() {
       .order("created_at", { ascending: false })
       .limit(3),
   ]);
+
+  const orgProfile = orgRes.data as {
+    organisation_name: string;
+    organisation_type: string | null;
+    kaupapa: string | null;
+    status: string | null;
+  } | null;
 
   const counts = {
     people: peopleRes.count ?? 0,
@@ -106,6 +127,27 @@ export default async function HomePage() {
 
   return (
     <AppShell title="Dashboard" eyebrow="Tangata">
+
+      {/* ── Setup prompt if no org profile ── */}
+      {!orgProfile && (
+        <section className="mb-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-[var(--accent)]/40 bg-[var(--surface)] px-6 py-4">
+          <div>
+            <p className="text-sm font-semibold text-[var(--foreground)]">
+              Set up your organisation profile first
+            </p>
+            <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">
+              The organisation profile anchors all governance, reporting, evidence, and outcome records in Tangata.
+            </p>
+          </div>
+          <Link
+            href="/organisation/new"
+            className="shrink-0 rounded-xl bg-[var(--foreground)] px-4 py-2 text-sm font-semibold text-[var(--background)] transition hover:opacity-90"
+          >
+            Set Up Organisation Profile
+          </Link>
+        </section>
+      )}
+
       {/* ── Hero ── */}
       <section className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)]">
         <div className="absolute inset-x-0 top-0 h-[3px] bg-[var(--accent)]" />
@@ -114,17 +156,37 @@ export default async function HomePage() {
             <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
               Governance OS
             </p>
-            <h1 className="mt-3 text-4xl font-semibold tracking-tight text-[var(--foreground)] sm:text-5xl lg:text-6xl">
-              Tangata
-            </h1>
-            <p className="mt-4 max-w-xl text-base leading-7 text-[var(--foreground)]">
-              An outcome-driven governance, administration, evidence, and reporting
-              system for Māori organisations, hapū, iwi, marae, trusts, and Māori businesses.
-            </p>
-            <p className="mt-3 max-w-xl text-sm leading-6 text-[var(--muted-foreground)]">
-              Tangata helps an organisation collect, organise, prove, and report
-              its own information — so it can make better decisions, negotiate
-              from evidence, apply for funding, and show outcomes.
+            {orgProfile ? (
+              <>
+                <h1 className="mt-3 text-4xl font-semibold tracking-tight text-[var(--foreground)] sm:text-5xl lg:text-6xl">
+                  {orgProfile.organisation_name}
+                </h1>
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  {orgProfile.organisation_type && (
+                    <span className="rounded-full border border-[var(--border)] px-3 py-1 text-xs font-semibold text-[var(--muted-foreground)]">
+                      {orgTypeLabels[orgProfile.organisation_type] ?? orgProfile.organisation_type}
+                    </span>
+                  )}
+                  {orgProfile.status && orgProfile.status !== "active" && (
+                    <span className="rounded-full border border-[var(--border)] px-3 py-1 text-xs text-[var(--muted-foreground)]">
+                      {orgProfile.status}
+                    </span>
+                  )}
+                </div>
+                {orgProfile.kaupapa && (
+                  <p className="mt-4 max-w-xl text-sm leading-6 text-[var(--muted-foreground)]">
+                    {orgProfile.kaupapa}
+                  </p>
+                )}
+              </>
+            ) : (
+              <h1 className="mt-3 text-4xl font-semibold tracking-tight text-[var(--foreground)] sm:text-5xl lg:text-6xl">
+                Tangata
+              </h1>
+            )}
+            <p className="mt-4 max-w-xl text-sm leading-6 text-[var(--muted-foreground)]">
+              Governance, administration, evidence, reporting, and outcomes —
+              in one operating system for Māori organisations.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Link
@@ -145,6 +207,14 @@ export default async function HomePage() {
               >
                 Reports
               </Link>
+              {orgProfile && (
+                <Link
+                  href="/organisation"
+                  className="rounded-xl border border-[var(--border)] px-5 py-2.5 text-sm font-semibold text-[var(--foreground)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+                >
+                  Organisation Profile
+                </Link>
+              )}
             </div>
           </div>
 
