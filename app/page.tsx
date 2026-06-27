@@ -136,7 +136,7 @@ export default async function HomePage() {
               Set up your organisation profile first
             </p>
             <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">
-              The organisation profile anchors all governance, reporting, evidence, and outcome records in Tangata.
+              The organisation profile is the hapū-held source of truth that anchors all governance, evidence, reporting, and outcome records in Tangata.
             </p>
           </div>
           <Link
@@ -185,8 +185,8 @@ export default async function HomePage() {
               </h1>
             )}
             <p className="mt-4 max-w-xl text-sm leading-6 text-[var(--muted-foreground)]">
-              Governance, administration, evidence, reporting, and outcomes —
-              in one operating system for Māori organisations.
+              A hapū-held governance, evidence, mandate, and reporting system — built for Māori organisations, hapū, marae, trusts, and Māori businesses.
+              Manage your own information, prove your own process, control what is shared externally, and negotiate from your own data.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Link
@@ -268,21 +268,23 @@ export default async function HomePage() {
           How Tangata Works
         </p>
         <h2 className="mt-1 text-base font-semibold text-[var(--foreground)]">
-          From data to provable outcomes
+          From organisation-held data to controlled outcomes
         </h2>
         <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-          Every step in this chain is recorded, linked, and reportable. Together they prove the process, show the mandate, and turn records into evidence.
+          Every step in this chain is recorded, linked, and reportable. Together they prove the process, show the mandate,
+          and create the evidence base for controlled sharing, negotiation, and reporting back to the people.
         </p>
         <div className="mt-5 flex flex-wrap items-center gap-2 text-sm">
           {[
-            { label: "Collect", sub: "information", href: "/people" },
-            { label: "Hui", sub: "process", href: "/hui" },
+            { label: "People & Data", sub: "organisation-held", href: "/people" },
+            { label: "Hui", sub: "consultation", href: "/hui" },
             { label: "Minutes", sub: "record", href: "/minutes" },
             { label: "Decisions", sub: "formalise", href: "/decisions" },
             { label: "Tasks", sub: "action", href: "/tasks" },
             { label: "Evidence", sub: "prove", href: "/library/evidence" },
-            { label: "Reports", sub: "mandate", href: "/reports" },
-            { label: "Outcomes", sub: "show change", href: "/reports/governance-chain" },
+            { label: "Controlled Sharing", sub: "permissioned access", href: "/reports" },
+            { label: "Outcomes", sub: "negotiate from evidence", href: "/reports/governance-chain" },
+            { label: "Report Back", sub: "to the people", href: "/reports" },
           ].map((step, i, arr) => (
             <div key={step.label} className="flex items-center gap-2">
               <Link
@@ -302,6 +304,11 @@ export default async function HomePage() {
             </div>
           ))}
         </div>
+        <p className="mt-4 text-xs text-[var(--muted-foreground)]">
+          Tangata is the trusted middle layer between your organisation and external parties —
+          councils, funders, iwi bodies, service providers, and statutory agencies.
+          Not a middleman that takes control. A data-sovereignty layer that lets your organisation negotiate from its own evidence.
+        </p>
       </section>
 
       {/* ── Registry Stats ── */}
@@ -474,7 +481,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Five Product Areas ── */}
+      {/* ── Six Product Areas ── */}
       <section className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
         <p className="mb-5 text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
           Product Areas
@@ -482,6 +489,13 @@ export default async function HomePage() {
 
         <div className="space-y-8">
           {[
+            {
+              group: "Organisation Profile",
+              desc: "The hapū-held source of truth. Defines who owns this data, what type of organisation holds it, what kaupapa it serves, and what mandate and relationships matter. Every record in Tangata belongs to this organisation.",
+              items: [
+                { label: "Organisation Profile", href: "/organisation", count: null },
+              ],
+            },
             {
               group: "People & Relationships",
               desc: "Identity, whakapapa, kinship, roles, knowledge, and participation records. Who are the people, what are their relationships, and what capability exists?",
@@ -520,7 +534,7 @@ export default async function HomePage() {
             },
             {
               group: "Intelligence & Outcomes",
-              desc: "Turn records into insight, mandate, funding readiness, and measurable outcomes. Reports help prove what happened, who was involved, and what it means.",
+              desc: "Turn records into insight, mandate, funding readiness, and measurable outcomes. Reports prove the process, show the mandate, and provide the evidence base for controlled, purpose-based sharing with external parties. Report back to the people.",
               items: [
                 { label: "Reports", href: "/reports", count: null },
                 { label: "Governance Chain", href: "/reports/governance-chain", count: null },

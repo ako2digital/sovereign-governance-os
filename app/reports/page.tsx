@@ -80,10 +80,11 @@ export default function ReportsPage() {
           Reports
         </h1>
         <p className="mt-3 max-w-2xl text-sm text-[var(--muted-foreground)]">
-          Turn records into insight, mandate, and evidence. Reports help you prove what happened,
-          who was involved, what was decided, what evidence supports it, and what mandate exists.
-          Use reports to prepare for council engagement, funding applications, iwi agreements,
-          trustee reporting, and partner negotiations.
+          Turn organisation-held records into insight, mandate, and evidence.
+          Reports prove what happened, who was involved, what was decided, what evidence supports it,
+          and what mandate exists. Use reports to negotiate from your own data — in council engagement,
+          funding applications, iwi agreements, trustee reporting, and partner negotiations.
+          Reports are also how you report back to the people the data belongs to.
         </p>
         <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
@@ -153,25 +154,38 @@ export default function ReportsPage() {
       {/* ── Mandate + Outcomes note ── */}
       <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
         <h2 className="text-sm font-medium text-[var(--foreground)]">
-          Preparing for negotiation, funding, or governance review
+          Negotiate from evidence. Report back to the people.
         </h2>
         <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-          The most useful thing Tangata does is help you walk into a meeting with structured data,
-          participation records, minutes, decisions, supporting documents, evidence, and a clear
-          chain showing how a position was formed. These reports are the output of that chain.
+          The most useful thing Tangata does is help you walk into a meeting with your own evidence —
+          structured data, participation records, minutes, decisions, supporting documents, and a clear
+          chain showing how a position was formed and who authorised it.
+          This is what it means to negotiate from evidence, not from claims.
         </p>
         <p className="mt-3 text-sm text-[var(--muted-foreground)]">
-          Outcomes — what actually changed as a result of the work — are the final destination.
-          A dedicated Outcomes register is planned for a future pass. For now, the Governance Chain
-          report shows the closest available view of what was decided, what was actioned, and what
-          evidence supports it.
+          Reports are also the foundation for controlled, purpose-based sharing —
+          where your organisation decides what is shared with councils, funders, iwi bodies,
+          service providers, or statutory agencies, and on what terms.
+          What is shared, who it is shared with, why, and what outcome is expected
+          should always be recorded and reported back to the people the data belongs to.
         </p>
-        <div className="mt-4">
+        <p className="mt-3 text-sm text-[var(--muted-foreground)]">
+          A dedicated Outcomes register and controlled-sharing layer are planned for future passes.
+          For now, the Governance Chain report provides the closest available view of what was decided,
+          what was actioned, and what evidence supports it.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-3">
           <Link
             href="/reports/governance-chain"
             className="text-xs font-medium text-[var(--accent)] transition hover:opacity-75"
           >
             View Governance Chain report →
+          </Link>
+          <Link
+            href="/organisation"
+            className="text-xs font-medium text-[var(--accent)] transition hover:opacity-75"
+          >
+            Organisation Profile →
           </Link>
         </div>
       </section>

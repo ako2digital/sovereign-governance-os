@@ -111,8 +111,10 @@ export default async function OrganisationPage() {
             Organisation Profile
           </h1>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--muted-foreground)]">
-            The organisation profile is the anchor for everything in Tangata. It identifies who this
-            organisation is, what type it is, what its kaupapa is, and what context it operates in.
+            The organisation profile is the hapū-held source of truth that anchors everything in Tangata.
+            It defines who owns this data, what type of organisation holds it, what kaupapa it serves,
+            how governance works, what mandate processes are used, what information is managed,
+            who the organisation reports to, what external relationships matter, and what outcomes it is working toward.
             Every record, hui, decision, document, report, and outcome belongs to this organisation.
           </p>
         </section>
@@ -141,12 +143,12 @@ export default async function OrganisationPage() {
           </p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {[
-              { label: "Governance Chain", desc: "Hui, minutes, decisions, and tasks belong to this organisation." },
-              { label: "People & Roles", desc: "Staff, trustees, members, and kaumātua are linked here." },
-              { label: "Hapū / Marae / Whenua", desc: "Land, marae, and hapū affiliations are defined in the profile." },
-              { label: "Library & Evidence", desc: "Documents, files, and evidence carry the organisation's context." },
-              { label: "Reports", desc: "All reports are generated for and on behalf of this organisation." },
-              { label: "Funding Readiness", desc: "Funders need to know who they are funding and what the kaupapa is." },
+              { label: "Data Sovereignty", desc: "The organisation decides what is shared, who it is shared with, why, and for what purpose. External access is always controlled, permissioned, and purpose-based." },
+              { label: "Governance Chain", desc: "Hui, minutes, decisions, and tasks belong to this organisation — proving the process and showing the mandate." },
+              { label: "People & Roles", desc: "Staff, trustees, members, and kaumātua are linked here — proving who participated and what authority they held." },
+              { label: "Hapū / Marae / Whenua", desc: "Land, marae, and hapū affiliations are defined in the profile — the geographic and cultural basis for mandate." },
+              { label: "Library & Evidence", desc: "Documents, files, and evidence carry the organisation's context — supporting controlled sharing and negotiation." },
+              { label: "Reports & Outcomes", desc: "All reports are generated for and on behalf of this organisation — and reported back to the people who the data belongs to." },
             ].map((item) => (
               <div
                 key={item.label}
