@@ -14,78 +14,88 @@ const reportCards: ReportCard[] = [
     title: "Governance Chain Report",
     href: "/reports/governance-chain",
     description:
-      "Full chain from hui through minutes, decisions, tasks, and evidence — showing how governance decisions are made, recorded, and actioned.",
-    proves: "Proves governance process, accountability chain, and decision traceability.",
+      "Full chain from hui through minutes, decisions, tasks, and evidence. Shows how positions were formed, who participated, and what mandate exists. Use this to prove process to funders, councils, or partners.",
+    proves: "Proves governance process, mandate chain, participation, and decision traceability.",
     tables: ["hui", "minutes", "decisions", "tasks", "record_files"],
   },
   {
     title: "Hui Participation Report",
     href: "/reports/hui-participation",
     description:
-      "Attendance and participation evidence across all hui — showing who attended, apologies, roles, and engagement depth.",
-    proves: "Proves community participation and governance engagement for funders and regulators.",
+      "Attendance and participation evidence across all hui — who attended, apologies, roles, and engagement. Shows that positions came from a real process, not just two people claiming to speak for a hapū.",
+    proves: "Proves community participation and mandate for governance positions.",
     tables: ["hui", "hui_attendees", "people"],
   },
   {
     title: "Decisions and Actions Report",
     href: "/decisions",
     description:
-      "Full register of formal decisions — status, source minutes, linked hui, resulting tasks, and document references.",
-    proves: "Proves formal decision-making and follow-through accountability.",
+      "Full register of formal decisions — status, source minutes, linked hui, resulting tasks, and document references. Each decision links back to the process that created it.",
+    proves: "Proves formal decision-making, follow-through accountability, and action delivery.",
     tables: ["decisions", "minutes", "tasks"],
   },
   {
     title: "Marae Governance Report",
     href: "/reports/marae-governance",
     description:
-      "Trustee and governance role structure, term history, appointment evidence, and AGM records for all marae.",
-    proves: "Proves governance structure, trustee continuity, and appointment legitimacy.",
+      "Trustee and governance role structure, term history, appointment evidence, and AGM records. Proves that governance is properly constituted and trustees are legitimately appointed.",
+    proves: "Proves governance structure, trustee legitimacy, and appointment continuity.",
     tables: ["marae_records", "governance_role_terms", "people"],
   },
   {
     title: "Evidence and Files Report",
     href: "/reports/evidence-files",
     description:
-      "Complete audit of file and evidence references — by type, category, sensitivity, verification status, and upcoming reviews.",
-    proves: "Proves document register completeness and evidence readiness.",
+      "Complete audit of file and evidence references — by type, category, sensitivity, verification status, and upcoming reviews. Shows what evidence exists and what gaps remain.",
+    proves: "Proves document register completeness and evidence readiness for funding or audit.",
     tables: ["record_files"],
   },
   {
     title: "Funding Readiness Snapshot",
     href: "/reports/funding-readiness",
     description:
-      "Data completeness indicators across all governance, land, people, and evidence modules — showing readiness for funding applications.",
-    proves: "Shows whether the organisation has the evidence base needed for funding applications.",
+      "Data completeness indicators across all governance, land, people, and evidence modules. Shows what is in place and what is missing before a funding application or negotiation.",
+    proves: "Shows the evidence base available for funding applications, council engagement, and partner negotiations.",
     tables: ["all modules"],
   },
   {
     title: "Document Register",
     href: "/reports/document-register",
     description:
-      "Printable register of all documents and file references — status, type, sensitivity, review dates, and expiry dates.",
-    proves: "Standard document register for auditors, funders, and governance review.",
+      "Printable register of all documents and file references — status, type, sensitivity, review dates, and expiry. Standard format for auditors, funders, and governance review.",
+    proves: "Standard document register for audit trail, funder compliance, and governance record-keeping.",
     tables: ["documents", "record_files"],
   },
 ];
 
 export default function ReportsPage() {
   return (
-    <AppShell title="Reports" eyebrow="Intelligence">
+    <AppShell title="Reports" eyebrow="Intelligence & Outcomes">
       {/* ── Header ── */}
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Intelligence
+          Intelligence & Outcomes
         </p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[var(--foreground)]">
           Reports
         </h1>
         <p className="mt-3 max-w-2xl text-sm text-[var(--muted-foreground)]">
-          Live reports generated from your governance records. Each report turns
-          raw data into structured evidence — governance chains, participation
-          records, trustee history, and funding-readiness summaries. Reports
-          reflect current database state and can be printed or saved as PDF
-          using your browser.
+          Turn records into insight, mandate, and evidence. Reports help you prove what happened,
+          who was involved, what was decided, what evidence supports it, and what mandate exists.
+          Use reports to prepare for council engagement, funding applications, iwi agreements,
+          trustee reporting, and partner negotiations.
         </p>
+        <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
+            What these reports show
+          </p>
+          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+            Reports reflect current database state — real records, real counts, no fabricated data.
+            Where records are missing, gaps are shown. The goal is to show not just that you have data,
+            but that the data proves a process, demonstrates mandate, and supports outcomes.
+            Can be printed via browser (Ctrl+P / Cmd+P) or saved as PDF.
+          </p>
+        </div>
         <div className="mt-5 flex flex-wrap gap-3">
           <Link
             href="/library"
@@ -140,19 +150,30 @@ export default function ReportsPage() {
         </div>
       </section>
 
-      {/* ── Note on v1 ── */}
+      {/* ── Mandate + Outcomes note ── */}
       <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
         <h2 className="text-sm font-medium text-[var(--foreground)]">
-          About Reporting v1
+          Preparing for negotiation, funding, or governance review
         </h2>
         <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-          Reports in v1 reflect live database records as honest summaries — no
-          fabricated data, no placeholder counts. Where records are missing,
-          empty states are shown. All reports can be printed via the browser
-          print function (Ctrl+P / Cmd+P) or using the "Print / Save as PDF"
-          button on each report page. PDF generation, CSV export, and scheduled
-          report delivery are planned for future versions.
+          The most useful thing Tangata does is help you walk into a meeting with structured data,
+          participation records, minutes, decisions, supporting documents, evidence, and a clear
+          chain showing how a position was formed. These reports are the output of that chain.
         </p>
+        <p className="mt-3 text-sm text-[var(--muted-foreground)]">
+          Outcomes — what actually changed as a result of the work — are the final destination.
+          A dedicated Outcomes register is planned for a future pass. For now, the Governance Chain
+          report shows the closest available view of what was decided, what was actioned, and what
+          evidence supports it.
+        </p>
+        <div className="mt-4">
+          <Link
+            href="/reports/governance-chain"
+            className="text-xs font-medium text-[var(--accent)] transition hover:opacity-75"
+          >
+            View Governance Chain report →
+          </Link>
+        </div>
       </section>
     </AppShell>
   );

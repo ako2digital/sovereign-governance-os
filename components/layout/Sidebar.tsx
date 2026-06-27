@@ -7,49 +7,45 @@ import { Dot, StatusBadge } from "@/components/ui-system/primitives";
 
 const navigation = [
   { name: "Dashboard", href: "/", group: "Overview" },
-  { name: "Activity", href: "/activity", group: "Overview" },
+  { name: "Organisation Profile", href: "/organisation", group: "Overview" },
 
-  { name: "People", href: "/people", group: "Whakapapa & People" },
-  { name: "Whakapapa", href: "/whakapapa", group: "Whakapapa & People" },
+  { name: "People", href: "/people", group: "People & Relationships" },
+  { name: "Whakapapa", href: "/whakapapa", group: "People & Relationships" },
 
-  { name: "Whenua", href: "/whenua", group: "Whenua" },
+  { name: "Marae", href: "/marae", group: "Hapū, Marae & Whenua" },
+  { name: "Pānui", href: "/panui", group: "Hapū, Marae & Whenua" },
+  { name: "Whenua", href: "/whenua", group: "Hapū, Marae & Whenua" },
 
-  { name: "Marae", href: "/marae", group: "Marae" },
-  { name: "Hui", href: "/hui", group: "Marae" },
-  { name: "Pānui", href: "/panui", group: "Marae" },
+  { name: "Hui", href: "/hui", group: "Governance Chain" },
+  { name: "Minutes", href: "/minutes", group: "Governance Chain" },
+  { name: "Decisions", href: "/decisions", group: "Governance Chain" },
+  { name: "Tasks", href: "/tasks", group: "Governance Chain" },
+  { name: "Governance Records", href: "/governance", group: "Governance Chain" },
 
-  { name: "Governance Records", href: "/governance", group: "Governance" },
-  { name: "Minutes", href: "/minutes", group: "Governance" },
-  { name: "Decisions", href: "/decisions", group: "Governance" },
+  { name: "Library", href: "/library", group: "Library & Evidence" },
+  { name: "Documents", href: "/documents", group: "Library & Evidence" },
+  { name: "Files", href: "/library/files", group: "Library & Evidence" },
+  { name: "Evidence", href: "/library/evidence", group: "Library & Evidence" },
 
-  { name: "Finance", href: "/finance", group: "Finance & Assets" },
-  { name: "Funding Readiness", href: "/reports/funding-readiness", group: "Finance & Assets" },
+  { name: "Reports", href: "/reports", group: "Intelligence & Outcomes" },
+  { name: "Funding Readiness", href: "/reports/funding-readiness", group: "Intelligence & Outcomes" },
+  { name: "Governance Chain", href: "/reports/governance-chain", group: "Intelligence & Outcomes" },
+  { name: "Hui Participation", href: "/reports/hui-participation", group: "Intelligence & Outcomes" },
+  { name: "Marae Governance", href: "/reports/marae-governance", group: "Intelligence & Outcomes" },
+  { name: "Document Register", href: "/reports/document-register", group: "Intelligence & Outcomes" },
+  { name: "Finance & Funding", href: "/finance", group: "Intelligence & Outcomes" },
 
-  { name: "Tasks", href: "/tasks", group: "Work & Delivery" },
-
-  { name: "Library", href: "/library", group: "Library & Archive" },
-  { name: "Documents", href: "/documents", group: "Library & Archive" },
-  { name: "Files", href: "/library/files", group: "Library & Archive" },
-  { name: "Evidence", href: "/library/evidence", group: "Library & Archive" },
-
-  { name: "Reports", href: "/reports", group: "Intelligence" },
-  { name: "Governance Chain", href: "/reports/governance-chain", group: "Intelligence" },
-  { name: "Hui Participation", href: "/reports/hui-participation", group: "Intelligence" },
-  { name: "Marae Governance", href: "/reports/marae-governance", group: "Intelligence" },
-  { name: "Evidence & Files", href: "/reports/evidence-files", group: "Intelligence" },
-  { name: "Document Register", href: "/reports/document-register", group: "Intelligence" },
+  { name: "Activity", href: "/activity", group: "System" },
 ];
 
 const groups = [
   "Overview",
-  "Whakapapa & People",
-  "Whenua",
-  "Marae",
-  "Governance",
-  "Finance & Assets",
-  "Work & Delivery",
-  "Library & Archive",
-  "Intelligence",
+  "People & Relationships",
+  "Hapū, Marae & Whenua",
+  "Governance Chain",
+  "Library & Evidence",
+  "Intelligence & Outcomes",
+  "System",
 ];
 
 function isActivePath(pathname: string, href: string) {
@@ -57,6 +53,7 @@ function isActivePath(pathname: string, href: string) {
   if (href === "/reports") return pathname === "/reports";
   if (href === "/library") return pathname === "/library";
   if (href === "/activity") return pathname === "/activity" || pathname.startsWith("/activity/");
+  if (href === "/organisation") return pathname === "/organisation" || pathname.startsWith("/organisation/");
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 

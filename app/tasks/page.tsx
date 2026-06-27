@@ -53,20 +53,31 @@ export default async function TasksPage() {
   const taskRecords = (data ?? []) as TaskRecord[];
 
   return (
-    <AppShell title="Tasks" eyebrow="Work & Delivery">
+    <AppShell title="Tasks" eyebrow="Governance Chain">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Work & Delivery
+          Governance Chain
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">Tasks</h1>
 
         <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
-          Decisions turned into action — every task assigned out of a governance
-          resolution, tracked with owner, priority, deadline, and completion
-          status. Linking tasks back to source decisions and hui closes the
-          governance chain and provides the delivery evidence funders require.
+          Decisions turned into action. Tasks connect decisions to delivery — each task should
+          trace back to the decision that authorised it and the hui that produced it.
+          Completing tasks and reporting back to the people closes the governance chain and
+          turns records into provable outcomes.
         </p>
+
+        <div className="mt-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
+            Pathway to outcome
+          </p>
+          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+            Tasks carry authority from the decision that created them. Completing tasks and
+            attaching evidence turns governance work into reportable, fundable outcomes.
+            Link tasks to decisions and hui to close the chain.
+          </p>
+        </div>
       </section>
 
       <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">

@@ -62,10 +62,10 @@ export default async function DocumentsPage() {
   const documentRecords = (data ?? []) as DocumentRecord[];
 
   return (
-    <AppShell title="Documents" eyebrow="Library & Archive">
+    <AppShell title="Documents" eyebrow="Library & Evidence">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Library & Archive
+          Library & Evidence
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">
@@ -75,10 +75,23 @@ export default async function DocumentsPage() {
         <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
           Document records and file references for the governance archive —
           deeds, reports, contracts, plans, correspondence, and supporting
-          materials. Documents are the evidence layer that gives governance
-          decisions their legal and historical weight. Link documents to the
-          hui, whenua, or decisions they support.
+          materials. Documents are not a separate module: they are the evidence layer
+          that gives governance decisions their legal and historical weight.
+          Link documents to the hui, whenua, or decisions they support to turn records into proof.
         </p>
+
+        <div className="mt-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
+            What belongs here
+          </p>
+          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+            Deeds, trust documents, contracts, legal correspondence, reports, plans, maps, photos,
+            signed minutes, funding applications, council documents, environmental reports, and any
+            document that supports a governance decision, whenua record, or mandate claim.
+            Use the Evidence archive for file-level references. Use Documents for named, structured
+            document records that belong in the governance register.
+          </p>
+        </div>
       </section>
 
       <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">

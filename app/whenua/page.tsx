@@ -49,10 +49,10 @@ export default async function WhenuaPage() {
   const whenuaRecords = (data ?? []) as WhenuaRecord[];
 
   return (
-    <AppShell title="Whenua" eyebrow="Whenua">
+    <AppShell title="Whenua" eyebrow="Hapū, Marae & Whenua">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Whenua
+          Hapū, Marae & Whenua
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">Whenua</h1>
@@ -60,9 +60,23 @@ export default async function WhenuaPage() {
         <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
           Land records, legal descriptions, and evidence for every block of
           land connected to this organisation — Māori freehold, general land,
-          reserves, and customary interests. Attach governance instruments,
-          survey plans, and funding applications as file references.
+          reserves, and customary interests. Whenua records are foundational to
+          mandate evidence: they show what land is at stake and what governance process
+          relates to it.
         </p>
+
+        <div className="mt-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
+            What belongs here
+          </p>
+          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+            Block names and numbers, legal descriptions, boundaries, land history, current use,
+            environmental records, council records, DOC reports, science reports, maps and plans,
+            and whenua-related governance records. Attach governance instruments, survey plans,
+            environmental assessments, and funding applications as file references. Whenua evidence
+            is critical for resource consent, council engagement, and funding applications.
+          </p>
+        </div>
       </section>
 
       <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">

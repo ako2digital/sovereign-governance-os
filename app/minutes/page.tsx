@@ -62,20 +62,31 @@ export default async function MinutesPage() {
   const minutesRecords = (data ?? []) as MinutesRecord[];
 
   return (
-    <AppShell title="Minutes" eyebrow="Governance">
+    <AppShell title="Minutes" eyebrow="Governance Chain">
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-raised)] p-8">
         <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-foreground)]">
-          Governance
+          Governance Chain
         </p>
 
         <h1 className="mt-3 text-3xl font-semibold text-[var(--foreground)]">Minutes</h1>
 
         <p className="mt-4 max-w-2xl text-[var(--muted-foreground)]">
-          The official record of what was said, agreed, and resolved at every
-          hui. Minutes are the authoritative narrative link between a meeting
-          and its formal decisions — they make the governance chain auditable
-          and defensible to funders, auditors, and future generations.
+          The official record of what was discussed and resolved at every hui. Minutes are
+          not a separate module — they are the written proof of the hui process. They connect
+          a meeting to its formal decisions and make the governance chain auditable, defensible,
+          and reportable to funders, auditors, and future generations.
         </p>
+
+        <div className="mt-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-[var(--muted-foreground)]">
+            What belongs here
+          </p>
+          <p className="mt-1 text-xs text-[var(--muted-foreground)]">
+            Records of what was discussed, who attended, what was agreed, and what was deferred.
+            Minutes should be linked to the hui they came from. Approved minutes carry evidential weight
+            — they prove the process and support the decisions that follow.
+          </p>
+        </div>
       </section>
 
       <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6">
